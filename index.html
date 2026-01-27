@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>CV Builder A4 → PDF</title>
 
-  <!-- Fuente (opcional) -->
+  <!-- Fuente -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -57,7 +57,7 @@
     }
     .row{ display:grid; grid-template-columns: 1fr; gap:6px; margin-bottom:10px; }
     label{ font-size:12px; color:var(--muted); }
-    input, textarea, select{
+    input, textarea{
       width:100%;
       border:1px solid var(--line);
       border-radius:10px;
@@ -136,9 +136,7 @@
       border-radius:10px;
       font-size:12px;
     }
-    .jobCardTop button.danger{
-      background:#EF4444;
-    }
+    .jobCardTop button.danger{ background:#EF4444; }
     .jobCard .grid3{
       display:grid;
       grid-template-columns: 1fr 1fr;
@@ -194,6 +192,7 @@
       font-size: 13.2px;
       font-weight: 850;
       color: var(--accent);
+      text-transform: none;
     }
     .contact{
       margin-top: 4mm;
@@ -202,6 +201,15 @@
       line-height: 1.45;
       word-break: break-word;
     }
+
+    /* Links prolijos (mail/tel/linkedin) */
+    .contact a{
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: 650;
+    }
+    .contact a:hover{ text-decoration: underline; }
+
     .photo{
       width: 36mm;
       height: 36mm;
@@ -298,18 +306,6 @@
       white-space:nowrap;
     }
 
-    .overflowWarn{
-      position:absolute;
-      inset:auto 16px 16px auto;
-      background: #fee2e2;
-      color:#991b1b;
-      border:1px solid #fecaca;
-      padding:8px 10px;
-      border-radius:10px;
-      font-size:12px;
-      font-weight:700;
-      display:none;
-    }
     .paperWrap{ position:relative; }
 
     @media (max-width: 1100px){
@@ -344,8 +340,23 @@
       </div>
 
       <div class="row">
-        <label>Contacto (una línea)</label>
-        <input id="inContact" value="Buenos Aires, Argentina · ceguiazabal@gmail.com · +54 11 2396-2046 · linkedin.com/in/cegui" />
+        <label>Email</label>
+        <input id="inEmail" value="ceguiazabal@gmail.com" />
+      </div>
+
+      <div class="row">
+        <label>Teléfono (formato internacional recomendado)</label>
+        <input id="inPhone" value="+54 11 2396-2046" />
+      </div>
+
+      <div class="row">
+        <label>LinkedIn (URL)</label>
+        <input id="inLinkedIn" value="https://www.linkedin.com/in/cegui" />
+      </div>
+
+      <div class="row">
+        <label>Ubicación</label>
+        <input id="inLocation" value="Buenos Aires, Argentina" />
       </div>
 
       <div class="row">
@@ -398,7 +409,7 @@ Comunicación y organizaciones | CAME / UTN</textarea>
       </div>
 
       <div class="hint">
-        PDF forzado a 1 hoja A4 (sin página 2 blanca).
+        PDF impecable en 1 hoja A4 + links clickeables (mail/tel/linkedin).
       </div>
     </aside>
 
@@ -413,8 +424,16 @@ Comunicación y organizaciones | CAME / UTN</textarea>
                 <h1 class="name" id="cvName">Camilo Eguiazabal</h1>
                 <div class="headline" id="cvHeadline">HRBP · People Analytics · Employee Experience</div>
                 <div class="degree" id="cvDegree">Lic. en Recursos Humanos</div>
-                <div class="contact" id="cvContact">Buenos Aires, Argentina · ceguiazabal@gmail.com · +54 11 2396-2046 · linkedin.com/in/cegui</div>
+
+                <!-- Contacto con links -->
+                <div class="contact" id="cvContact">
+                  <span id="cvLocation">Buenos Aires, Argentina</span> ·
+                  <a id="cvEmail" href="mailto:ceguiazabal@gmail.com">ceguiazabal@gmail.com</a> ·
+                  <a id="cvPhone" href="tel:+541123962046">+54 11 2396-2046</a> ·
+                  <a id="cvLinkedIn" href="https://www.linkedin.com/in/cegui" target="_blank">linkedin.com/in/cegui</a>
+                </div>
               </div>
+
               <div class="photo" id="cvPhotoBox">
                 <span id="cvPhotoLabel">FOTO</span>
                 <img id="cvPhotoImg" alt="Foto" style="display:none"/>
@@ -456,8 +475,6 @@ Comunicación y organizaciones | CAME / UTN</textarea>
 
           </div>
         </div>
-
-        <div class="overflowWarn" id="overflowWarn">Te pasaste de 1 página A4 😅</div>
       </div>
     </section>
 
@@ -506,6 +523,21 @@ Comunicación y organizaciones | CAME / UTN</textarea>
       return (str ?? "").replace(/[&<>"']/g, (m) => ({
         "&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"
       }[m]));
+    }
+
+    function toTelHref(phone){
+      // deja sólo + y dígitos
+      const clean = (phone || "").trim().replace(/[^\d+]/g,"");
+      return clean.startsWith("+") ? clean : ("+" + clean);
+    }
+
+    function linkedinLabel(url){
+      try{
+        const u = new URL(url);
+        return (u.hostname.replace(/^www\./,"") + u.pathname).replace(/\/$/,"");
+      }catch{
+        return (url || "").replace(/^https?:\/\//,"").replace(/\/$/,"");
+      }
     }
 
     // -----------------------------
@@ -566,20 +598,28 @@ Comunicación y organizaciones | CAME / UTN</textarea>
       $("cvName").textContent = $("inName").value || "";
       $("cvHeadline").textContent = $("inHeadline").value || "";
       $("cvDegree").textContent = $("inDegree").value || "";
-      $("cvContact").textContent = $("inContact").value || "";
       $("cvProfile").textContent = $("inProfile").value || "";
+
+      // Contacto con links
+      const location = $("inLocation").value || "";
+      const email = $("inEmail").value || "";
+      const phone = $("inPhone").value || "";
+      const linkedin = $("inLinkedIn").value || "";
+
+      $("cvLocation").textContent = location;
+      $("cvEmail").textContent = email;
+      $("cvEmail").href = email ? `mailto:${email}` : "#";
+
+      $("cvPhone").textContent = phone;
+      $("cvPhone").href = phone ? `tel:${toTelHref(phone)}` : "#";
+
+      $("cvLinkedIn").textContent = linkedinLabel(linkedin);
+      $("cvLinkedIn").href = linkedin || "#";
+
       renderAreas();
       renderEdu();
       renderCourses();
       renderJobsCV();
-      checkOverflow();
-    }
-
-    function checkOverflow(){
-      const paper = $("paper");
-      const cv = $("cv");
-      const warn = $("overflowWarn");
-      warn.style.display = (cv.scrollHeight > paper.clientHeight) ? "block" : "none";
     }
 
     // -----------------------------
@@ -690,7 +730,6 @@ Comunicación y organizaciones | CAME / UTN</textarea>
         $("cvPhotoImg").src = reader.result;
         $("cvPhotoImg").style.display = "block";
         $("cvPhotoLabel").style.display = "none";
-        checkOverflow();
       };
       reader.readAsDataURL(file);
     });
@@ -698,9 +737,11 @@ Comunicación y organizaciones | CAME / UTN</textarea>
     // -----------------------------
     // LIVE UPDATES
     // -----------------------------
-    ["inName","inHeadline","inDegree","inContact","inProfile","inAreas","inEdu","inCourses"].forEach(id=>{
-      $(id).addEventListener("input", syncText);
-    });
+    [
+      "inName","inHeadline","inDegree",
+      "inEmail","inPhone","inLinkedIn","inLocation",
+      "inProfile","inAreas","inEdu","inCourses"
+    ].forEach(id => $(id).addEventListener("input", syncText));
 
     // -----------------------------
     // GENERAR PDF (FORZAR 1 HOJA)
@@ -714,14 +755,14 @@ Comunicación y organizaciones | CAME / UTN</textarea>
         filename: `CV_${($("inName").value || "CV").replace(/\s+/g,"_")}.pdf`,
         image: { type: "jpeg", quality: 0.98 },
         html2canvas: {
-          scale: 1.98,             // micro-reducción invisible
+          scale: 1.98, // micro-reducción invisible
           useCORS: true,
           backgroundColor: "#ffffff",
           scrollX: 0,
           scrollY: 0
         },
         jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
-        pagebreak: { mode: ["avoid-all"] } // clave: evita hoja 2
+        pagebreak: { mode: ["avoid-all"] }
       };
 
       await html2pdf().set(opt).from(paper).save();
@@ -734,10 +775,17 @@ Comunicación y organizaciones | CAME / UTN</textarea>
       $("inName").value = "Camilo Eguiazabal";
       $("inDegree").value = "Lic. en Recursos Humanos";
       $("inHeadline").value = "HRBP · People Analytics · Employee Experience";
-      $("inContact").value = "Buenos Aires, Argentina · ceguiazabal@gmail.com · +54 11 2396-2046 · linkedin.com/in/cegui";
+      $("inEmail").value = "ceguiazabal@gmail.com";
+      $("inPhone").value = "+54 11 2396-2046";
+      $("inLinkedIn").value = "https://www.linkedin.com/in/cegui";
+      $("inLocation").value = "Buenos Aires, Argentina";
+
       $("inProfile").value = "Licenciado en Recursos Humanos con experiencia en entornos corporativos y trayectoria sólida en gestión administrativa y coordinación. Actualmente HRBP Contractor en Oracle, con foco en employee experience, comunicación interna, ejecución de iniciativas de RR.HH. y trabajo cross-functional.";
+
       $("inAreas").value = "HRBP Support\nEmployee Experience\nHR Operations\nOnboarding\nInternal Communications\nStakeholder Management\nHR Reporting";
+
       $("inEdu").value = "Lic. en Recursos Humanos — UADE | Finalizado · Promedio 8,78\nLic. en Psicología — UADE | En curso";
+
       $("inCourses").value = "Planificación y gestión de RR.HH. para PyMEs | CAME / UTN\nTécnicas de selección de RR.HH. | CAME / UTN\nConducción de equipos | CAME / UTN\nComunicación y organizaciones | CAME / UTN";
 
       jobs = JSON.parse(JSON.stringify(DEFAULT_JOBS));
@@ -753,7 +801,7 @@ Comunicación y organizaciones | CAME / UTN</textarea>
     // INIT
     renderJobsEditor();
     syncText();
-    window.addEventListener("resize", checkOverflow);
   </script>
 </body>
 </html>
+
