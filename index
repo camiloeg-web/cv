@@ -1,0 +1,759 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>CV Builder A4 → PDF</title>
+
+  <!-- Fuente (opcional) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+  <!-- html2pdf (html2canvas + jsPDF) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+  <style>
+    :root{
+      --ink:#111827;
+      --muted:#4B5563;
+      --line:#E5E7EB;
+      --accent:#0B1F3A;
+      --bg:#F3F4F6;
+      --paper:#fff;
+    }
+    *{ box-sizing:border-box; }
+    body{
+      margin:0;
+      font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background: var(--bg);
+      color: var(--ink);
+    }
+    .wrap{
+      display:grid;
+      grid-template-columns: 440px 1fr;
+      gap: 18px;
+      padding: 18px;
+      max-width: 1500px;
+      margin: 0 auto;
+    }
+
+    /* ===== Panel ===== */
+    .panel{
+      background:#fff;
+      border:1px solid var(--line);
+      border-radius:14px;
+      padding:14px;
+      position: sticky;
+      top: 14px;
+      height: fit-content;
+    }
+    .panel h2{
+      margin:0 0 10px 0;
+      font-size:14px;
+      letter-spacing:.12em;
+      text-transform:uppercase;
+      color:var(--accent);
+    }
+    .row{ display:grid; grid-template-columns: 1fr; gap:6px; margin-bottom:10px; }
+    label{ font-size:12px; color:var(--muted); }
+    input, textarea, select{
+      width:100%;
+      border:1px solid var(--line);
+      border-radius:10px;
+      padding:10px 10px;
+      font: inherit;
+      font-size:13px;
+      outline:none;
+      background:#fff;
+    }
+    textarea{ min-height: 88px; resize: vertical; }
+    .grid2{ display:grid; grid-template-columns: 1fr 1fr; gap:10px; }
+    .btns{ display:flex; gap:10px; flex-wrap:wrap; margin-top:10px; }
+    button{
+      border:0;
+      border-radius:12px;
+      padding:10px 12px;
+      font-weight:700;
+      cursor:pointer;
+      background: var(--accent);
+      color:#fff;
+      font-size:13px;
+    }
+    button.secondary{
+      background:#EEF2F7;
+      color:#111827;
+      border:1px solid var(--line);
+    }
+    .hint{
+      font-size:12px;
+      color:var(--muted);
+      line-height:1.45;
+      margin-top:10px;
+    }
+
+    /* ===== Experiencia editor ===== */
+    .jobsEditor{
+      border-top:1px solid var(--line);
+      margin-top:12px;
+      padding-top:12px;
+    }
+    .jobsHeader{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:10px;
+      margin-bottom:8px;
+    }
+    .jobsHeader h3{
+      margin:0;
+      font-size:13px;
+      letter-spacing:.12em;
+      text-transform:uppercase;
+      color:var(--accent);
+    }
+    .jobCard{
+      border:1px solid var(--line);
+      border-radius:12px;
+      padding:10px;
+      margin-bottom:10px;
+      background:#fff;
+    }
+    .jobCardTop{
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      gap:10px;
+      margin-bottom:8px;
+    }
+    .jobCardTop .mini{
+      display:flex;
+      gap:6px;
+      flex-wrap:wrap;
+    }
+    .jobCardTop button{
+      padding:7px 9px;
+      border-radius:10px;
+      font-size:12px;
+    }
+    .jobCardTop button.danger{
+      background:#EF4444;
+    }
+    .jobCard .grid3{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:10px;
+      margin-bottom:8px;
+    }
+    .jobCard textarea{ min-height:64px; }
+
+    /* ===== A4 Preview ===== */
+    .stage{
+      display:flex;
+      justify-content:center;
+      align-items:flex-start;
+      padding-bottom:24px;
+    }
+    .paper{
+      width: 210mm;
+      height: 297mm;
+      background: var(--paper);
+      box-shadow: 0 18px 40px rgba(0,0,0,.14);
+      border-radius: 6px;
+      overflow: hidden;
+    }
+    .page{
+      padding: 12mm;
+      height: 100%;
+    }
+
+    /* ===== CV Layout ===== */
+    .header{
+      display:grid;
+      grid-template-columns: 1fr 36mm;
+      gap: 10mm;
+      align-items:center;
+      padding-bottom: 6mm;
+      border-bottom: 1px solid var(--line);
+    }
+    .name{
+      margin:0;
+      font-size: 34px;
+      font-weight: 900;
+      letter-spacing: -0.03em;
+      line-height: 1.05;
+    }
+    .headline{
+      margin-top: 3mm;
+      font-size: 15.5px;
+      font-weight: 650;
+      color: var(--muted);
+    }
+    .degree{
+      margin-top: 2mm;
+      font-size: 13.2px;
+      font-weight: 850;
+      color: var(--accent);
+    }
+    .contact{
+      margin-top: 4mm;
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.45;
+      word-break: break-word;
+    }
+    .photo{
+      width: 36mm;
+      height: 36mm;
+      border-radius: 12px;
+      border:1px solid var(--line);
+      background:#F3F4F6;
+      overflow:hidden;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      color:#9CA3AF;
+      font-weight:700;
+      font-size:11px;
+    }
+    .photo img{ width:100%; height:100%; object-fit:cover; display:block; }
+
+    .layout{
+      display:grid;
+      grid-template-columns: 1fr 62mm;
+      gap: 10mm;
+      padding-top: 7mm;
+      height: calc(100% - 52mm);
+    }
+
+    .section{ margin-bottom: 7mm; }
+    .title{
+      font-size: 11.8px;
+      font-weight: 900;
+      letter-spacing: .16em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin: 0 0 3mm 0;
+    }
+    .p{
+      font-size: 12.6px;
+      line-height: 1.6;
+      margin: 0;
+    }
+
+    .job{ margin-top: 4.5mm; }
+    .jobhead{
+      display:grid;
+      grid-template-columns: 1fr auto;
+      gap: 8mm;
+      align-items: baseline;
+    }
+    .jobrole{
+      font-size: 13.4px;
+      font-weight: 850;
+      margin: 0;
+    }
+    .jobdate{
+      font-size: 11.8px;
+      color: var(--muted);
+      white-space: nowrap;
+      font-weight: 600;
+    }
+    .jobmeta{
+      margin-top: 1.2mm;
+      font-size: 11.8px;
+      color: var(--muted);
+    }
+    ul.bullets{
+      margin: 2.5mm 0 0 18px;
+      padding: 0;
+    }
+    ul.bullets li{
+      font-size: 12.3px;
+      line-height: 1.55;
+      margin: 0 0 2mm 0;
+    }
+
+    .card{
+      border:1px solid var(--line);
+      border-radius:12px;
+      padding:4.5mm;
+      margin-bottom:6mm;
+    }
+    .list{ margin:0; padding-left:16px; }
+    .list li{ font-size:12.1px; margin-bottom:2mm; }
+
+    .rows{ display:flex; flex-direction:column; gap:2.2mm; }
+    .row2{
+      display:grid;
+      grid-template-columns: 1fr auto;
+      gap: 6mm;
+      align-items: baseline;
+    }
+    .row2 .l{ font-size:12.2px; line-height:1.45; }
+    .row2 .r{
+      font-size:12.2px;
+      color:var(--muted);
+      font-weight:650;
+      white-space:nowrap;
+    }
+
+    .overflowWarn{
+      position:absolute;
+      inset:auto 16px 16px auto;
+      background: #fee2e2;
+      color:#991b1b;
+      border:1px solid #fecaca;
+      padding:8px 10px;
+      border-radius:10px;
+      font-size:12px;
+      font-weight:700;
+      display:none;
+    }
+    .paperWrap{ position:relative; }
+
+    @media (max-width: 1100px){
+      .wrap{ grid-template-columns: 1fr; }
+      .panel{ position:relative; top:auto; }
+      .stage{ overflow:auto; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+
+    <!-- PANEL -->
+    <aside class="panel">
+      <h2>Completar CV</h2>
+
+      <div class="grid2">
+        <div class="row">
+          <label>Nombre y apellido</label>
+          <input id="inName" value="Camilo Eguiazabal" />
+        </div>
+        <div class="row">
+          <label>Título (debajo)</label>
+          <input id="inDegree" value="Lic. en Recursos Humanos" />
+        </div>
+      </div>
+
+      <div class="row">
+        <label>Headline</label>
+        <input id="inHeadline" value="HRBP · People Analytics · Employee Experience" />
+      </div>
+
+      <div class="row">
+        <label>Contacto (una línea)</label>
+        <input id="inContact" value="Buenos Aires, Argentina · ceguiazabal@gmail.com · +54 11 2396-2046 · linkedin.com/in/cegui" />
+      </div>
+
+      <div class="row">
+        <label>Foto (opcional)</label>
+        <input id="inPhoto" type="file" accept="image/*" />
+      </div>
+
+      <div class="row">
+        <label>Perfil</label>
+        <textarea id="inProfile">Licenciado en Recursos Humanos con experiencia en entornos corporativos y trayectoria sólida en gestión administrativa y coordinación. Actualmente HRBP Contractor en Oracle, con foco en employee experience, comunicación interna, ejecución de iniciativas de RR.HH. y trabajo cross-functional.</textarea>
+      </div>
+
+      <div class="row">
+        <label>Áreas HR (una por línea)</label>
+        <textarea id="inAreas">HRBP Support
+Employee Experience
+HR Operations
+Onboarding
+Internal Communications
+Stakeholder Management
+HR Reporting</textarea>
+      </div>
+
+      <div class="row">
+        <label>Educación (líneas: Título — Institución | Detalle)</label>
+        <textarea id="inEdu">Lic. en Recursos Humanos — UADE | Finalizado · Promedio 8,78
+Lic. en Psicología — UADE | En curso</textarea>
+      </div>
+
+      <div class="row">
+        <label>Formación complementaria (Curso | Institución)</label>
+        <textarea id="inCourses">Planificación y gestión de RR.HH. para PyMEs | CAME / UTN
+Técnicas de selección de RR.HH. | CAME / UTN
+Conducción de equipos | CAME / UTN
+Comunicación y organizaciones | CAME / UTN</textarea>
+      </div>
+
+      <div class="btns">
+        <button id="btnPDF" type="button">Generar PDF</button>
+        <button id="btnReset" class="secondary" type="button">Reset</button>
+      </div>
+
+      <!-- EDITOR EXPERIENCIA -->
+      <div class="jobsEditor">
+        <div class="jobsHeader">
+          <h3>Experiencia (editar)</h3>
+          <button id="btnAddJob" class="secondary" type="button">+ Agregar</button>
+        </div>
+        <div id="jobsEditorList"></div>
+      </div>
+
+      <div class="hint">
+        PDF forzado a 1 hoja A4 (sin página 2 blanca).
+      </div>
+    </aside>
+
+    <!-- PREVIEW -->
+    <section class="stage">
+      <div class="paperWrap">
+        <div class="paper" id="paper">
+          <div class="page" id="cv">
+
+            <div class="header">
+              <div>
+                <h1 class="name" id="cvName">Camilo Eguiazabal</h1>
+                <div class="headline" id="cvHeadline">HRBP · People Analytics · Employee Experience</div>
+                <div class="degree" id="cvDegree">Lic. en Recursos Humanos</div>
+                <div class="contact" id="cvContact">Buenos Aires, Argentina · ceguiazabal@gmail.com · +54 11 2396-2046 · linkedin.com/in/cegui</div>
+              </div>
+              <div class="photo" id="cvPhotoBox">
+                <span id="cvPhotoLabel">FOTO</span>
+                <img id="cvPhotoImg" alt="Foto" style="display:none"/>
+              </div>
+            </div>
+
+            <div class="layout">
+              <!-- LEFT -->
+              <div>
+                <div class="section">
+                  <h2 class="title">Perfil</h2>
+                  <p class="p" id="cvProfile"></p>
+                </div>
+
+                <div class="section">
+                  <h2 class="title">Experiencia</h2>
+                  <div id="cvJobs"></div>
+                </div>
+              </div>
+
+              <!-- RIGHT -->
+              <aside>
+                <div class="card">
+                  <h2 class="title">Áreas HR</h2>
+                  <ul class="list" id="cvAreas"></ul>
+                </div>
+
+                <div class="card">
+                  <h2 class="title">Educación</h2>
+                  <div id="cvEdu"></div>
+                </div>
+
+                <div class="card" style="margin-bottom:0;">
+                  <h2 class="title">Formación complementaria</h2>
+                  <div class="rows" id="cvCourses"></div>
+                </div>
+              </aside>
+            </div>
+
+          </div>
+        </div>
+
+        <div class="overflowWarn" id="overflowWarn">Te pasaste de 1 página A4 😅</div>
+      </div>
+    </section>
+
+  </div>
+
+  <script>
+    // -----------------------------
+    // DATA (Experiencias editables)
+    // -----------------------------
+    const DEFAULT_JOBS = [
+      {
+        role: "HRBP Contractor — Oracle",
+        meta: "Buenos Aires, Argentina",
+        dates: "2023 – Actualidad",
+        bullets: [
+          "Soporte HRBP a líderes y equipos en temas del ciclo de vida del colaborador.",
+          "Coordinación con HR, Facilities y Finanzas para ejecución de iniciativas y procesos.",
+          "Gestión operativa de acciones de employee experience, beneficios y engagement.",
+          "Armado y seguimiento de reportes y documentación operativa."
+        ]
+      },
+      {
+        role: "Analista de RR.HH. — Grupo Suessa",
+        meta: "CABA, Argentina",
+        dates: "Dic 2022 – 2023",
+        bullets: [
+          "Organización de procesos de selección, onboarding y seguimiento administrativo.",
+          "Coordinación con candidatos y soporte operativo al área."
+        ]
+      },
+      {
+        role: "Gestión Académica y Administrativa — CFP Nº26",
+        meta: "CABA, Argentina",
+        dates: "2015 – 2022",
+        bullets: [
+          "Carrera progresiva: Administrativo / Preceptor → Equipo Pedagógico → Jefe Dpto. Alumnos.",
+          "Gestión documental, atención a alumnos y coordinación institucional."
+        ]
+      }
+    ];
+
+    let jobs = JSON.parse(JSON.stringify(DEFAULT_JOBS));
+    const $ = (id) => document.getElementById(id);
+
+    function escapeHTML(str){
+      return (str ?? "").replace(/[&<>"']/g, (m) => ({
+        "&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"
+      }[m]));
+    }
+
+    // -----------------------------
+    // RENDER CV
+    // -----------------------------
+    function renderJobsCV(){
+      const container = $("cvJobs");
+      container.innerHTML = "";
+      jobs.forEach((j) => {
+        const wrap = document.createElement("div");
+        wrap.className = "job";
+        wrap.innerHTML = `
+          <div class="jobhead">
+            <p class="jobrole">${escapeHTML(j.role)}</p>
+            <div class="jobdate">${escapeHTML(j.dates)}</div>
+          </div>
+          <div class="jobmeta">${escapeHTML(j.meta)}</div>
+          <ul class="bullets">
+            ${j.bullets.map(b => `<li>${escapeHTML(b)}</li>`).join("")}
+          </ul>
+        `;
+        container.appendChild(wrap);
+      });
+    }
+
+    function renderAreas(){
+      const lines = $("inAreas").value.split("\n").map(s=>s.trim()).filter(Boolean);
+      $("cvAreas").innerHTML = lines.map(l => `<li>${escapeHTML(l)}</li>`).join("");
+    }
+
+    function renderEdu(){
+      const lines = $("inEdu").value.split("\n").map(s=>s.trim()).filter(Boolean);
+      $("cvEdu").innerHTML = lines.map(l => {
+        const parts = l.split("|").map(s=>s.trim());
+        if(parts.length === 2){
+          return `<p style="margin:0 0 3mm 0;"><strong>${escapeHTML(parts[0])}</strong><br><span style="color:var(--muted)">${escapeHTML(parts[1])}</span></p>`;
+        }
+        return `<p style="margin:0 0 3mm 0;"><strong>${escapeHTML(l)}</strong></p>`;
+      }).join("");
+    }
+
+    function renderCourses(){
+      const lines = $("inCourses").value.split("\n").map(s=>s.trim()).filter(Boolean);
+      $("cvCourses").innerHTML = lines.map(l => {
+        const parts = l.split("|").map(s=>s.trim());
+        const left = parts[0] ?? "";
+        const right = parts[1] ?? "";
+        return `
+          <div class="row2">
+            <div class="l">${escapeHTML(left)}</div>
+            <div class="r">${escapeHTML(right)}</div>
+          </div>
+        `;
+      }).join("");
+    }
+
+    function syncText(){
+      $("cvName").textContent = $("inName").value || "";
+      $("cvHeadline").textContent = $("inHeadline").value || "";
+      $("cvDegree").textContent = $("inDegree").value || "";
+      $("cvContact").textContent = $("inContact").value || "";
+      $("cvProfile").textContent = $("inProfile").value || "";
+      renderAreas();
+      renderEdu();
+      renderCourses();
+      renderJobsCV();
+      checkOverflow();
+    }
+
+    function checkOverflow(){
+      const paper = $("paper");
+      const cv = $("cv");
+      const warn = $("overflowWarn");
+      warn.style.display = (cv.scrollHeight > paper.clientHeight) ? "block" : "none";
+    }
+
+    // -----------------------------
+    // EXPERIENCIA: EDITOR UI
+    // -----------------------------
+    function renderJobsEditor(){
+      const list = $("jobsEditorList");
+      list.innerHTML = "";
+      jobs.forEach((j, idx) => {
+        const card = document.createElement("div");
+        card.className = "jobCard";
+        card.innerHTML = `
+          <div class="jobCardTop">
+            <div style="font-weight:800; font-size:13px;">Experiencia #${idx+1}</div>
+            <div class="mini">
+              <button class="secondary" data-act="up" data-idx="${idx}">↑</button>
+              <button class="secondary" data-act="down" data-idx="${idx}">↓</button>
+              <button class="danger" data-act="del" data-idx="${idx}">Eliminar</button>
+            </div>
+          </div>
+
+          <div class="grid3">
+            <div class="row" style="margin:0;">
+              <label>Rol — Empresa</label>
+              <input data-k="role" data-idx="${idx}" value="${escapeHTML(j.role)}"/>
+            </div>
+            <div class="row" style="margin:0;">
+              <label>Fechas</label>
+              <input data-k="dates" data-idx="${idx}" value="${escapeHTML(j.dates)}"/>
+            </div>
+          </div>
+
+          <div class="row" style="margin-bottom:8px;">
+            <label>Ubicación</label>
+            <input data-k="meta" data-idx="${idx}" value="${escapeHTML(j.meta)}"/>
+          </div>
+
+          <div class="row" style="margin:0;">
+            <label>Bullets (1 por línea)</label>
+            <textarea data-k="bullets" data-idx="${idx}">${escapeHTML(j.bullets.join("\n"))}</textarea>
+          </div>
+        `;
+        list.appendChild(card);
+      });
+    }
+
+    function moveJob(idx, dir){
+      const newIdx = idx + dir;
+      if(newIdx < 0 || newIdx >= jobs.length) return;
+      [jobs[idx], jobs[newIdx]] = [jobs[newIdx], jobs[idx]];
+      renderJobsEditor();
+      syncText();
+    }
+
+    function deleteJob(idx){
+      jobs.splice(idx, 1);
+      renderJobsEditor();
+      syncText();
+    }
+
+    function addJob(){
+      jobs.unshift({
+        role: "Nuevo rol — Empresa",
+        meta: "Buenos Aires, Argentina",
+        dates: "2024 – 2025",
+        bullets: ["Logro/Responsabilidad 1", "Logro/Responsabilidad 2"]
+      });
+      renderJobsEditor();
+      syncText();
+    }
+
+    $("jobsEditorList").addEventListener("click", (e) => {
+      const btn = e.target.closest("button");
+      if(!btn) return;
+      const act = btn.dataset.act;
+      const idx = Number(btn.dataset.idx);
+      if(Number.isNaN(idx)) return;
+      if(act === "up") moveJob(idx, -1);
+      if(act === "down") moveJob(idx, 1);
+      if(act === "del") deleteJob(idx);
+    });
+
+    $("jobsEditorList").addEventListener("input", (e) => {
+      const el = e.target;
+      const idx = Number(el.dataset.idx);
+      const k = el.dataset.k;
+      if(Number.isNaN(idx) || !k) return;
+
+      if(k === "bullets"){
+        jobs[idx].bullets = el.value.split("\n").map(s=>s.trim()).filter(Boolean);
+        if(jobs[idx].bullets.length === 0) jobs[idx].bullets = [""];
+      } else {
+        jobs[idx][k] = el.value;
+      }
+      syncText();
+    });
+
+    $("btnAddJob").addEventListener("click", addJob);
+
+    // -----------------------------
+    // FOTO
+    // -----------------------------
+    $("inPhoto").addEventListener("change", (e) => {
+      const file = e.target.files?.[0];
+      if(!file) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        $("cvPhotoImg").src = reader.result;
+        $("cvPhotoImg").style.display = "block";
+        $("cvPhotoLabel").style.display = "none";
+        checkOverflow();
+      };
+      reader.readAsDataURL(file);
+    });
+
+    // -----------------------------
+    // LIVE UPDATES
+    // -----------------------------
+    ["inName","inHeadline","inDegree","inContact","inProfile","inAreas","inEdu","inCourses"].forEach(id=>{
+      $(id).addEventListener("input", syncText);
+    });
+
+    // -----------------------------
+    // GENERAR PDF (FORZAR 1 HOJA)
+    // -----------------------------
+    $("btnPDF").addEventListener("click", async () => {
+      const paper = $("paper");
+      paper.scrollIntoView({ block: "start" });
+
+      const opt = {
+        margin: 0,
+        filename: `CV_${($("inName").value || "CV").replace(/\s+/g,"_")}.pdf`,
+        image: { type: "jpeg", quality: 0.98 },
+        html2canvas: {
+          scale: 1.98,             // micro-reducción invisible
+          useCORS: true,
+          backgroundColor: "#ffffff",
+          scrollX: 0,
+          scrollY: 0
+        },
+        jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
+        pagebreak: { mode: ["avoid-all"] } // clave: evita hoja 2
+      };
+
+      await html2pdf().set(opt).from(paper).save();
+    });
+
+    // -----------------------------
+    // RESET
+    // -----------------------------
+    $("btnReset").addEventListener("click", () => {
+      $("inName").value = "Camilo Eguiazabal";
+      $("inDegree").value = "Lic. en Recursos Humanos";
+      $("inHeadline").value = "HRBP · People Analytics · Employee Experience";
+      $("inContact").value = "Buenos Aires, Argentina · ceguiazabal@gmail.com · +54 11 2396-2046 · linkedin.com/in/cegui";
+      $("inProfile").value = "Licenciado en Recursos Humanos con experiencia en entornos corporativos y trayectoria sólida en gestión administrativa y coordinación. Actualmente HRBP Contractor en Oracle, con foco en employee experience, comunicación interna, ejecución de iniciativas de RR.HH. y trabajo cross-functional.";
+      $("inAreas").value = "HRBP Support\nEmployee Experience\nHR Operations\nOnboarding\nInternal Communications\nStakeholder Management\nHR Reporting";
+      $("inEdu").value = "Lic. en Recursos Humanos — UADE | Finalizado · Promedio 8,78\nLic. en Psicología — UADE | En curso";
+      $("inCourses").value = "Planificación y gestión de RR.HH. para PyMEs | CAME / UTN\nTécnicas de selección de RR.HH. | CAME / UTN\nConducción de equipos | CAME / UTN\nComunicación y organizaciones | CAME / UTN";
+
+      jobs = JSON.parse(JSON.stringify(DEFAULT_JOBS));
+
+      $("inPhoto").value = "";
+      $("cvPhotoImg").style.display = "none";
+      $("cvPhotoLabel").style.display = "block";
+
+      renderJobsEditor();
+      syncText();
+    });
+
+    // INIT
+    renderJobsEditor();
+    syncText();
+    window.addEventListener("resize", checkOverflow);
+  </script>
+</body>
+</html>
