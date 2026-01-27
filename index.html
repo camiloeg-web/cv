@@ -3,15 +3,19 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>CV Builder A4 → PDF</title>
+  <title>CV Builder A4 → PDF (Templates + Auto 2 pages + EN + Optimize + Save/Load + Foto opcional)</title>
 
   <!-- Fuente -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 
-  <!-- html2pdf (html2canvas + jsPDF) -->
+  <!-- Fallback bundle -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+
+  <!-- Dependencias explícitas (robusto) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
   <style>
     :root{
@@ -21,7 +25,70 @@
       --accent:#0B1F3A;
       --bg:#F3F4F6;
       --paper:#fff;
+
+      --name-size: 34px;
+      --headline-size: 15.5px;
+      --p-size: 12.6px;
+      --bullet-size: 12.3px;
+      --title-size: 11.8px;
+      --jobrole-size: 13.4px;
+
+      --pad-mm: 12mm;
+      --gap-mm: 10mm;
+      --radius: 12px;
+
+      --cv-cols: 1fr 62mm;
+      --header-cols: 1fr 36mm;
     }
+
+    /* ===== Templates ===== */
+    body.tpl-classic{
+      --accent:#0B1F3A;
+      --cv-cols: 1fr 62mm;
+      --header-cols: 1fr 36mm;
+      --radius: 12px;
+      --line:#E5E7EB;
+    }
+    body.tpl-modern{
+      --accent:#111827;
+      --line:#E6EAF0;
+      --cv-cols: 1fr;
+      --header-cols: 1fr 36mm;
+      --radius: 16px;
+    }
+    body.tpl-sidebar{
+      --accent:#111827;
+      --line:#E6EAF0;
+      --cv-cols: 70mm 1fr;
+      --header-cols: 1fr 36mm;
+      --radius: 14px;
+    }
+    body.tpl-minimal{
+      --accent:#111827;
+      --line:#F3F4F6;
+      --cv-cols: 1fr 58mm;
+      --header-cols: 1fr;
+      --radius: 10px;
+    }
+
+    /* ===== Photo toggle ===== */
+    body.no-photo{
+      --header-cols: 1fr;
+    }
+    body.no-photo #cvPhotoBox{ display:none !important; }
+
+    /* ===== Compact ===== */
+    body.compact{
+      --name-size: 31px;
+      --headline-size: 14.5px;
+      --p-size: 12.0px;
+      --bullet-size: 11.8px;
+      --title-size: 11.2px;
+      --jobrole-size: 13.0px;
+      --pad-mm: 11mm;
+      --gap-mm: 9mm;
+    }
+
     *{ box-sizing:border-box; }
     body{
       margin:0;
@@ -31,10 +98,10 @@
     }
     .wrap{
       display:grid;
-      grid-template-columns: 440px 1fr;
+      grid-template-columns: 460px 1fr;
       gap: 18px;
       padding: 18px;
-      max-width: 1500px;
+      max-width: 1600px;
       margin: 0 auto;
     }
 
@@ -57,7 +124,7 @@
     }
     .row{ display:grid; grid-template-columns: 1fr; gap:6px; margin-bottom:10px; }
     label{ font-size:12px; color:var(--muted); }
-    input, textarea{
+    input, textarea, select{
       width:100%;
       border:1px solid var(--line);
       border-radius:10px;
@@ -74,7 +141,7 @@
       border:0;
       border-radius:12px;
       padding:10px 12px;
-      font-weight:700;
+      font-weight:800;
       cursor:pointer;
       background: var(--accent);
       color:#fff;
@@ -85,14 +152,29 @@
       color:#111827;
       border:1px solid var(--line);
     }
+    button.danger{ background:#EF4444; }
     .hint{
       font-size:12px;
       color:var(--muted);
       line-height:1.45;
       margin-top:10px;
     }
+    .miniActions{
+      display:flex;
+      gap:8px;
+      flex-wrap:wrap;
+      margin-top:10px;
+      padding-top:10px;
+      border-top:1px solid var(--line);
+    }
+    .miniActions button{
+      padding:8px 10px;
+      border-radius:10px;
+      font-size:12px;
+      font-weight:800;
+    }
 
-    /* ===== Experiencia editor ===== */
+    /* ===== Jobs editor ===== */
     .jobsEditor{
       border-top:1px solid var(--line);
       margin-top:12px;
@@ -126,30 +208,26 @@
       gap:10px;
       margin-bottom:8px;
     }
-    .jobCardTop .mini{
-      display:flex;
-      gap:6px;
-      flex-wrap:wrap;
-    }
+    .jobCardTop .mini{ display:flex; gap:6px; flex-wrap:wrap; }
     .jobCardTop button{
       padding:7px 9px;
       border-radius:10px;
       font-size:12px;
-    }
-    .jobCardTop button.danger{ background:#EF4444; }
-    .jobCard .grid3{
-      display:grid;
-      grid-template-columns: 1fr 1fr;
-      gap:10px;
-      margin-bottom:8px;
+      font-weight:800;
     }
     .jobCard textarea{ min-height:64px; }
 
-    /* ===== A4 Preview ===== */
+    /* ===== Preview ===== */
     .stage{
       display:flex;
       justify-content:center;
       align-items:flex-start;
+      padding-bottom:24px;
+    }
+    .paperStack{
+      display:flex;
+      flex-direction:column;
+      gap: 16px;
       padding-bottom:24px;
     }
     .paper{
@@ -159,31 +237,36 @@
       box-shadow: 0 18px 40px rgba(0,0,0,.14);
       border-radius: 6px;
       overflow: hidden;
+      position: relative;
+      break-after: page;
+      page-break-after: always;
     }
+    .paper:last-child{ break-after:auto; page-break-after:auto; }
     .page{
-      padding: 12mm;
+      padding: var(--pad-mm);
       height: 100%;
+      position: relative;
     }
 
-    /* ===== CV Layout ===== */
+    /* ===== CV blocks ===== */
     .header{
       display:grid;
-      grid-template-columns: 1fr 36mm;
-      gap: 10mm;
+      grid-template-columns: var(--header-cols);
+      gap: var(--gap-mm);
       align-items:center;
       padding-bottom: 6mm;
       border-bottom: 1px solid var(--line);
     }
     .name{
       margin:0;
-      font-size: 34px;
+      font-size: var(--name-size);
       font-weight: 900;
       letter-spacing: -0.03em;
       line-height: 1.05;
     }
     .headline{
       margin-top: 3mm;
-      font-size: 15.5px;
+      font-size: var(--headline-size);
       font-weight: 650;
       color: var(--muted);
     }
@@ -192,7 +275,6 @@
       font-size: 13.2px;
       font-weight: 850;
       color: var(--accent);
-      text-transform: none;
     }
     .contact{
       margin-top: 4mm;
@@ -201,19 +283,17 @@
       line-height: 1.45;
       word-break: break-word;
     }
-
-    /* Links prolijos (mail/tel/linkedin) */
     .contact a{
       color: var(--accent);
       text-decoration: none;
-      font-weight: 650;
+      font-weight: 750;
     }
     .contact a:hover{ text-decoration: underline; }
 
     .photo{
       width: 36mm;
       height: 36mm;
-      border-radius: 12px;
+      border-radius: var(--radius);
       border:1px solid var(--line);
       background:#F3F4F6;
       overflow:hidden;
@@ -221,22 +301,22 @@
       align-items:center;
       justify-content:center;
       color:#9CA3AF;
-      font-weight:700;
+      font-weight:800;
       font-size:11px;
     }
     .photo img{ width:100%; height:100%; object-fit:cover; display:block; }
 
     .layout{
       display:grid;
-      grid-template-columns: 1fr 62mm;
-      gap: 10mm;
+      grid-template-columns: var(--cv-cols);
+      gap: var(--gap-mm);
       padding-top: 7mm;
       height: calc(100% - 52mm);
     }
 
     .section{ margin-bottom: 7mm; }
     .title{
-      font-size: 11.8px;
+      font-size: var(--title-size);
       font-weight: 900;
       letter-spacing: .16em;
       text-transform: uppercase;
@@ -244,9 +324,10 @@
       margin: 0 0 3mm 0;
     }
     .p{
-      font-size: 12.6px;
+      font-size: var(--p-size);
       line-height: 1.6;
       margin: 0;
+      white-space: pre-wrap;
     }
 
     .job{ margin-top: 4.5mm; }
@@ -257,40 +338,41 @@
       align-items: baseline;
     }
     .jobrole{
-      font-size: 13.4px;
-      font-weight: 850;
+      font-size: var(--jobrole-size);
+      font-weight: 900;
       margin: 0;
     }
     .jobdate{
       font-size: 11.8px;
       color: var(--muted);
       white-space: nowrap;
-      font-weight: 600;
+      font-weight: 700;
     }
     .jobmeta{
       margin-top: 1.2mm;
       font-size: 11.8px;
       color: var(--muted);
+      font-weight: 600;
     }
     ul.bullets{
       margin: 2.5mm 0 0 18px;
       padding: 0;
     }
     ul.bullets li{
-      font-size: 12.3px;
+      font-size: var(--bullet-size);
       line-height: 1.55;
       margin: 0 0 2mm 0;
     }
 
     .card{
       border:1px solid var(--line);
-      border-radius:12px;
+      border-radius: var(--radius);
       padding:4.5mm;
       margin-bottom:6mm;
+      background:#fff;
     }
     .list{ margin:0; padding-left:16px; }
     .list li{ font-size:12.1px; margin-bottom:2mm; }
-
     .rows{ display:flex; flex-direction:column; gap:2.2mm; }
     .row2{
       display:grid;
@@ -302,13 +384,37 @@
     .row2 .r{
       font-size:12.2px;
       color:var(--muted);
-      font-weight:650;
+      font-weight:750;
       white-space:nowrap;
     }
 
-    .paperWrap{ position:relative; }
+    /* Minimal: sin cards */
+    body.tpl-minimal .card{ border:0; padding:0; background:transparent; }
 
-    @media (max-width: 1100px){
+    /* Modern */
+    body.tpl-modern .layout{ grid-template-columns: 1fr; }
+    body.tpl-modern .layout > aside{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--gap-mm);
+      align-content:start;
+    }
+    body.tpl-modern .layout > aside .card:last-child{ grid-column: 1 / -1; }
+
+    /* Sidebar */
+    body.tpl-sidebar .layout{ grid-template-columns: 70mm 1fr; }
+    body.tpl-sidebar .layout > aside{ order: -1; }
+
+    /* Page 2 extras */
+    .page2Grid{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--gap-mm);
+      margin-top: 6mm;
+    }
+    .page2Grid .span2{ grid-column: 1 / -1; }
+
+    @media (max-width: 1200px){
       .wrap{ grid-template-columns: 1fr; }
       .panel{ position:relative; top:auto; }
       .stage{ overflow:auto; }
@@ -316,12 +422,46 @@
   </style>
 </head>
 
-<body>
+<body class="tpl-classic">
   <div class="wrap">
 
     <!-- PANEL -->
     <aside class="panel">
       <h2>Completar CV</h2>
+
+      <div class="grid2">
+        <div class="row">
+          <label>Plantilla</label>
+          <select id="inTemplate">
+            <option value="tpl-classic">Classic (ATS)</option>
+            <option value="tpl-modern">Modern (Cards)</option>
+            <option value="tpl-sidebar">Sidebar (Left)</option>
+            <option value="tpl-minimal">Minimal</option>
+          </select>
+        </div>
+        <div class="row">
+          <label>Layout</label>
+          <select id="inCompact">
+            <option value="off">Normal</option>
+            <option value="on">Compacto</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- NUEVO: Con / Sin foto -->
+      <div class="grid2">
+        <div class="row">
+          <label>Foto</label>
+          <select id="inPhotoMode">
+            <option value="with">Con foto</option>
+            <option value="without">Sin foto</option>
+          </select>
+        </div>
+        <div class="row">
+          <label>Subir foto (solo si “Con foto”)</label>
+          <input id="inPhoto" type="file" accept="image/*" />
+        </div>
+      </div>
 
       <div class="grid2">
         <div class="row">
@@ -339,14 +479,15 @@
         <input id="inHeadline" value="HRBP · People Analytics · Employee Experience" />
       </div>
 
-      <div class="row">
-        <label>Email</label>
-        <input id="inEmail" value="ceguiazabal@gmail.com" />
-      </div>
-
-      <div class="row">
-        <label>Teléfono (formato internacional recomendado)</label>
-        <input id="inPhone" value="+54 11 2396-2046" />
+      <div class="grid2">
+        <div class="row">
+          <label>Email</label>
+          <input id="inEmail" value="ceguiazabal@gmail.com" />
+        </div>
+        <div class="row">
+          <label>Teléfono</label>
+          <input id="inPhone" value="+54 11 2396-2046" />
+        </div>
       </div>
 
       <div class="row">
@@ -360,17 +501,12 @@
       </div>
 
       <div class="row">
-        <label>Foto (opcional)</label>
-        <input id="inPhoto" type="file" accept="image/*" />
-      </div>
-
-      <div class="row">
-        <label>Perfil</label>
+        <label id="tProfileLbl">Perfil</label>
         <textarea id="inProfile">Licenciado en Recursos Humanos con experiencia en entornos corporativos y trayectoria sólida en gestión administrativa y coordinación. Actualmente HRBP Contractor en Oracle, con foco en employee experience, comunicación interna, ejecución de iniciativas de RR.HH. y trabajo cross-functional.</textarea>
       </div>
 
       <div class="row">
-        <label>Áreas HR (una por línea)</label>
+        <label id="tAreasLbl">Áreas HR (una por línea)</label>
         <textarea id="inAreas">HRBP Support
 Employee Experience
 HR Operations
@@ -381,13 +517,13 @@ HR Reporting</textarea>
       </div>
 
       <div class="row">
-        <label>Educación (líneas: Título — Institución | Detalle)</label>
-        <textarea id="inEdu">Lic. en Recursos Humanos — UADE | Finalizado · Promedio 8,78
+        <label id="tEduLbl">Educación (líneas: Título — Institución | Detalle)</label>
+        <textarea id="inEdu">Lic. en Recursos Humanos — UADE | Finalizado
 Lic. en Psicología — UADE | En curso</textarea>
       </div>
 
       <div class="row">
-        <label>Formación complementaria (Curso | Institución)</label>
+        <label id="tCoursesLbl">Formación complementaria (Curso | Institución)</label>
         <textarea id="inCourses">Planificación y gestión de RR.HH. para PyMEs | CAME / UTN
 Técnicas de selección de RR.HH. | CAME / UTN
 Conducción de equipos | CAME / UTN
@@ -396,28 +532,39 @@ Comunicación y organizaciones | CAME / UTN</textarea>
 
       <div class="btns">
         <button id="btnPDF" type="button">Generar PDF</button>
+        <button id="btnTranslateEN" class="secondary" type="button">Traducir a EN</button>
         <button id="btnReset" class="secondary" type="button">Reset</button>
+      </div>
+
+      <div class="miniActions">
+        <button id="btnSave" class="secondary" type="button">Guardar borrador</button>
+        <button id="btnLoad" class="secondary" type="button">Cargar borrador</button>
+        <button id="btnExport" class="secondary" type="button">Export JSON</button>
+        <button id="btnImport" class="secondary" type="button">Import JSON</button>
+        <button id="btnOptimizeBullets" class="secondary" type="button">Optimizar bullets</button>
       </div>
 
       <!-- EDITOR EXPERIENCIA -->
       <div class="jobsEditor">
         <div class="jobsHeader">
-          <h3>Experiencia (editar)</h3>
+          <h3 id="tExpEdit">Experiencia (editar)</h3>
           <button id="btnAddJob" class="secondary" type="button">+ Agregar</button>
         </div>
         <div id="jobsEditorList"></div>
       </div>
 
       <div class="hint">
-        PDF impecable en 1 hoja A4 + links clickeables (mail/tel/linkedin).
+        Auto: si no entra en 1 hoja, pasa a 2. Si hoja 2 queda vacía, se completa con módulos.
       </div>
     </aside>
 
     <!-- PREVIEW -->
     <section class="stage">
-      <div class="paperWrap">
-        <div class="paper" id="paper">
-          <div class="page" id="cv">
+      <div class="paperStack" id="paperStack">
+
+        <!-- PAGE 1 -->
+        <div class="paper" data-page="1">
+          <div class="page" id="cvPage1">
 
             <div class="header">
               <div>
@@ -425,7 +572,6 @@ Comunicación y organizaciones | CAME / UTN</textarea>
                 <div class="headline" id="cvHeadline">HRBP · People Analytics · Employee Experience</div>
                 <div class="degree" id="cvDegree">Lic. en Recursos Humanos</div>
 
-                <!-- Contacto con links -->
                 <div class="contact" id="cvContact">
                   <span id="cvLocation">Buenos Aires, Argentina</span> ·
                   <a id="cvEmail" href="mailto:ceguiazabal@gmail.com">ceguiazabal@gmail.com</a> ·
@@ -440,34 +586,34 @@ Comunicación y organizaciones | CAME / UTN</textarea>
               </div>
             </div>
 
-            <div class="layout">
-              <!-- LEFT -->
-              <div>
-                <div class="section">
-                  <h2 class="title">Perfil</h2>
+            <div class="layout" id="cvLayout">
+              <!-- MAIN -->
+              <div id="cvMain">
+                <div class="section card">
+                  <h2 class="title" id="tProfile">Perfil</h2>
                   <p class="p" id="cvProfile"></p>
                 </div>
 
-                <div class="section">
-                  <h2 class="title">Experiencia</h2>
-                  <div id="cvJobs"></div>
+                <div class="section card">
+                  <h2 class="title" id="tExperience">Experiencia</h2>
+                  <div id="cvJobsPage1"></div>
                 </div>
               </div>
 
-              <!-- RIGHT -->
-              <aside>
-                <div class="card">
-                  <h2 class="title">Áreas HR</h2>
+              <!-- SIDE -->
+              <aside id="cvSide">
+                <div class="card" id="cardAreas">
+                  <h2 class="title" id="tAreas">Áreas HR</h2>
                   <ul class="list" id="cvAreas"></ul>
                 </div>
 
-                <div class="card">
-                  <h2 class="title">Educación</h2>
+                <div class="card" id="cardEdu">
+                  <h2 class="title" id="tEdu">Educación</h2>
                   <div id="cvEdu"></div>
                 </div>
 
-                <div class="card" style="margin-bottom:0;">
-                  <h2 class="title">Formación complementaria</h2>
+                <div class="card" id="cardCourses" style="margin-bottom:0;">
+                  <h2 class="title" id="tCourses">Formación complementaria</h2>
                   <div class="rows" id="cvCourses"></div>
                 </div>
               </aside>
@@ -475,6 +621,18 @@ Comunicación y organizaciones | CAME / UTN</textarea>
 
           </div>
         </div>
+
+        <!-- PAGE 2 -->
+        <div class="paper" data-page="2" id="paper2" style="display:none;">
+          <div class="page" id="cvPage2">
+            <div class="section card" style="margin-bottom:0;">
+              <h2 class="title" id="tExperience2">Experiencia</h2>
+              <div id="cvJobsPage2"></div>
+              <div id="cvPage2Extras"></div>
+            </div>
+          </div>
+        </div>
+
       </div>
     </section>
 
@@ -482,8 +640,10 @@ Comunicación y organizaciones | CAME / UTN</textarea>
 
   <script>
     // -----------------------------
-    // DATA (Experiencias editables)
+    // DATA
     // -----------------------------
+    const STORAGE_KEY = "cv_builder_draft_v2";
+
     const DEFAULT_JOBS = [
       {
         role: "HRBP Contractor — Oracle",
@@ -524,13 +684,10 @@ Comunicación y organizaciones | CAME / UTN</textarea>
         "&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"
       }[m]));
     }
-
     function toTelHref(phone){
-      // deja sólo + y dígitos
       const clean = (phone || "").trim().replace(/[^\d+]/g,"");
       return clean.startsWith("+") ? clean : ("+" + clean);
     }
-
     function linkedinLabel(url){
       try{
         const u = new URL(url);
@@ -541,33 +698,108 @@ Comunicación y organizaciones | CAME / UTN</textarea>
     }
 
     // -----------------------------
-    // RENDER CV
+    // Foto modo: con / sin
     // -----------------------------
-    function renderJobsCV(){
-      const container = $("cvJobs");
-      container.innerHTML = "";
-      jobs.forEach((j) => {
-        const wrap = document.createElement("div");
-        wrap.className = "job";
-        wrap.innerHTML = `
-          <div class="jobhead">
-            <p class="jobrole">${escapeHTML(j.role)}</p>
-            <div class="jobdate">${escapeHTML(j.dates)}</div>
-          </div>
-          <div class="jobmeta">${escapeHTML(j.meta)}</div>
-          <ul class="bullets">
-            ${j.bullets.map(b => `<li>${escapeHTML(b)}</li>`).join("")}
-          </ul>
-        `;
-        container.appendChild(wrap);
-      });
+    function setPhotoMode(mode){
+      const withPhoto = (mode === "with");
+      $("inPhoto").disabled = !withPhoto;
+      document.body.classList.toggle("no-photo", !withPhoto);
+
+      if(!withPhoto){
+        // limpiar vista foto
+        $("inPhoto").value = "";
+        $("cvPhotoImg").style.display = "none";
+        $("cvPhotoLabel").style.display = "block";
+      }
     }
 
+    // -----------------------------
+    // Traducción ES -> EN (heurística + glosario)
+    // -----------------------------
+    const GLOSSARY = [
+      [/\bRecursos Humanos\b/gi, "Human Resources"],
+      [/\bRR\.?HH\.?\b/gi, "HR"],
+      [/\bActualidad\b/gi, "Present"],
+      [/\bExperiencia\b/gi, "Experience"],
+      [/\bPerfil\b/gi, "Profile"],
+      [/\bEducación\b/gi, "Education"],
+      [/\bFormación complementaria\b/gi, "Additional Training"],
+      [/\bÁreas HR\b/gi, "HR Areas"],
+      [/\bComunicaci[oó]n interna\b/gi, "Internal Communications"],
+      [/\bBeneficios\b/gi, "Benefits"],
+      [/\bGestión\b/gi, "Management"],
+      [/\bCoordinaci[oó]n\b/gi, "Coordination"],
+      [/\bSoporte\b/gi, "Support"],
+      [/\bcolaborador(es)?\b/gi, "employees"],
+      [/\bCiclo de vida\b/gi, "lifecycle"],
+      [/\bReportes\b/gi, "reports"],
+      [/\bDocumentación\b/gi, "documentation"],
+      [/\bDic\b/gi, "Dec"]
+    ];
+    function tHeuristic(text){
+      let out = text || "";
+      for(const [re, rep] of GLOSSARY) out = out.replace(re, rep);
+      return out;
+    }
+    function translateStructuredToEN(){
+      document.documentElement.lang = "en";
+
+      $("tProfileLbl").textContent = "Profile";
+      $("tAreasLbl").textContent = "HR Areas (one per line)";
+      $("tEduLbl").textContent = "Education (lines: Degree — Institution | Detail)";
+      $("tCoursesLbl").textContent = "Additional Training (Course | Institution)";
+      $("tExpEdit").textContent = "Experience (edit)";
+
+      $("tProfile").textContent = "Profile";
+      $("tExperience").textContent = "Experience";
+      $("tExperience2").textContent = "Experience";
+      $("tAreas").textContent = "HR Areas";
+      $("tEdu").textContent = "Education";
+      $("tCourses").textContent = "Additional Training";
+
+      $("inDegree").value = tHeuristic($("inDegree").value);
+      $("inProfile").value = tHeuristic($("inProfile").value);
+
+      $("inAreas").value = $("inAreas").value.split("\n").map(s=>tHeuristic(s.trim())).filter(Boolean).join("\n");
+
+      $("inEdu").value = $("inEdu").value.split("\n").map(s=>{
+        const line = s.trim(); if(!line) return "";
+        const parts = line.split("|").map(x=>x.trim());
+        const left = tHeuristic(parts[0]||"");
+        const right = tHeuristic(parts[1]||"");
+        return parts.length === 2 ? `${left} | ${right}` : left;
+      }).filter(Boolean).join("\n");
+
+      $("inCourses").value = $("inCourses").value.split("\n").map(s=>{
+        const line = s.trim(); if(!line) return "";
+        const parts = line.split("|").map(x=>x.trim());
+        const left = tHeuristic(parts[0]||"");
+        const right = tHeuristic(parts[1]||"");
+        return parts.length === 2 ? `${left} | ${right}` : left;
+      }).filter(Boolean).join("\n");
+
+      jobs = jobs.map(j=>({
+        role: tHeuristic(j.role),
+        meta: tHeuristic(j.meta),
+        dates: tHeuristic(j.dates),
+        bullets: (j.bullets||[]).map(b=>tHeuristic(b))
+      }));
+    }
+
+    function detectLang(){
+      const isEN = (document.documentElement.lang === "en")
+        || /Human Resources/i.test($("inDegree").value || "")
+        || ($("tProfileLbl").textContent || "").toLowerCase().includes("profile");
+      return isEN ? "en" : "es";
+    }
+
+    // -----------------------------
+    // Render CV
+    // -----------------------------
     function renderAreas(){
       const lines = $("inAreas").value.split("\n").map(s=>s.trim()).filter(Boolean);
       $("cvAreas").innerHTML = lines.map(l => `<li>${escapeHTML(l)}</li>`).join("");
     }
-
     function renderEdu(){
       const lines = $("inEdu").value.split("\n").map(s=>s.trim()).filter(Boolean);
       $("cvEdu").innerHTML = lines.map(l => {
@@ -578,7 +810,6 @@ Comunicación y organizaciones | CAME / UTN</textarea>
         return `<p style="margin:0 0 3mm 0;"><strong>${escapeHTML(l)}</strong></p>`;
       }).join("");
     }
-
     function renderCourses(){
       const lines = $("inCourses").value.split("\n").map(s=>s.trim()).filter(Boolean);
       $("cvCourses").innerHTML = lines.map(l => {
@@ -593,6 +824,115 @@ Comunicación y organizaciones | CAME / UTN</textarea>
         `;
       }).join("");
     }
+    function jobNode(j){
+      const wrap = document.createElement("div");
+      wrap.className = "job";
+      wrap.innerHTML = `
+        <div class="jobhead">
+          <p class="jobrole">${escapeHTML(j.role)}</p>
+          <div class="jobdate">${escapeHTML(j.dates)}</div>
+        </div>
+        <div class="jobmeta">${escapeHTML(j.meta)}</div>
+        <ul class="bullets">
+          ${(j.bullets||[]).map(b => `<li>${escapeHTML(b)}</li>`).join("")}
+        </ul>
+      `;
+      return wrap;
+    }
+
+    function getHighlights(max=4){
+      const out = [];
+      for(const j of jobs.slice(0,2)){
+        for(const b of (j.bullets||[])){
+          const s = (b||"").trim();
+          if(!s) continue;
+          out.push(s);
+          if(out.length >= max) return out;
+        }
+      }
+      return out;
+    }
+
+    function renderPage2ExtrasIfNeeded(){
+      const extras = $("cvPage2Extras");
+      extras.innerHTML = "";
+
+      const paper2 = $("paper2");
+      if(paper2.style.display === "none") return;
+
+      const p2Jobs = $("cvJobsPage2");
+      const jobsCount = p2Jobs.children.length;
+
+      const page2 = $("cvPage2");
+      const usedRatio = page2.scrollHeight / page2.clientHeight;
+
+      if(jobsCount >= 2 && usedRatio > 0.75) return;
+
+      const highlights = getHighlights(4);
+      const areasLines = $("inAreas").value.split("\n").map(s=>s.trim()).filter(Boolean);
+
+      const wrapper = document.createElement("div");
+      wrapper.className = "page2Grid";
+
+      const tAreas = $("tAreas").textContent || "Áreas HR";
+      const tEdu = $("tEdu").textContent || "Educación";
+      const tCourses = $("tCourses").textContent || "Formación complementaria";
+
+      wrapper.innerHTML = `
+        <div class="card span2">
+          <h2 class="title">${detectLang()==="en" ? "Highlights" : "Highlights"}</h2>
+          <ul class="bullets">
+            ${highlights.map(h=>`<li>${escapeHTML(h)}</li>`).join("")}
+          </ul>
+        </div>
+
+        <div class="card">
+          <h2 class="title">${escapeHTML(tAreas)}</h2>
+          <ul class="list">
+            ${areasLines.slice(0,10).map(l=>`<li>${escapeHTML(l)}</li>`).join("")}
+          </ul>
+        </div>
+
+        <div class="card">
+          <h2 class="title">${escapeHTML(tEdu)}</h2>
+          <div>${$("cvEdu").innerHTML}</div>
+        </div>
+
+        <div class="card span2">
+          <h2 class="title">${escapeHTML(tCourses)}</h2>
+          <div class="rows">${$("cvCourses").innerHTML}</div>
+        </div>
+      `;
+
+      extras.appendChild(wrapper);
+    }
+
+    function renderJobsAutoPaginate(){
+      const p1 = $("cvJobsPage1");
+      const p2 = $("cvJobsPage2");
+      p1.innerHTML = "";
+      p2.innerHTML = "";
+      $("cvPage2Extras").innerHTML = "";
+      $("paper2").style.display = "none";
+
+      jobs.forEach(j => p1.appendChild(jobNode(j)));
+
+      const page1 = $("cvPage1");
+      const overflow1 = () => (page1.scrollHeight - page1.clientHeight);
+
+      if(overflow1() <= 2) return;
+
+      $("paper2").style.display = "block";
+
+      for(let guard=0; guard<260; guard++){
+        if(overflow1() <= 2) break;
+        const last = p1.lastElementChild;
+        if(!last) break;
+        p2.insertBefore(last, p2.firstChild);
+      }
+
+      renderPage2ExtrasIfNeeded();
+    }
 
     function syncText(){
       $("cvName").textContent = $("inName").value || "";
@@ -600,13 +940,13 @@ Comunicación y organizaciones | CAME / UTN</textarea>
       $("cvDegree").textContent = $("inDegree").value || "";
       $("cvProfile").textContent = $("inProfile").value || "";
 
-      // Contacto con links
       const location = $("inLocation").value || "";
       const email = $("inEmail").value || "";
       const phone = $("inPhone").value || "";
       const linkedin = $("inLinkedIn").value || "";
 
       $("cvLocation").textContent = location;
+
       $("cvEmail").textContent = email;
       $("cvEmail").href = email ? `mailto:${email}` : "#";
 
@@ -619,11 +959,11 @@ Comunicación y organizaciones | CAME / UTN</textarea>
       renderAreas();
       renderEdu();
       renderCourses();
-      renderJobsCV();
+      renderJobsAutoPaginate();
     }
 
     // -----------------------------
-    // EXPERIENCIA: EDITOR UI
+    // Jobs editor
     // -----------------------------
     function renderJobsEditor(){
       const list = $("jobsEditorList");
@@ -633,7 +973,7 @@ Comunicación y organizaciones | CAME / UTN</textarea>
         card.className = "jobCard";
         card.innerHTML = `
           <div class="jobCardTop">
-            <div style="font-weight:800; font-size:13px;">Experiencia #${idx+1}</div>
+            <div style="font-weight:900; font-size:13px;">Experiencia #${idx+1}</div>
             <div class="mini">
               <button class="secondary" data-act="up" data-idx="${idx}">↑</button>
               <button class="secondary" data-act="down" data-idx="${idx}">↓</button>
@@ -641,7 +981,7 @@ Comunicación y organizaciones | CAME / UTN</textarea>
             </div>
           </div>
 
-          <div class="grid3">
+          <div class="grid2" style="margin-bottom:8px;">
             <div class="row" style="margin:0;">
               <label>Rol — Empresa</label>
               <input data-k="role" data-idx="${idx}" value="${escapeHTML(j.role)}"/>
@@ -659,7 +999,7 @@ Comunicación y organizaciones | CAME / UTN</textarea>
 
           <div class="row" style="margin:0;">
             <label>Bullets (1 por línea)</label>
-            <textarea data-k="bullets" data-idx="${idx}">${escapeHTML(j.bullets.join("\n"))}</textarea>
+            <textarea data-k="bullets" data-idx="${idx}">${escapeHTML((j.bullets||[]).join("\n"))}</textarea>
           </div>
         `;
         list.appendChild(card);
@@ -673,19 +1013,17 @@ Comunicación y organizaciones | CAME / UTN</textarea>
       renderJobsEditor();
       syncText();
     }
-
     function deleteJob(idx){
       jobs.splice(idx, 1);
       renderJobsEditor();
       syncText();
     }
-
     function addJob(){
       jobs.unshift({
         role: "Nuevo rol — Empresa",
         meta: "Buenos Aires, Argentina",
         dates: "2024 – 2025",
-        bullets: ["Logro/Responsabilidad 1", "Logro/Responsabilidad 2"]
+        bullets: ["Logro medible 1", "Logro medible 2"]
       });
       renderJobsEditor();
       syncText();
@@ -700,6 +1038,7 @@ Comunicación y organizaciones | CAME / UTN</textarea>
       if(act === "up") moveJob(idx, -1);
       if(act === "down") moveJob(idx, 1);
       if(act === "del") deleteJob(idx);
+      autoSaveSoft();
     });
 
     $("jobsEditorList").addEventListener("input", (e) => {
@@ -715,14 +1054,16 @@ Comunicación y organizaciones | CAME / UTN</textarea>
         jobs[idx][k] = el.value;
       }
       syncText();
+      autoSaveSoft();
     });
 
-    $("btnAddJob").addEventListener("click", addJob);
+    $("btnAddJob").addEventListener("click", () => { addJob(); autoSaveSoft(); });
 
     // -----------------------------
-    // FOTO
+    // Foto upload (solo si con foto)
     // -----------------------------
     $("inPhoto").addEventListener("change", (e) => {
+      if($("inPhotoMode").value !== "with") return;
       const file = e.target.files?.[0];
       if(!file) return;
       const reader = new FileReader();
@@ -730,48 +1071,387 @@ Comunicación y organizaciones | CAME / UTN</textarea>
         $("cvPhotoImg").src = reader.result;
         $("cvPhotoImg").style.display = "block";
         $("cvPhotoLabel").style.display = "none";
+        autoSaveSoft();
       };
       reader.readAsDataURL(file);
     });
 
     // -----------------------------
-    // LIVE UPDATES
+    // Template + Compact + Photo mode
     // -----------------------------
-    [
+    $("inTemplate").addEventListener("change", () => {
+      document.body.classList.remove("tpl-classic","tpl-modern","tpl-sidebar","tpl-minimal");
+      document.body.classList.add($("inTemplate").value);
+      syncText();
+      autoSaveSoft();
+    });
+
+    $("inCompact").addEventListener("change", () => {
+      document.body.classList.toggle("compact", $("inCompact").value === "on");
+      syncText();
+      autoSaveSoft();
+    });
+
+    $("inPhotoMode").addEventListener("change", () => {
+      setPhotoMode($("inPhotoMode").value);
+      syncText();
+      autoSaveSoft();
+    });
+
+    // -----------------------------
+    // Live updates
+    // -----------------------------
+    const LIVE_IDS = [
       "inName","inHeadline","inDegree",
       "inEmail","inPhone","inLinkedIn","inLocation",
       "inProfile","inAreas","inEdu","inCourses"
-    ].forEach(id => $(id).addEventListener("input", syncText));
+    ];
+    LIVE_IDS.forEach(id => $(id).addEventListener("input", () => { syncText(); autoSaveSoft(); }));
 
     // -----------------------------
-    // GENERAR PDF (FORZAR 1 HOJA)
+    // Optimizar bullets (ATS / Premium)
     // -----------------------------
-    $("btnPDF").addEventListener("click", async () => {
-      const paper = $("paper");
-      paper.scrollIntoView({ block: "start" });
+    function normalizeBullet(s){
+      let t = (s || "").trim();
+      t = t.replace(/\s+/g, " ");
+      t = t.replace(/[•·]+/g, "");
+      t = t.replace(/\.\s*$/,"");
+      if(t.length) t = t[0].toUpperCase() + t.slice(1);
+      return t;
+    }
+    function hasMetricLike(s){
+      return /(\d+[%]?)|(\b(kpi|sla|okr|nps|csat|ttr|ttf|headcount|hc)\b)/i.test(s || "");
+    }
+    function ensureActionVerbStart(s, lang){
+      const t = s.trim();
+      if(!t) return t;
 
+      if(lang === "en"){
+        if(/^(Led|Managed|Owned|Built|Implemented|Coordinated|Partnered|Delivered|Developed|Optimized|Streamlined|Designed|Created|Analyzed|Automated)\b/i.test(t)) return t;
+        if(/^(Leading|Managing|Building|Implementing|Coordinating|Partnering|Delivering)\b/i.test(t)) return t;
+      }else{
+        if(/^(Lider[ée]?|Gestion[ée]?|Coordin[ée]?|Implement[ée]?|Desarroll[ée]?|Optimic[ée]?|Estandaric[ée]?|Diseñ[ée]?|Cre[ée]?|Analic[ée]?|Automatiz[ée]?|Ejecut[ée]?|Administr[ée]?)\b/i.test(t)) return t;
+      }
+
+      return (lang === "en" ? "Supported " : "Soporte en ") + t;
+    }
+    function toATS(bullet, lang){
+      let t = normalizeBullet(bullet);
+      t = ensureActionVerbStart(t, lang);
+      if(!hasMetricLike(t)){
+        t += (lang === "en") ? " — Impact: [metric/scale]" : " — Impacto: [métrica/escala]";
+      }
+      return t;
+    }
+    function toPremium(bullet, lang){
+      let t = normalizeBullet(bullet);
+
+      if(lang !== "en"){
+        t = t
+          .replace(/^Soporte HRBP\b/i, "Brindé soporte HRBP")
+          .replace(/^Soporte en\b/i, "Brindé soporte en");
+        t = ensureActionVerbStart(t, "es");
+        if(!/—/.test(t)) t += " —";
+        if(!/Impacto:/i.test(t)){
+          t += " Impacto: [métrica] (ej: +%, -tiempo, +N colaboradores)";
+        }
+        return t;
+      }
+
+      t = t.replace(/^Support(ed)?\b/i, "Partnered").replace(/^Supported\b/i, "Partnered");
+      t = ensureActionVerbStart(t, "en");
+      if(!/—/.test(t)) t += " —";
+      if(!/Impact:/i.test(t)){
+        t += " Impact: [metric] (e.g., +%, -time, +N employees)";
+      }
+      return t;
+    }
+    function optimizeBullets(style){
+      const lang = detectLang();
+      jobs = jobs.map(j => {
+        const bullets = (j.bullets || []).map(b => style === "premium" ? toPremium(b, lang) : toATS(b, lang));
+        return { ...j, bullets };
+      });
+      renderJobsEditor();
+      syncText();
+      autoSaveSoft();
+    }
+
+    $("btnOptimizeBullets").addEventListener("click", () => {
+      const wantPremium = confirm(
+        "¿Querés optimización PREMIUM?\n\nOK = Premium (más potente)\nCancelar = ATS (simple)"
+      );
+      optimizeBullets(wantPremium ? "premium" : "ats");
+      alert("Listo. Revisá y reemplazá los placeholders [métrica].");
+    });
+
+    // -----------------------------
+    // Save / Load / Export / Import
+    // -----------------------------
+    function getDraft(){
+      const photoEnabled = ($("inPhotoMode").value === "with");
+      return {
+        meta: {
+          template: $("inTemplate").value,
+          compact: $("inCompact").value,
+          photoMode: $("inPhotoMode").value,
+          photoDataUrl: (photoEnabled && $("cvPhotoImg").style.display !== "none") ? $("cvPhotoImg").src : ""
+        },
+        fields: {
+          inName: $("inName").value,
+          inDegree: $("inDegree").value,
+          inHeadline: $("inHeadline").value,
+          inEmail: $("inEmail").value,
+          inPhone: $("inPhone").value,
+          inLinkedIn: $("inLinkedIn").value,
+          inLocation: $("inLocation").value,
+          inProfile: $("inProfile").value,
+          inAreas: $("inAreas").value,
+          inEdu: $("inEdu").value,
+          inCourses: $("inCourses").value
+        },
+        jobs
+      };
+    }
+
+    function applyDraft(d){
+      if(!d || typeof d !== "object") return;
+
+      if(d.meta?.template){
+        $("inTemplate").value = d.meta.template;
+        document.body.classList.remove("tpl-classic","tpl-modern","tpl-sidebar","tpl-minimal");
+        document.body.classList.add(d.meta.template);
+      }
+      if(d.meta?.compact){
+        $("inCompact").value = d.meta.compact;
+        document.body.classList.toggle("compact", d.meta.compact === "on");
+      }
+      if(d.meta?.photoMode){
+        $("inPhotoMode").value = d.meta.photoMode;
+        setPhotoMode(d.meta.photoMode);
+      }
+
+      const f = d.fields || {};
+      for(const k of Object.keys(f)){
+        if($(k)) $(k).value = f[k] ?? "";
+      }
+
+      if(Array.isArray(d.jobs)) jobs = d.jobs;
+
+      // foto
+      if(d.meta?.photoMode === "with" && d.meta?.photoDataUrl){
+        $("cvPhotoImg").src = d.meta.photoDataUrl;
+        $("cvPhotoImg").style.display = "block";
+        $("cvPhotoLabel").style.display = "none";
+      }
+
+      renderJobsEditor();
+      syncText();
+    }
+
+    function saveDraftHard(){
+      const draft = getDraft();
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(draft));
+    }
+
+    function loadDraftHard(){
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if(!raw) return false;
+      try{
+        const d = JSON.parse(raw);
+        applyDraft(d);
+        return true;
+      }catch{
+        return false;
+      }
+    }
+
+    let saveTimer = null;
+    function autoSaveSoft(){
+      clearTimeout(saveTimer);
+      saveTimer = setTimeout(() => {
+        try{ saveDraftHard(); }catch{}
+      }, 350);
+    }
+
+    async function tryCopy(text){
+      try{
+        await navigator.clipboard.writeText(text);
+        return true;
+      }catch{
+        return false;
+      }
+    }
+
+    $("btnSave").addEventListener("click", () => {
+      saveDraftHard();
+      alert("Borrador guardado.");
+    });
+
+    $("btnLoad").addEventListener("click", () => {
+      const ok = loadDraftHard();
+      if(!ok) alert("No hay borrador guardado (o está corrupto).");
+    });
+
+    $("btnExport").addEventListener("click", async () => {
+      const json = JSON.stringify(getDraft(), null, 2);
+      const copied = await tryCopy(json);
+      if(copied) alert("JSON copiado al portapapeles.");
+      else prompt("Copiá este JSON:", json);
+    });
+
+    $("btnImport").addEventListener("click", () => {
+      const raw = prompt("Pegá el JSON exportado:");
+      if(!raw) return;
+      try{
+        const d = JSON.parse(raw);
+        applyDraft(d);
+        alert("Importado OK.");
+      }catch{
+        alert("JSON inválido.");
+      }
+    });
+
+    // -----------------------------
+    // PDF export (robusto + links clickeables)
+    // -----------------------------
+    function getVisiblePapers(){
+      return Array.from(document.querySelectorAll(".paper"))
+        .filter(p => p.style.display !== "none");
+    }
+    function pxToMm(px, elementPxWidth){
+      return (px * 210) / elementPxWidth;
+    }
+    function getRectMmWithinPage(el, pageEl){
+      const r = el.getBoundingClientRect();
+      const pr = pageEl.getBoundingClientRect();
+      const pageWidthPx = pr.width;
+      const xPx = r.left - pr.left;
+      const yPx = r.top - pr.top;
+      return {
+        x: pxToMm(xPx, pageWidthPx),
+        y: pxToMm(yPx, pageWidthPx),
+        w: pxToMm(r.width, pageWidthPx),
+        h: pxToMm(r.height, pageWidthPx)
+      };
+    }
+
+    async function exportPdfRobusto(){
+      const html2canvasFn = window.html2canvas;
+      const jsPDFmod = window.jspdf;
+      if(!html2canvasFn || !jsPDFmod?.jsPDF){
+        throw new Error("html2canvas o jsPDF no disponibles");
+      }
+
+      const { jsPDF } = jsPDFmod;
+      const pdf = new jsPDF({ unit: "mm", format: "a4", orientation: "portrait" });
+      const pages = getVisiblePapers();
+      const filename = `CV_${($("inName").value || "CV").replace(/\s+/g,"_")}.pdf`;
+
+      for(let i=0; i<pages.length; i++){
+        const paper = pages[i];
+
+        const canvas = await html2canvasFn(paper, {
+          scale: 2,
+          useCORS: true,
+          backgroundColor: "#ffffff",
+          scrollX: 0,
+          scrollY: 0
+        });
+
+        const imgData = canvas.toDataURL("image/jpeg", 0.98);
+        if(i > 0) pdf.addPage("a4", "portrait");
+        pdf.addImage(imgData, "JPEG", 0, 0, 210, 297);
+
+        const pageEl = paper.querySelector(".page");
+        if(pageEl){
+          const emailEl = $("cvEmail");
+          const phoneEl = $("cvPhone");
+          const liEl = $("cvLinkedIn");
+
+          const inThisPage = (el) => pageEl.contains(el);
+          const addLink = (el, url) => {
+            const rr = getRectMmWithinPage(el, pageEl);
+            const pad = 0.6;
+            pdf.link(rr.x - pad, rr.y - pad, rr.w + pad*2, rr.h + pad*2, { url });
+          };
+
+          if(inThisPage(emailEl) && emailEl.href && emailEl.href !== "#") addLink(emailEl, emailEl.href);
+          if(inThisPage(phoneEl) && phoneEl.href && phoneEl.href !== "#") addLink(phoneEl, phoneEl.href);
+          if(inThisPage(liEl) && liEl.href && liEl.href !== "#") addLink(liEl, liEl.href);
+        }
+      }
+
+      pdf.save(filename);
+    }
+
+    async function exportPdfFallbackHtml2Pdf(){
+      const filename = `CV_${($("inName").value || "CV").replace(/\s+/g,"_")}.pdf`;
+      const stack = $("paperStack");
       const opt = {
         margin: 0,
-        filename: `CV_${($("inName").value || "CV").replace(/\s+/g,"_")}.pdf`,
+        filename,
         image: { type: "jpeg", quality: 0.98 },
         html2canvas: {
-          scale: 1.98, // micro-reducción invisible
+          scale: 2,
           useCORS: true,
           backgroundColor: "#ffffff",
           scrollX: 0,
           scrollY: 0
         },
         jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
-        pagebreak: { mode: ["avoid-all"] }
+        pagebreak: { mode: ["css", "legacy"] }
       };
+      await html2pdf().set(opt).from(stack).save();
+    }
 
-      await html2pdf().set(opt).from(paper).save();
+    $("btnPDF").addEventListener("click", async () => {
+      syncText();
+      try{
+        await exportPdfRobusto();
+      }catch(err){
+        console.warn("Export robusto falló, uso fallback html2pdf:", err);
+        await exportPdfFallbackHtml2Pdf();
+      }
     });
 
     // -----------------------------
-    // RESET
+    // Translate to EN
+    // -----------------------------
+    $("btnTranslateEN").addEventListener("click", () => {
+      translateStructuredToEN();
+      syncText();
+      autoSaveSoft();
+    });
+
+    // -----------------------------
+    // Reset
     // -----------------------------
     $("btnReset").addEventListener("click", () => {
+      localStorage.removeItem(STORAGE_KEY);
+      document.documentElement.lang = "es";
+
+      $("inTemplate").value = "tpl-classic";
+      document.body.classList.remove("tpl-classic","tpl-modern","tpl-sidebar","tpl-minimal","compact","no-photo");
+      document.body.classList.add("tpl-classic");
+      $("inCompact").value = "off";
+
+      $("inPhotoMode").value = "with";
+      setPhotoMode("with");
+
+      $("tProfileLbl").textContent = "Perfil";
+      $("tAreasLbl").textContent = "Áreas HR (una por línea)";
+      $("tEduLbl").textContent = "Educación (líneas: Título — Institución | Detalle)";
+      $("tCoursesLbl").textContent = "Formación complementaria (Curso | Institución)";
+      $("tExpEdit").textContent = "Experiencia (editar)";
+
+      $("tProfile").textContent = "Perfil";
+      $("tExperience").textContent = "Experiencia";
+      $("tExperience2").textContent = "Experiencia";
+      $("tAreas").textContent = "Áreas HR";
+      $("tEdu").textContent = "Educación";
+      $("tCourses").textContent = "Formación complementaria";
+
       $("inName").value = "Camilo Eguiazabal";
       $("inDegree").value = "Lic. en Recursos Humanos";
       $("inHeadline").value = "HRBP · People Analytics · Employee Experience";
@@ -784,7 +1464,7 @@ Comunicación y organizaciones | CAME / UTN</textarea>
 
       $("inAreas").value = "HRBP Support\nEmployee Experience\nHR Operations\nOnboarding\nInternal Communications\nStakeholder Management\nHR Reporting";
 
-      $("inEdu").value = "Lic. en Recursos Humanos — UADE | Finalizado · Promedio 8,78\nLic. en Psicología — UADE | En curso";
+      $("inEdu").value = "Lic. en Recursos Humanos — UADE | Finalizado\nLic. en Psicología — UADE | En curso";
 
       $("inCourses").value = "Planificación y gestión de RR.HH. para PyMEs | CAME / UTN\nTécnicas de selección de RR.HH. | CAME / UTN\nConducción de equipos | CAME / UTN\nComunicación y organizaciones | CAME / UTN";
 
@@ -798,10 +1478,16 @@ Comunicación y organizaciones | CAME / UTN</textarea>
       syncText();
     });
 
+    // -----------------------------
     // INIT
+    // -----------------------------
+    // Defaults
+    setPhotoMode($("inPhotoMode").value);
+
+    // load draft if exists
     renderJobsEditor();
-    syncText();
+    const loaded = loadDraftHard();
+    if(!loaded) syncText();
   </script>
 </body>
 </html>
-
