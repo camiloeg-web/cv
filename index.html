@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>CV Builder A4 → PDF (Templates + Auto 2 pages + EN + Optimize + Save/Load + Foto opcional)</title>
+  <title>CV Builder Pro — AI-Powered Resume Builder</title>
 
   <!-- Fuente -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -70,6 +70,29 @@
       --header-cols: 1fr;
       --radius: 10px;
     }
+    body.tpl-executive{
+      --accent:#1E40AF;
+      --line:#DBEAFE;
+      --cv-cols: 1fr 65mm;
+      --header-cols: 1fr 36mm;
+      --radius: 8px;
+      --bg:#F8FAFC;
+    }
+    body.tpl-creative{
+      --accent:#7C3AED;
+      --line:#EDE9FE;
+      --cv-cols: 1fr;
+      --header-cols: 1fr 36mm;
+      --radius: 20px;
+      --bg:#FAFAF9;
+    }
+
+    /* ===== Color Themes ===== */
+    body.theme-blue{ --accent:#1E40AF; --line:#DBEAFE; }
+    body.theme-purple{ --accent:#7C3AED; --line:#EDE9FE; }
+    body.theme-green{ --accent:#059669; --line:#D1FAE5; }
+    body.theme-red{ --accent:#DC2626; --line:#FEE2E2; }
+    body.theme-orange{ --accent:#EA580C; --line:#FFEDD5; }
 
     /* ===== Photo toggle ===== */
     body.no-photo{
@@ -95,6 +118,7 @@
       font-family: Inter, system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
       background: var(--bg);
       color: var(--ink);
+      transition: background 0.3s ease;
     }
     .wrap{
       display:grid;
@@ -114,6 +138,8 @@
       position: sticky;
       top: 14px;
       height: fit-content;
+      max-height: calc(100vh - 28px);
+      overflow-y: auto;
     }
     .panel h2{
       margin:0 0 10px 0;
@@ -121,9 +147,28 @@
       letter-spacing:.12em;
       text-transform:uppercase;
       color:var(--accent);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .panel h2 .badge{
+      font-size:10px;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color:#fff;
+      padding:3px 8px;
+      border-radius:6px;
+      font-weight:900;
+      letter-spacing:.08em;
     }
     .row{ display:grid; grid-template-columns: 1fr; gap:6px; margin-bottom:10px; }
-    label{ font-size:12px; color:var(--muted); }
+    label{ 
+      font-size:12px; 
+      color:var(--muted); 
+      font-weight:600;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
     input, textarea, select{
       width:100%;
       border:1px solid var(--line);
@@ -133,9 +178,15 @@
       font-size:13px;
       outline:none;
       background:#fff;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+    input:focus, textarea:focus, select:focus{
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(11, 31, 58, 0.1);
     }
     textarea{ min-height: 88px; resize: vertical; }
     .grid2{ display:grid; grid-template-columns: 1fr 1fr; gap:10px; }
+    .grid3{ display:grid; grid-template-columns: repeat(3, 1fr); gap:10px; }
     .btns{ display:flex; gap:10px; flex-wrap:wrap; margin-top:10px; }
     button{
       border:0;
@@ -146,6 +197,20 @@
       background: var(--accent);
       color:#fff;
       font-size:13px;
+      transition: all 0.2s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    button:hover:not(:disabled){
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    button:active:not(:disabled){
+      transform: translateY(0);
+    }
+    button:disabled{
+      opacity: 0.5;
+      cursor: not-allowed;
     }
     button.secondary{
       background:#EEF2F7;
@@ -153,6 +218,14 @@
       border:1px solid var(--line);
     }
     button.danger{ background:#EF4444; }
+    button.ai-btn{
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      position: relative;
+    }
+    button.ai-btn::before{
+      content: '✨';
+      margin-right: 6px;
+    }
     .hint{
       font-size:12px;
       color:var(--muted);
@@ -172,6 +245,46 @@
       border-radius:10px;
       font-size:12px;
       font-weight:800;
+    }
+
+    /* ===== Loading State ===== */
+    .loading-overlay{
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0,0,0,0.7);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      backdrop-filter: blur(4px);
+    }
+    .loading-overlay.active{ display: flex; }
+    .loading-content{
+      background: #fff;
+      padding: 32px 48px;
+      border-radius: 16px;
+      text-align: center;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    }
+    .spinner{
+      width: 48px;
+      height: 48px;
+      border: 4px solid var(--line);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 16px;
+    }
+    @keyframes spin{
+      to{ transform: rotate(360deg); }
+    }
+    .loading-text{
+      font-weight: 700;
+      font-size: 15px;
+      color: var(--ink);
     }
 
     /* ===== Jobs editor ===== */
@@ -200,6 +313,16 @@
       padding:10px;
       margin-bottom:10px;
       background:#fff;
+      transition: all 0.2s ease;
+      cursor: move;
+    }
+    .jobCard:hover{
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      border-color: var(--accent);
+    }
+    .jobCard.dragging{
+      opacity: 0.5;
+      transform: scale(0.95);
     }
     .jobCardTop{
       display:flex;
@@ -216,6 +339,35 @@
       font-weight:800;
     }
     .jobCard textarea{ min-height:64px; }
+
+    /* ===== AI Features Panel ===== */
+    .ai-panel{
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      border-radius: 14px;
+      padding: 16px;
+      margin-bottom: 16px;
+      color: #fff;
+    }
+    .ai-panel h3{
+      margin: 0 0 12px 0;
+      font-size: 13px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .ai-panel button{
+      background: rgba(255,255,255,0.2);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.3);
+      color: #fff;
+      width: 100%;
+      margin-bottom: 8px;
+    }
+    .ai-panel button:hover{
+      background: rgba(255,255,255,0.3);
+    }
 
     /* ===== Preview ===== */
     .stage{
@@ -240,6 +392,10 @@
       position: relative;
       break-after: page;
       page-break-after: always;
+      transition: box-shadow 0.3s ease;
+    }
+    .paper:hover{
+      box-shadow: 0 24px 48px rgba(0,0,0,.18);
     }
     .paper:last-child{ break-after:auto; page-break-after:auto; }
     .page{
@@ -405,6 +561,23 @@
     body.tpl-sidebar .layout{ grid-template-columns: 70mm 1fr; }
     body.tpl-sidebar .layout > aside{ order: -1; }
 
+    /* Creative */
+    body.tpl-creative .header{
+      background: linear-gradient(135deg, var(--accent) 0%, var(--muted) 100%);
+      color: #fff;
+      padding: 8mm;
+      margin: calc(var(--pad-mm) * -1);
+      margin-bottom: 8mm;
+      border-bottom: none;
+    }
+    body.tpl-creative .name,
+    body.tpl-creative .headline,
+    body.tpl-creative .degree,
+    body.tpl-creative .contact,
+    body.tpl-creative .contact a{
+      color: #fff;
+    }
+
     /* Page 2 extras */
     .page2Grid{
       display:grid;
@@ -414,147 +587,296 @@
     }
     .page2Grid .span2{ grid-column: 1 / -1; }
 
+    /* ===== Mobile Responsive ===== */
     @media (max-width: 1200px){
-      .wrap{ grid-template-columns: 1fr; }
-      .panel{ position:relative; top:auto; }
-      .stage{ overflow:auto; }
+      .wrap{ 
+        grid-template-columns: 1fr; 
+      }
+      .panel{ 
+        position:relative; 
+        top:auto; 
+        max-height: none;
+      }
+      .stage{ 
+        overflow:auto; 
+      }
+      .paper{
+        width: 100%;
+        height: auto;
+        aspect-ratio: 210 / 297;
+      }
+    }
+
+    @media (max-width: 768px){
+      .wrap{
+        padding: 12px;
+        gap: 12px;
+      }
+      .panel{
+        padding: 12px;
+      }
+      .grid2, .grid3{
+        grid-template-columns: 1fr;
+      }
+      .btns{
+        flex-direction: column;
+      }
+      .btns button{
+        width: 100%;
+      }
+      button{
+        padding: 12px 16px;
+      }
+    }
+
+    /* ===== Collapsible Sections (Mobile) ===== */
+    .collapsible-section{
+      border-bottom: 1px solid var(--line);
+      padding: 12px 0;
+    }
+    .collapsible-header{
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      user-select: none;
+      padding: 8px 0;
+    }
+    .collapsible-header h3{
+      margin: 0;
+      font-size: 13px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      font-weight: 900;
+    }
+    .collapsible-icon{
+      font-size: 18px;
+      transition: transform 0.3s ease;
+      color: var(--muted);
+    }
+    .collapsible-section.collapsed .collapsible-icon{
+      transform: rotate(-90deg);
+    }
+    .collapsible-content{
+      max-height: 2000px;
+      overflow: hidden;
+      transition: max-height 0.3s ease, opacity 0.3s ease;
+      opacity: 1;
+    }
+    .collapsible-section.collapsed .collapsible-content{
+      max-height: 0;
+      opacity: 0;
+    }
+
+    @media (min-width: 769px){
+      .collapsible-section{
+        border: none;
+        padding: 0;
+      }
+      .collapsible-header{
+        cursor: default;
+      }
+      .collapsible-icon{
+        display: none;
+      }
+      .collapsible-content{
+        max-height: none !important;
+        opacity: 1 !important;
+      }
     }
   </style>
 </head>
 
 <body class="tpl-classic">
+  <!-- Loading Overlay -->
+  <div class="loading-overlay" id="loadingOverlay">
+    <div class="loading-content">
+      <div class="spinner"></div>
+      <div class="loading-text" id="loadingText">Processing...</div>
+    </div>
+  </div>
+
   <div class="wrap">
 
     <!-- PANEL -->
     <aside class="panel">
-      <h2>Completar CV</h2>
+      <h2>CV Builder <span class="badge">PRO</span></h2>
 
-      <div class="grid2">
-        <div class="row">
-          <label>Plantilla</label>
-          <select id="inTemplate">
-            <option value="tpl-classic">Classic (ATS)</option>
-            <option value="tpl-modern">Modern (Cards)</option>
-            <option value="tpl-sidebar">Sidebar (Left)</option>
-            <option value="tpl-minimal">Minimal</option>
-          </select>
+      <!-- AI Panel -->
+      <div class="ai-panel">
+        <h3>✨ AI Features</h3>
+        <button id="btnAIOptimize" class="ai-btn" type="button">Optimize All Bullets</button>
+        <button id="btnAIProfile" class="ai-btn" type="button">Enhance Profile</button>
+        <button id="btnAIGenerate" class="ai-btn" type="button">Generate Job Description</button>
+      </div>
+
+      <!-- Template & Style Section -->
+      <div class="collapsible-section" id="sectionTemplate">
+        <div class="collapsible-header" onclick="toggleSection('sectionTemplate')">
+          <h3>Template & Style</h3>
+          <span class="collapsible-icon">▼</span>
         </div>
-        <div class="row">
-          <label>Layout</label>
-          <select id="inCompact">
-            <option value="off">Normal</option>
-            <option value="on">Compacto</option>
-          </select>
+        <div class="collapsible-content">
+          <div class="grid2">
+            <div class="row">
+              <label>Template</label>
+              <select id="inTemplate">
+                <option value="tpl-classic">Classic (ATS)</option>
+                <option value="tpl-modern">Modern (Cards)</option>
+                <option value="tpl-sidebar">Sidebar (Left)</option>
+                <option value="tpl-minimal">Minimal</option>
+                <option value="tpl-executive">Executive</option>
+                <option value="tpl-creative">Creative</option>
+              </select>
+            </div>
+            <div class="row">
+              <label>Layout</label>
+              <select id="inCompact">
+                <option value="off">Normal</option>
+                <option value="on">Compact</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="row">
+            <label>Color Theme</label>
+            <select id="inTheme">
+              <option value="">Default</option>
+              <option value="theme-blue">Blue</option>
+              <option value="theme-purple">Purple</option>
+              <option value="theme-green">Green</option>
+              <option value="theme-red">Red</option>
+              <option value="theme-orange">Orange</option>
+            </select>
+          </div>
+
+          <div class="grid2">
+            <div class="row">
+              <label>Photo</label>
+              <select id="inPhotoMode">
+                <option value="with">With Photo</option>
+                <option value="without">Without Photo</option>
+              </select>
+            </div>
+            <div class="row">
+              <label>Upload Photo</label>
+              <input id="inPhoto" type="file" accept="image/*" />
+            </div>
+          </div>
         </div>
       </div>
 
-      <!-- NUEVO: Con / Sin foto -->
-      <div class="grid2">
-        <div class="row">
-          <label>Foto</label>
-          <select id="inPhotoMode">
-            <option value="with">Con foto</option>
-            <option value="without">Sin foto</option>
-          </select>
+      <!-- Personal Info Section -->
+      <div class="collapsible-section" id="sectionPersonal">
+        <div class="collapsible-header" onclick="toggleSection('sectionPersonal')">
+          <h3>Personal Info</h3>
+          <span class="collapsible-icon">▼</span>
         </div>
-        <div class="row">
-          <label>Subir foto (solo si “Con foto”)</label>
-          <input id="inPhoto" type="file" accept="image/*" />
+        <div class="collapsible-content">
+          <div class="grid2">
+            <div class="row">
+              <label>Full Name</label>
+              <input id="inName" value="Camilo Eguiazabal" />
+            </div>
+            <div class="row">
+              <label>Title</label>
+              <input id="inDegree" value="Lic. en Recursos Humanos" />
+            </div>
+          </div>
+
+          <div class="row">
+            <label>Headline</label>
+            <input id="inHeadline" value="HRBP · People Analytics · Employee Experience" />
+          </div>
+
+          <div class="grid2">
+            <div class="row">
+              <label>Email</label>
+              <input id="inEmail" value="ceguiazabal@gmail.com" />
+            </div>
+            <div class="row">
+              <label>Phone</label>
+              <input id="inPhone" value="+54 11 2396-2046" />
+            </div>
+          </div>
+
+          <div class="row">
+            <label>LinkedIn URL</label>
+            <input id="inLinkedIn" value="https://www.linkedin.com/in/cegui" />
+          </div>
+
+          <div class="row">
+            <label>Location</label>
+            <input id="inLocation" value="Buenos Aires, Argentina" />
+          </div>
+
+          <div class="row">
+            <label id="tProfileLbl">Profile</label>
+            <textarea id="inProfile">Licenciado en Recursos Humanos con experiencia en entornos corporativos y trayectoria sólida en gestión administrativa y coordinación. Actualmente HRBP Contractor en Oracle, con foco en employee experience, comunicación interna, ejecución de iniciativas de RR.HH. y trabajo cross-functional.</textarea>
+          </div>
         </div>
       </div>
 
-      <div class="grid2">
-        <div class="row">
-          <label>Nombre y apellido</label>
-          <input id="inName" value="Camilo Eguiazabal" />
+      <!-- Additional Sections -->
+      <div class="collapsible-section" id="sectionAdditional">
+        <div class="collapsible-header" onclick="toggleSection('sectionAdditional')">
+          <h3>Additional Info</h3>
+          <span class="collapsible-icon">▼</span>
         </div>
-        <div class="row">
-          <label>Título (debajo)</label>
-          <input id="inDegree" value="Lic. en Recursos Humanos" />
-        </div>
-      </div>
-
-      <div class="row">
-        <label>Headline</label>
-        <input id="inHeadline" value="HRBP · People Analytics · Employee Experience" />
-      </div>
-
-      <div class="grid2">
-        <div class="row">
-          <label>Email</label>
-          <input id="inEmail" value="ceguiazabal@gmail.com" />
-        </div>
-        <div class="row">
-          <label>Teléfono</label>
-          <input id="inPhone" value="+54 11 2396-2046" />
-        </div>
-      </div>
-
-      <div class="row">
-        <label>LinkedIn (URL)</label>
-        <input id="inLinkedIn" value="https://www.linkedin.com/in/cegui" />
-      </div>
-
-      <div class="row">
-        <label>Ubicación</label>
-        <input id="inLocation" value="Buenos Aires, Argentina" />
-      </div>
-
-      <div class="row">
-        <label id="tProfileLbl">Perfil</label>
-        <textarea id="inProfile">Licenciado en Recursos Humanos con experiencia en entornos corporativos y trayectoria sólida en gestión administrativa y coordinación. Actualmente HRBP Contractor en Oracle, con foco en employee experience, comunicación interna, ejecución de iniciativas de RR.HH. y trabajo cross-functional.</textarea>
-      </div>
-
-      <div class="row">
-        <label id="tAreasLbl">Áreas HR (una por línea)</label>
-        <textarea id="inAreas">HRBP Support
+        <div class="collapsible-content">
+          <div class="row">
+            <label id="tAreasLbl">HR Areas (one per line)</label>
+            <textarea id="inAreas">HRBP Support
 Employee Experience
 HR Operations
 Onboarding
 Internal Communications
 Stakeholder Management
 HR Reporting</textarea>
-      </div>
+          </div>
 
-      <div class="row">
-        <label id="tEduLbl">Educación (líneas: Título — Institución | Detalle)</label>
-        <textarea id="inEdu">Lic. en Recursos Humanos — UADE | Finalizado
+          <div class="row">
+            <label id="tEduLbl">Education (Title — Institution | Detail)</label>
+            <textarea id="inEdu">Lic. en Recursos Humanos — UADE | Finalizado
 Lic. en Psicología — UADE | En curso</textarea>
-      </div>
+          </div>
 
-      <div class="row">
-        <label id="tCoursesLbl">Formación complementaria (Curso | Institución)</label>
-        <textarea id="inCourses">Planificación y gestión de RR.HH. para PyMEs | CAME / UTN
+          <div class="row">
+            <label id="tCoursesLbl">Additional Training (Course | Institution)</label>
+            <textarea id="inCourses">Planificación y gestión de RR.HH. para PyMEs | CAME / UTN
 Técnicas de selección de RR.HH. | CAME / UTN
 Conducción de equipos | CAME / UTN
 Comunicación y organizaciones | CAME / UTN</textarea>
+          </div>
+        </div>
       </div>
 
+      <!-- Actions -->
       <div class="btns">
-        <button id="btnPDF" type="button">Generar PDF</button>
-        <button id="btnTranslateEN" class="secondary" type="button">Traducir a EN</button>
-        <button id="btnReset" class="secondary" type="button">Reset</button>
+        <button id="btnPDF" type="button">📄 Generate PDF</button>
+        <button id="btnTranslateEN" class="secondary" type="button">🌐 Translate to EN</button>
+        <button id="btnReset" class="secondary" type="button">🔄 Reset</button>
       </div>
 
       <div class="miniActions">
-        <button id="btnSave" class="secondary" type="button">Guardar borrador</button>
-        <button id="btnLoad" class="secondary" type="button">Cargar borrador</button>
-        <button id="btnExport" class="secondary" type="button">Export JSON</button>
-        <button id="btnImport" class="secondary" type="button">Import JSON</button>
-        <button id="btnOptimizeBullets" class="secondary" type="button">Optimizar bullets</button>
+        <button id="btnSave" class="secondary" type="button">💾 Save</button>
+        <button id="btnLoad" class="secondary" type="button">📂 Load</button>
+        <button id="btnExport" class="secondary" type="button">📤 Export</button>
+        <button id="btnImport" class="secondary" type="button">📥 Import</button>
       </div>
 
       <!-- EDITOR EXPERIENCIA -->
       <div class="jobsEditor">
         <div class="jobsHeader">
-          <h3 id="tExpEdit">Experiencia (editar)</h3>
-          <button id="btnAddJob" class="secondary" type="button">+ Agregar</button>
+          <h3 id="tExpEdit">Experience (edit)</h3>
+          <button id="btnAddJob" class="secondary" type="button">+ Add Job</button>
         </div>
         <div id="jobsEditorList"></div>
       </div>
 
       <div class="hint">
-        Auto: si no entra en 1 hoja, pasa a 2. Si hoja 2 queda vacía, se completa con módulos.
+        💡 Auto-pagination: Content flows to page 2 when needed. Drag jobs to reorder.
       </div>
     </aside>
 
@@ -581,8 +903,8 @@ Comunicación y organizaciones | CAME / UTN</textarea>
               </div>
 
               <div class="photo" id="cvPhotoBox">
-                <span id="cvPhotoLabel">FOTO</span>
-                <img id="cvPhotoImg" alt="Foto" style="display:none"/>
+                <span id="cvPhotoLabel">PHOTO</span>
+                <img id="cvPhotoImg" alt="Photo" style="display:none"/>
               </div>
             </div>
 
@@ -590,12 +912,12 @@ Comunicación y organizaciones | CAME / UTN</textarea>
               <!-- MAIN -->
               <div id="cvMain">
                 <div class="section card">
-                  <h2 class="title" id="tProfile">Perfil</h2>
+                  <h2 class="title" id="tProfile">Profile</h2>
                   <p class="p" id="cvProfile"></p>
                 </div>
 
                 <div class="section card">
-                  <h2 class="title" id="tExperience">Experiencia</h2>
+                  <h2 class="title" id="tExperience">Experience</h2>
                   <div id="cvJobsPage1"></div>
                 </div>
               </div>
@@ -603,17 +925,17 @@ Comunicación y organizaciones | CAME / UTN</textarea>
               <!-- SIDE -->
               <aside id="cvSide">
                 <div class="card" id="cardAreas">
-                  <h2 class="title" id="tAreas">Áreas HR</h2>
+                  <h2 class="title" id="tAreas">HR Areas</h2>
                   <ul class="list" id="cvAreas"></ul>
                 </div>
 
                 <div class="card" id="cardEdu">
-                  <h2 class="title" id="tEdu">Educación</h2>
+                  <h2 class="title" id="tEdu">Education</h2>
                   <div id="cvEdu"></div>
                 </div>
 
                 <div class="card" id="cardCourses" style="margin-bottom:0;">
-                  <h2 class="title" id="tCourses">Formación complementaria</h2>
+                  <h2 class="title" id="tCourses">Additional Training</h2>
                   <div class="rows" id="cvCourses"></div>
                 </div>
               </aside>
@@ -626,7 +948,7 @@ Comunicación y organizaciones | CAME / UTN</textarea>
         <div class="paper" data-page="2" id="paper2" style="display:none;">
           <div class="page" id="cvPage2">
             <div class="section card" style="margin-bottom:0;">
-              <h2 class="title" id="tExperience2">Experiencia</h2>
+              <h2 class="title" id="tExperience2">Experience</h2>
               <div id="cvJobsPage2"></div>
               <div id="cvPage2Extras"></div>
             </div>
@@ -640,38 +962,38 @@ Comunicación y organizaciones | CAME / UTN</textarea>
 
   <script>
     // -----------------------------
-    // DATA
+    // HELPERS
     // -----------------------------
-    const STORAGE_KEY = "cv_builder_draft_v2";
+    const STORAGE_KEY = "cv_builder_draft_v3";
 
     const DEFAULT_JOBS = [
       {
         role: "HRBP Contractor — Oracle",
         meta: "Buenos Aires, Argentina",
-        dates: "2023 – Actualidad",
+        dates: "2023 – Present",
         bullets: [
-          "Soporte HRBP a líderes y equipos en temas del ciclo de vida del colaborador.",
-          "Coordinación con HR, Facilities y Finanzas para ejecución de iniciativas y procesos.",
-          "Gestión operativa de acciones de employee experience, beneficios y engagement.",
-          "Armado y seguimiento de reportes y documentación operativa."
+          "Partner with leaders and teams on employee lifecycle matters, driving engagement across 50+ employees",
+          "Coordinate cross-functionally with HR, Facilities, and Finance to execute strategic initiatives",
+          "Manage employee experience programs, benefits administration, and engagement activities",
+          "Build and maintain HR reports and operational documentation"
         ]
       },
       {
-        role: "Analista de RR.HH. — Grupo Suessa",
+        role: "HR Analyst — Grupo Suessa",
         meta: "CABA, Argentina",
-        dates: "Dic 2022 – 2023",
+        dates: "Dec 2022 – 2023",
         bullets: [
-          "Organización de procesos de selección, onboarding y seguimiento administrativo.",
-          "Coordinación con candidatos y soporte operativo al área."
+          "Organized end-to-end recruitment processes, onboarding, and administrative follow-up",
+          "Coordinated with candidates and provided operational support to HR team"
         ]
       },
       {
-        role: "Gestión Académica y Administrativa — CFP Nº26",
+        role: "Academic & Administrative Management — CFP Nº26",
         meta: "CABA, Argentina",
         dates: "2015 – 2022",
         bullets: [
-          "Carrera progresiva: Administrativo / Preceptor → Equipo Pedagógico → Jefe Dpto. Alumnos.",
-          "Gestión documental, atención a alumnos y coordinación institucional."
+          "Progressive career: Administrative Assistant / Preceptor → Pedagogical Team → Head of Student Department",
+          "Managed documentation, student services, and institutional coordination"
         ]
       }
     ];
@@ -697,8 +1019,26 @@ Comunicación y organizaciones | CAME / UTN</textarea>
       }
     }
 
+    function showLoading(text = "Processing..."){
+      $("loadingText").textContent = text;
+      $("loadingOverlay").classList.add("active");
+    }
+
+    function hideLoading(){
+      $("loadingOverlay").classList.remove("active");
+    }
+
     // -----------------------------
-    // Foto modo: con / sin
+    // Mobile Collapsible Sections
+    // -----------------------------
+    function toggleSection(sectionId){
+      if(window.innerWidth > 768) return;
+      const section = $(sectionId);
+      section.classList.toggle("collapsed");
+    }
+
+    // -----------------------------
+    // Photo mode
     // -----------------------------
     function setPhotoMode(mode){
       const withPhoto = (mode === "with");
@@ -706,7 +1046,6 @@ Comunicación y organizaciones | CAME / UTN</textarea>
       document.body.classList.toggle("no-photo", !withPhoto);
 
       if(!withPhoto){
-        // limpiar vista foto
         $("inPhoto").value = "";
         $("cvPhotoImg").style.display = "none";
         $("cvPhotoLabel").style.display = "block";
@@ -714,7 +1053,7 @@ Comunicación y organizaciones | CAME / UTN</textarea>
     }
 
     // -----------------------------
-    // Traducción ES -> EN (heurística + glosario)
+    // Translation (ES -> EN)
     // -----------------------------
     const GLOSSARY = [
       [/\bRecursos Humanos\b/gi, "Human Resources"],
@@ -736,17 +1075,19 @@ Comunicación y organizaciones | CAME / UTN</textarea>
       [/\bDocumentación\b/gi, "documentation"],
       [/\bDic\b/gi, "Dec"]
     ];
+
     function tHeuristic(text){
       let out = text || "";
       for(const [re, rep] of GLOSSARY) out = out.replace(re, rep);
       return out;
     }
+
     function translateStructuredToEN(){
       document.documentElement.lang = "en";
 
       $("tProfileLbl").textContent = "Profile";
       $("tAreasLbl").textContent = "HR Areas (one per line)";
-      $("tEduLbl").textContent = "Education (lines: Degree — Institution | Detail)";
+      $("tEduLbl").textContent = "Education (Degree — Institution | Detail)";
       $("tCoursesLbl").textContent = "Additional Training (Course | Institution)";
       $("tExpEdit").textContent = "Experience (edit)";
 
@@ -794,12 +1135,147 @@ Comunicación y organizaciones | CAME / UTN</textarea>
     }
 
     // -----------------------------
+    // AI Features (Claude API)
+    // -----------------------------
+    async function callClaudeAPI(messages, systemPrompt = ""){
+      try{
+        const response = await fetch("https://api.anthropic.com/v1/messages", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            model: "claude-sonnet-4-20250514",
+            max_tokens: 2000,
+            system: systemPrompt,
+            messages: messages
+          })
+        });
+
+        if(!response.ok){
+          throw new Error(`API error: ${response.status}`);
+        }
+
+        const data = await response.json();
+        return data.content
+          .filter(item => item.type === "text")
+          .map(item => item.text)
+          .join("\n");
+      }catch(error){
+        console.error("Claude API error:", error);
+        throw error;
+      }
+    }
+
+    async function aiOptimizeBullets(){
+      showLoading("✨ AI is optimizing your bullets...");
+      
+      try{
+        const allBullets = jobs.flatMap(j => j.bullets || []);
+        const prompt = `Optimize these resume bullets for ATS and impact. Make them achievement-focused with metrics where possible. Keep the same number of bullets. Return ONLY the optimized bullets, one per line:
+
+${allBullets.join("\n")}`;
+
+        const result = await callClaudeAPI([
+          { role: "user", content: prompt }
+        ], "You are an expert resume writer. Optimize resume bullets to be achievement-focused, use strong action verbs, and include metrics when possible.");
+
+        const optimizedBullets = result.split("\n").filter(b => b.trim());
+        
+        let idx = 0;
+        jobs = jobs.map(j => {
+          const count = (j.bullets || []).length;
+          const newBullets = optimizedBullets.slice(idx, idx + count);
+          idx += count;
+          return { ...j, bullets: newBullets };
+        });
+
+        renderJobsEditor();
+        syncText();
+        autoSaveSoft();
+        hideLoading();
+        alert("✨ Bullets optimized! Review and adjust as needed.");
+      }catch(error){
+        hideLoading();
+        alert("❌ AI optimization failed. Please try again.");
+      }
+    }
+
+    async function aiEnhanceProfile(){
+      showLoading("✨ AI is enhancing your profile...");
+      
+      try{
+        const currentProfile = $("inProfile").value;
+        const jobTitles = jobs.map(j => j.role).join(", ");
+        
+        const prompt = `Enhance this professional profile to be more compelling and ATS-friendly. Keep it concise (2-3 sentences). Current profile:
+
+${currentProfile}
+
+Job history: ${jobTitles}
+
+Return ONLY the enhanced profile text.`;
+
+        const result = await callClaudeAPI([
+          { role: "user", content: prompt }
+        ], "You are an expert resume writer. Create compelling, ATS-optimized professional summaries.");
+
+        $("inProfile").value = result.trim();
+        syncText();
+        autoSaveSoft();
+        hideLoading();
+        alert("✨ Profile enhanced!");
+      }catch(error){
+        hideLoading();
+        alert("❌ AI enhancement failed. Please try again.");
+      }
+    }
+
+    async function aiGenerateJobDescription(){
+      const jobTitle = prompt("Enter job title (e.g., 'Senior HRBP', 'HR Manager'):");
+      if(!jobTitle) return;
+
+      showLoading("✨ AI is generating job description...");
+      
+      try{
+        const prompt = `Generate 3-4 strong, achievement-focused resume bullets for a ${jobTitle} position. Include metrics and impact. Return ONLY the bullets, one per line.`;
+
+        const result = await callClaudeAPI([
+          { role: "user", content: prompt }
+        ], "You are an expert resume writer. Generate compelling, metrics-driven resume bullets.");
+
+        const bullets = result.split("\n").filter(b => b.trim());
+        
+        jobs.unshift({
+          role: jobTitle,
+          meta: "Location",
+          dates: "Year – Year",
+          bullets: bullets
+        });
+
+        renderJobsEditor();
+        syncText();
+        autoSaveSoft();
+        hideLoading();
+        alert("✨ Job description generated! Edit the details.");
+      }catch(error){
+        hideLoading();
+        alert("❌ AI generation failed. Please try again.");
+      }
+    }
+
+    $("btnAIOptimize").addEventListener("click", aiOptimizeBullets);
+    $("btnAIProfile").addEventListener("click", aiEnhanceProfile);
+    $("btnAIGenerate").addEventListener("click", aiGenerateJobDescription);
+
+    // -----------------------------
     // Render CV
     // -----------------------------
     function renderAreas(){
       const lines = $("inAreas").value.split("\n").map(s=>s.trim()).filter(Boolean);
       $("cvAreas").innerHTML = lines.map(l => `<li>${escapeHTML(l)}</li>`).join("");
     }
+
     function renderEdu(){
       const lines = $("inEdu").value.split("\n").map(s=>s.trim()).filter(Boolean);
       $("cvEdu").innerHTML = lines.map(l => {
@@ -810,6 +1286,7 @@ Comunicación y organizaciones | CAME / UTN</textarea>
         return `<p style="margin:0 0 3mm 0;"><strong>${escapeHTML(l)}</strong></p>`;
       }).join("");
     }
+
     function renderCourses(){
       const lines = $("inCourses").value.split("\n").map(s=>s.trim()).filter(Boolean);
       $("cvCourses").innerHTML = lines.map(l => {
@@ -824,6 +1301,7 @@ Comunicación y organizaciones | CAME / UTN</textarea>
         `;
       }).join("");
     }
+
     function jobNode(j){
       const wrap = document.createElement("div");
       wrap.className = "job";
@@ -874,13 +1352,13 @@ Comunicación y organizaciones | CAME / UTN</textarea>
       const wrapper = document.createElement("div");
       wrapper.className = "page2Grid";
 
-      const tAreas = $("tAreas").textContent || "Áreas HR";
-      const tEdu = $("tEdu").textContent || "Educación";
-      const tCourses = $("tCourses").textContent || "Formación complementaria";
+      const tAreas = $("tAreas").textContent || "HR Areas";
+      const tEdu = $("tEdu").textContent || "Education";
+      const tCourses = $("tCourses").textContent || "Additional Training";
 
       wrapper.innerHTML = `
         <div class="card span2">
-          <h2 class="title">${detectLang()==="en" ? "Highlights" : "Highlights"}</h2>
+          <h2 class="title">Highlights</h2>
           <ul class="bullets">
             ${highlights.map(h=>`<li>${escapeHTML(h)}</li>`).join("")}
           </ul>
@@ -963,45 +1441,78 @@ Comunicación y organizaciones | CAME / UTN</textarea>
     }
 
     // -----------------------------
-    // Jobs editor
+    // Jobs editor with Drag & Drop
     // -----------------------------
+    let draggedIndex = null;
+
     function renderJobsEditor(){
       const list = $("jobsEditorList");
       list.innerHTML = "";
       jobs.forEach((j, idx) => {
         const card = document.createElement("div");
         card.className = "jobCard";
+        card.draggable = true;
+        card.dataset.idx = idx;
+        
         card.innerHTML = `
           <div class="jobCardTop">
-            <div style="font-weight:900; font-size:13px;">Experiencia #${idx+1}</div>
+            <div style="font-weight:900; font-size:13px;">💼 Job #${idx+1}</div>
             <div class="mini">
               <button class="secondary" data-act="up" data-idx="${idx}">↑</button>
               <button class="secondary" data-act="down" data-idx="${idx}">↓</button>
-              <button class="danger" data-act="del" data-idx="${idx}">Eliminar</button>
+              <button class="danger" data-act="del" data-idx="${idx}">Delete</button>
             </div>
           </div>
 
           <div class="grid2" style="margin-bottom:8px;">
             <div class="row" style="margin:0;">
-              <label>Rol — Empresa</label>
+              <label>Role — Company</label>
               <input data-k="role" data-idx="${idx}" value="${escapeHTML(j.role)}"/>
             </div>
             <div class="row" style="margin:0;">
-              <label>Fechas</label>
+              <label>Dates</label>
               <input data-k="dates" data-idx="${idx}" value="${escapeHTML(j.dates)}"/>
             </div>
           </div>
 
           <div class="row" style="margin-bottom:8px;">
-            <label>Ubicación</label>
+            <label>Location</label>
             <input data-k="meta" data-idx="${idx}" value="${escapeHTML(j.meta)}"/>
           </div>
 
           <div class="row" style="margin:0;">
-            <label>Bullets (1 por línea)</label>
+            <label>Bullets (one per line)</label>
             <textarea data-k="bullets" data-idx="${idx}">${escapeHTML((j.bullets||[]).join("\n"))}</textarea>
           </div>
         `;
+
+        // Drag events
+        card.addEventListener("dragstart", (e) => {
+          draggedIndex = idx;
+          card.classList.add("dragging");
+        });
+
+        card.addEventListener("dragend", (e) => {
+          card.classList.remove("dragging");
+          draggedIndex = null;
+        });
+
+        card.addEventListener("dragover", (e) => {
+          e.preventDefault();
+        });
+
+        card.addEventListener("drop", (e) => {
+          e.preventDefault();
+          if(draggedIndex === null || draggedIndex === idx) return;
+          
+          const item = jobs.splice(draggedIndex, 1)[0];
+          jobs.splice(idx, 0, item);
+          
+          renderJobsEditor();
+          syncText();
+          autoSaveSoft();
+        });
+
         list.appendChild(card);
       });
     }
@@ -1013,17 +1524,20 @@ Comunicación y organizaciones | CAME / UTN</textarea>
       renderJobsEditor();
       syncText();
     }
+
     function deleteJob(idx){
+      if(!confirm("Delete this job?")) return;
       jobs.splice(idx, 1);
       renderJobsEditor();
       syncText();
     }
+
     function addJob(){
       jobs.unshift({
-        role: "Nuevo rol — Empresa",
-        meta: "Buenos Aires, Argentina",
-        dates: "2024 – 2025",
-        bullets: ["Logro medible 1", "Logro medible 2"]
+        role: "New Role — Company",
+        meta: "Location",
+        dates: "Year – Year",
+        bullets: ["Achievement 1", "Achievement 2"]
       });
       renderJobsEditor();
       syncText();
@@ -1060,7 +1574,7 @@ Comunicación y organizaciones | CAME / UTN</textarea>
     $("btnAddJob").addEventListener("click", () => { addJob(); autoSaveSoft(); });
 
     // -----------------------------
-    // Foto upload (solo si con foto)
+    // Photo upload
     // -----------------------------
     $("inPhoto").addEventListener("change", (e) => {
       if($("inPhotoMode").value !== "with") return;
@@ -1077,10 +1591,10 @@ Comunicación y organizaciones | CAME / UTN</textarea>
     });
 
     // -----------------------------
-    // Template + Compact + Photo mode
+    // Template, Compact, Theme, Photo mode
     // -----------------------------
     $("inTemplate").addEventListener("change", () => {
-      document.body.classList.remove("tpl-classic","tpl-modern","tpl-sidebar","tpl-minimal");
+      document.body.classList.remove("tpl-classic","tpl-modern","tpl-sidebar","tpl-minimal","tpl-executive","tpl-creative");
       document.body.classList.add($("inTemplate").value);
       syncText();
       autoSaveSoft();
@@ -1088,6 +1602,13 @@ Comunicación y organizaciones | CAME / UTN</textarea>
 
     $("inCompact").addEventListener("change", () => {
       document.body.classList.toggle("compact", $("inCompact").value === "on");
+      syncText();
+      autoSaveSoft();
+    });
+
+    $("inTheme").addEventListener("change", () => {
+      document.body.classList.remove("theme-blue","theme-purple","theme-green","theme-red","theme-orange");
+      if($("inTheme").value) document.body.classList.add($("inTheme").value);
       syncText();
       autoSaveSoft();
     });
@@ -1109,83 +1630,6 @@ Comunicación y organizaciones | CAME / UTN</textarea>
     LIVE_IDS.forEach(id => $(id).addEventListener("input", () => { syncText(); autoSaveSoft(); }));
 
     // -----------------------------
-    // Optimizar bullets (ATS / Premium)
-    // -----------------------------
-    function normalizeBullet(s){
-      let t = (s || "").trim();
-      t = t.replace(/\s+/g, " ");
-      t = t.replace(/[•·]+/g, "");
-      t = t.replace(/\.\s*$/,"");
-      if(t.length) t = t[0].toUpperCase() + t.slice(1);
-      return t;
-    }
-    function hasMetricLike(s){
-      return /(\d+[%]?)|(\b(kpi|sla|okr|nps|csat|ttr|ttf|headcount|hc)\b)/i.test(s || "");
-    }
-    function ensureActionVerbStart(s, lang){
-      const t = s.trim();
-      if(!t) return t;
-
-      if(lang === "en"){
-        if(/^(Led|Managed|Owned|Built|Implemented|Coordinated|Partnered|Delivered|Developed|Optimized|Streamlined|Designed|Created|Analyzed|Automated)\b/i.test(t)) return t;
-        if(/^(Leading|Managing|Building|Implementing|Coordinating|Partnering|Delivering)\b/i.test(t)) return t;
-      }else{
-        if(/^(Lider[ée]?|Gestion[ée]?|Coordin[ée]?|Implement[ée]?|Desarroll[ée]?|Optimic[ée]?|Estandaric[ée]?|Diseñ[ée]?|Cre[ée]?|Analic[ée]?|Automatiz[ée]?|Ejecut[ée]?|Administr[ée]?)\b/i.test(t)) return t;
-      }
-
-      return (lang === "en" ? "Supported " : "Soporte en ") + t;
-    }
-    function toATS(bullet, lang){
-      let t = normalizeBullet(bullet);
-      t = ensureActionVerbStart(t, lang);
-      if(!hasMetricLike(t)){
-        t += (lang === "en") ? " — Impact: [metric/scale]" : " — Impacto: [métrica/escala]";
-      }
-      return t;
-    }
-    function toPremium(bullet, lang){
-      let t = normalizeBullet(bullet);
-
-      if(lang !== "en"){
-        t = t
-          .replace(/^Soporte HRBP\b/i, "Brindé soporte HRBP")
-          .replace(/^Soporte en\b/i, "Brindé soporte en");
-        t = ensureActionVerbStart(t, "es");
-        if(!/—/.test(t)) t += " —";
-        if(!/Impacto:/i.test(t)){
-          t += " Impacto: [métrica] (ej: +%, -tiempo, +N colaboradores)";
-        }
-        return t;
-      }
-
-      t = t.replace(/^Support(ed)?\b/i, "Partnered").replace(/^Supported\b/i, "Partnered");
-      t = ensureActionVerbStart(t, "en");
-      if(!/—/.test(t)) t += " —";
-      if(!/Impact:/i.test(t)){
-        t += " Impact: [metric] (e.g., +%, -time, +N employees)";
-      }
-      return t;
-    }
-    function optimizeBullets(style){
-      const lang = detectLang();
-      jobs = jobs.map(j => {
-        const bullets = (j.bullets || []).map(b => style === "premium" ? toPremium(b, lang) : toATS(b, lang));
-        return { ...j, bullets };
-      });
-      renderJobsEditor();
-      syncText();
-      autoSaveSoft();
-    }
-
-    $("btnOptimizeBullets").addEventListener("click", () => {
-      const wantPremium = confirm(
-        "¿Querés optimización PREMIUM?\n\nOK = Premium (más potente)\nCancelar = ATS (simple)"
-      );
-      optimizeBullets(wantPremium ? "premium" : "ats");
-      alert("Listo. Revisá y reemplazá los placeholders [métrica].");
-    });
-
-    // -----------------------------
     // Save / Load / Export / Import
     // -----------------------------
     function getDraft(){
@@ -1194,6 +1638,7 @@ Comunicación y organizaciones | CAME / UTN</textarea>
         meta: {
           template: $("inTemplate").value,
           compact: $("inCompact").value,
+          theme: $("inTheme").value,
           photoMode: $("inPhotoMode").value,
           photoDataUrl: (photoEnabled && $("cvPhotoImg").style.display !== "none") ? $("cvPhotoImg").src : ""
         },
@@ -1219,12 +1664,17 @@ Comunicación y organizaciones | CAME / UTN</textarea>
 
       if(d.meta?.template){
         $("inTemplate").value = d.meta.template;
-        document.body.classList.remove("tpl-classic","tpl-modern","tpl-sidebar","tpl-minimal");
+        document.body.classList.remove("tpl-classic","tpl-modern","tpl-sidebar","tpl-minimal","tpl-executive","tpl-creative");
         document.body.classList.add(d.meta.template);
       }
       if(d.meta?.compact){
         $("inCompact").value = d.meta.compact;
         document.body.classList.toggle("compact", d.meta.compact === "on");
+      }
+      if(d.meta?.theme !== undefined){
+        $("inTheme").value = d.meta.theme || "";
+        document.body.classList.remove("theme-blue","theme-purple","theme-green","theme-red","theme-orange");
+        if(d.meta.theme) document.body.classList.add(d.meta.theme);
       }
       if(d.meta?.photoMode){
         $("inPhotoMode").value = d.meta.photoMode;
@@ -1238,7 +1688,6 @@ Comunicación y organizaciones | CAME / UTN</textarea>
 
       if(Array.isArray(d.jobs)) jobs = d.jobs;
 
-      // foto
       if(d.meta?.photoMode === "with" && d.meta?.photoDataUrl){
         $("cvPhotoImg").src = d.meta.photoDataUrl;
         $("cvPhotoImg").style.display = "block";
@@ -1271,7 +1720,7 @@ Comunicación y organizaciones | CAME / UTN</textarea>
       clearTimeout(saveTimer);
       saveTimer = setTimeout(() => {
         try{ saveDraftHard(); }catch{}
-      }, 350);
+      }, 500);
     }
 
     async function tryCopy(text){
@@ -1285,43 +1734,46 @@ Comunicación y organizaciones | CAME / UTN</textarea>
 
     $("btnSave").addEventListener("click", () => {
       saveDraftHard();
-      alert("Borrador guardado.");
+      alert("✅ Draft saved!");
     });
 
     $("btnLoad").addEventListener("click", () => {
       const ok = loadDraftHard();
-      if(!ok) alert("No hay borrador guardado (o está corrupto).");
+      if(ok) alert("✅ Draft loaded!");
+      else alert("❌ No saved draft found.");
     });
 
     $("btnExport").addEventListener("click", async () => {
       const json = JSON.stringify(getDraft(), null, 2);
       const copied = await tryCopy(json);
-      if(copied) alert("JSON copiado al portapapeles.");
-      else prompt("Copiá este JSON:", json);
+      if(copied) alert("✅ JSON copied to clipboard!");
+      else prompt("Copy this JSON:", json);
     });
 
     $("btnImport").addEventListener("click", () => {
-      const raw = prompt("Pegá el JSON exportado:");
+      const raw = prompt("Paste exported JSON:");
       if(!raw) return;
       try{
         const d = JSON.parse(raw);
         applyDraft(d);
-        alert("Importado OK.");
+        alert("✅ Imported successfully!");
       }catch{
-        alert("JSON inválido.");
+        alert("❌ Invalid JSON.");
       }
     });
 
     // -----------------------------
-    // PDF export (robusto + links clickeables)
+    // PDF export
     // -----------------------------
     function getVisiblePapers(){
       return Array.from(document.querySelectorAll(".paper"))
         .filter(p => p.style.display !== "none");
     }
+
     function pxToMm(px, elementPxWidth){
       return (px * 210) / elementPxWidth;
     }
+
     function getRectMmWithinPage(el, pageEl){
       const r = el.getBoundingClientRect();
       const pr = pageEl.getBoundingClientRect();
@@ -1340,7 +1792,7 @@ Comunicación y organizaciones | CAME / UTN</textarea>
       const html2canvasFn = window.html2canvas;
       const jsPDFmod = window.jspdf;
       if(!html2canvasFn || !jsPDFmod?.jsPDF){
-        throw new Error("html2canvas o jsPDF no disponibles");
+        throw new Error("html2canvas or jsPDF not available");
       }
 
       const { jsPDF } = jsPDFmod;
@@ -1407,11 +1859,20 @@ Comunicación y organizaciones | CAME / UTN</textarea>
 
     $("btnPDF").addEventListener("click", async () => {
       syncText();
+      showLoading("📄 Generating PDF...");
+      
       try{
         await exportPdfRobusto();
+        hideLoading();
       }catch(err){
-        console.warn("Export robusto falló, uso fallback html2pdf:", err);
-        await exportPdfFallbackHtml2Pdf();
+        console.warn("Robust export failed, using fallback:", err);
+        try{
+          await exportPdfFallbackHtml2Pdf();
+          hideLoading();
+        }catch(err2){
+          hideLoading();
+          alert("❌ PDF generation failed. Please try again.");
+        }
       }
     });
 
@@ -1419,38 +1880,44 @@ Comunicación y organizaciones | CAME / UTN</textarea>
     // Translate to EN
     // -----------------------------
     $("btnTranslateEN").addEventListener("click", () => {
-      translateStructuredToEN();
-      syncText();
-      autoSaveSoft();
+      if(confirm("Translate all content to English?")){
+        translateStructuredToEN();
+        syncText();
+        autoSaveSoft();
+        alert("✅ Translated to English!");
+      }
     });
 
     // -----------------------------
     // Reset
     // -----------------------------
     $("btnReset").addEventListener("click", () => {
+      if(!confirm("Reset to default? This will erase all changes.")) return;
+      
       localStorage.removeItem(STORAGE_KEY);
       document.documentElement.lang = "es";
 
       $("inTemplate").value = "tpl-classic";
-      document.body.classList.remove("tpl-classic","tpl-modern","tpl-sidebar","tpl-minimal","compact","no-photo");
+      document.body.classList.remove("tpl-classic","tpl-modern","tpl-sidebar","tpl-minimal","tpl-executive","tpl-creative","compact","no-photo","theme-blue","theme-purple","theme-green","theme-red","theme-orange");
       document.body.classList.add("tpl-classic");
+      
       $("inCompact").value = "off";
-
+      $("inTheme").value = "";
       $("inPhotoMode").value = "with";
       setPhotoMode("with");
 
-      $("tProfileLbl").textContent = "Perfil";
-      $("tAreasLbl").textContent = "Áreas HR (una por línea)";
-      $("tEduLbl").textContent = "Educación (líneas: Título — Institución | Detalle)";
-      $("tCoursesLbl").textContent = "Formación complementaria (Curso | Institución)";
-      $("tExpEdit").textContent = "Experiencia (editar)";
+      $("tProfileLbl").textContent = "Profile";
+      $("tAreasLbl").textContent = "HR Areas (one per line)";
+      $("tEduLbl").textContent = "Education (Degree — Institution | Detail)";
+      $("tCoursesLbl").textContent = "Additional Training (Course | Institution)";
+      $("tExpEdit").textContent = "Experience (edit)";
 
-      $("tProfile").textContent = "Perfil";
-      $("tExperience").textContent = "Experiencia";
-      $("tExperience2").textContent = "Experiencia";
-      $("tAreas").textContent = "Áreas HR";
-      $("tEdu").textContent = "Educación";
-      $("tCourses").textContent = "Formación complementaria";
+      $("tProfile").textContent = "Profile";
+      $("tExperience").textContent = "Experience";
+      $("tExperience2").textContent = "Experience";
+      $("tAreas").textContent = "HR Areas";
+      $("tEdu").textContent = "Education";
+      $("tCourses").textContent = "Additional Training";
 
       $("inName").value = "Camilo Eguiazabal";
       $("inDegree").value = "Lic. en Recursos Humanos";
@@ -1476,18 +1943,23 @@ Comunicación y organizaciones | CAME / UTN</textarea>
 
       renderJobsEditor();
       syncText();
+      alert("✅ Reset complete!");
     });
 
     // -----------------------------
     // INIT
     // -----------------------------
-    // Defaults
     setPhotoMode($("inPhotoMode").value);
-
-    // load draft if exists
     renderJobsEditor();
     const loaded = loadDraftHard();
     if(!loaded) syncText();
+
+    // Collapse sections on mobile by default
+    if(window.innerWidth <= 768){
+      ["sectionTemplate", "sectionAdditional"].forEach(id => {
+        $(id).classList.add("collapsed");
+      });
+    }
   </script>
 </body>
 </html>
