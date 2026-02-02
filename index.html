@@ -218,14 +218,6 @@
       border:1px solid var(--line);
     }
     button.danger{ background:#EF4444; }
-    button.ai-btn{
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      position: relative;
-    }
-    button.ai-btn::before{
-      content: '✨';
-      margin-right: 6px;
-    }
     .hint{
       font-size:12px;
       color:var(--muted);
@@ -339,35 +331,6 @@
       font-weight:800;
     }
     .jobCard textarea{ min-height:64px; }
-
-    /* ===== AI Features Panel ===== */
-    .ai-panel{
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      border-radius: 14px;
-      padding: 16px;
-      margin-bottom: 16px;
-      color: #fff;
-    }
-    .ai-panel h3{
-      margin: 0 0 12px 0;
-      font-size: 13px;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    .ai-panel button{
-      background: rgba(255,255,255,0.2);
-      backdrop-filter: blur(10px);
-      border: 1px solid rgba(255,255,255,0.3);
-      color: #fff;
-      width: 100%;
-      margin-bottom: 8px;
-    }
-    .ai-panel button:hover{
-      background: rgba(255,255,255,0.3);
-    }
 
     /* ===== Preview ===== */
     .stage{
@@ -702,14 +665,6 @@
     <!-- PANEL -->
     <aside class="panel">
       <h2>CV Builder <span class="badge">PRO</span></h2>
-
-      <!-- AI Panel -->
-      <div class="ai-panel">
-        <h3>✨ Asistente IA</h3>
-        <button id="btnAIOptimize" class="ai-btn" type="button">Optimizar Bullets con IA</button>
-        <button id="btnAIProfile" class="ai-btn" type="button">Mejorar Perfil con IA</button>
-        <button id="btnAITranslate" class="ai-btn" type="button">Traducir Trabajo con IA</button>
-      </div>
 
       <!-- Smart Tools -->
       <div style="background:#F3F4F6; border-radius:14px; padding:16px; margin-bottom:16px;">
@@ -1139,172 +1094,6 @@ Comunicación y organizaciones | CAME / UTN</textarea>
     }
 
     // -----------------------------
-    // AI Features (Claude API)
-    // -----------------------------
-    async function callClaudeAPI(messages, systemPrompt = ""){
-      try{
-        const response = await fetch("https://api.anthropic.com/v1/messages", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            model: "claude-sonnet-4-20250514",
-            max_tokens: 2000,
-            system: systemPrompt,
-            messages: messages
-          })
-        });
-
-        if(!response.ok){
-          throw new Error(`API error: ${response.status}`);
-        }
-
-        const data = await response.json();
-        return data.content
-          .filter(item => item.type === "text")
-          .map(item => item.text)
-          .join("\n");
-      }catch(error){
-        console.error("Claude API error:", error);
-        throw error;
-      }
-    }
-
-    async function aiOptimizeBullets(){
-      showLoading("✨ IA optimizando tus bullets...");
-      
-      try{
-        const allBullets = jobs.flatMap(j => j.bullets || []);
-        const prompt = `Optimiza estos bullets de CV para ATS e impacto. Hacelos orientados a logros con métricas cuando sea posible. Mantené la misma cantidad de bullets. Devolvé SOLAMENTE los bullets optimizados, uno por línea, en español:
-
-${allBullets.join("\n")}`;
-
-        const result = await callClaudeAPI([
-          { role: "user", content: prompt }
-        ], "Sos un experto en escribir CVs. Optimiza bullets de CV para que estén enfocados en logros, usen verbos de acción fuertes e incluyan métricas cuando sea posible.");
-
-        const optimizedBullets = result.split("\n").filter(b => b.trim());
-        
-        let idx = 0;
-        jobs = jobs.map(j => {
-          const count = (j.bullets || []).length;
-          const newBullets = optimizedBullets.slice(idx, idx + count);
-          idx += count;
-          return { ...j, bullets: newBullets };
-        });
-
-        renderJobsEditor();
-        syncText();
-        autoSaveSoft();
-        hideLoading();
-        alert("✨ ¡Bullets optimizados! Revisá y ajustá según necesites.");
-      }catch(error){
-        hideLoading();
-        alert("❌ Error al optimizar. Intentá nuevamente.");
-      }
-    }
-
-    async function aiEnhanceProfile(){
-      showLoading("✨ IA mejorando tu perfil...");
-      
-      try{
-        const currentProfile = $("inProfile").value;
-        const jobTitles = jobs.map(j => j.role).join(", ");
-        
-        const prompt = `Mejora este perfil profesional para que sea más impactante y optimizado para ATS. Mantenerlo conciso (2-3 oraciones). Perfil actual:
-
-${currentProfile}
-
-Historial laboral: ${jobTitles}
-
-Devolvé SOLAMENTE el texto del perfil mejorado en español.`;
-
-        const result = await callClaudeAPI([
-          { role: "user", content: prompt }
-        ], "Sos un experto en escribir CVs. Creá resúmenes profesionales convincentes y optimizados para ATS.");
-
-        $("inProfile").value = result.trim();
-        syncText();
-        autoSaveSoft();
-        hideLoading();
-        alert("✨ ¡Perfil mejorado!");
-      }catch(error){
-        hideLoading();
-        alert("❌ Error al mejorar el perfil. Intentá nuevamente.");
-      }
-    }
-
-    async function aiTranslateJob(){
-      if(jobs.length === 0){
-        alert("❌ No hay trabajos para traducir.");
-        return;
-      }
-
-      const indices = jobs.map((j, i) => `${i+1}: ${j.role}`).join("\n");
-      const input = prompt(`Selecciona el número del trabajo a traducir:\n\n${indices}\n\nNúmero:`);
-      if(!input) return;
-
-      const idx = parseInt(input) - 1;
-      if(idx < 0 || idx >= jobs.length){
-        alert("❌ Número inválido.");
-        return;
-      }
-
-      const targetLang = confirm("¿Traducir a inglés? (Cancelar = traducir a español)") ? "inglés" : "español";
-      showLoading(`✨ IA traduciendo a ${targetLang}...`);
-
-      try{
-        const job = jobs[idx];
-        const prompt = `Traducí este trabajo de CV a ${targetLang} manteniendo el formato profesional:
-
-Rol: ${job.role}
-Ubicación: ${job.meta}
-Fechas: ${job.dates}
-Logros:
-${job.bullets.join("\n")}
-
-Devolvé en formato:
-ROL: [rol traducido]
-UBICACIÓN: [ubicación traducida]
-FECHAS: [fechas traducidas]
-LOGROS:
-- [logro 1]
-- [logro 2]
-...`;
-
-        const result = await callClaudeAPI([
-          { role: "user", content: prompt }
-        ], `Sos un traductor experto especializado en CVs. Traducí al ${targetLang} manteniendo el impacto profesional.`);
-
-        // Parse result
-        const lines = result.split("\n");
-        let newRole = job.role;
-        let newMeta = job.meta;
-        let newDates = job.dates;
-        const newBullets = [];
-
-        for(const line of lines){
-          if(line.startsWith("ROL:")) newRole = line.substring(4).trim();
-          else if(line.startsWith("UBICACIÓN:")) newMeta = line.substring(10).trim();
-          else if(line.startsWith("FECHAS:")) newDates = line.substring(7).trim();
-          else if(line.trim().startsWith("-")) newBullets.push(line.trim().substring(1).trim());
-        }
-
-        jobs[idx] = { role: newRole, meta: newMeta, dates: newDates, bullets: newBullets.length > 0 ? newBullets : job.bullets };
-
-        renderJobsEditor();
-        syncText();
-        autoSaveSoft();
-        hideLoading();
-        alert(`✨ ¡Trabajo traducido a ${targetLang}!`);
-      }catch(error){
-        hideLoading();
-        alert("❌ Error al traducir. Intentá nuevamente.");
-      }
-    }
-
-    // -----------------------------
     // Smart Tools
     // -----------------------------
     function autoFormat(){
@@ -1375,11 +1164,7 @@ LOGROS:
       alert("✅ Trabajo duplicado! Editá los detalles.");
     }
 
-    $("btnAIOptimize").addEventListener("click", aiOptimizeBullets);
-    $("btnAIProfile").addEventListener("click", aiEnhanceProfile);
-    $("btnAITranslate").addEventListener("click", aiTranslateJob);
-
-    // Smart tools
+    // Smart tools event listeners
     $("btnAutoFormat").addEventListener("click", autoFormat);
     $("btnSpellCheck").addEventListener("click", spellCheck);
     $("btnCountWords").addEventListener("click", countWords);
@@ -2039,4 +1824,14 @@ LOGROS:
     setPhotoMode($("inPhotoMode").value);
     renderJobsEditor();
     const loaded = loadDraftHard();
-    if(!loa
+    if(!loaded) syncText();
+
+    // Collapse sections on mobile by default
+    if(window.innerWidth <= 768){
+      ["sectionTemplate", "sectionAdditional"].forEach(id => {
+        $(id).classList.add("collapsed");
+      });
+    }
+  </script>
+</body>
+</html>
