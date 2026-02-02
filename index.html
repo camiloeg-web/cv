@@ -705,62 +705,73 @@
 
       <!-- AI Panel -->
       <div class="ai-panel">
-        <h3>✨ AI Features</h3>
-        <button id="btnAIOptimize" class="ai-btn" type="button">Optimize All Bullets</button>
-        <button id="btnAIProfile" class="ai-btn" type="button">Enhance Profile</button>
-        <button id="btnAIGenerate" class="ai-btn" type="button">Generate Job Description</button>
+        <h3>✨ Asistente IA</h3>
+        <button id="btnAIOptimize" class="ai-btn" type="button">Optimizar Bullets con IA</button>
+        <button id="btnAIProfile" class="ai-btn" type="button">Mejorar Perfil con IA</button>
+        <button id="btnAITranslate" class="ai-btn" type="button">Traducir Trabajo con IA</button>
+      </div>
+
+      <!-- Smart Tools -->
+      <div style="background:#F3F4F6; border-radius:14px; padding:16px; margin-bottom:16px;">
+        <h3 style="margin:0 0 12px 0; font-size:13px; letter-spacing:0.12em; text-transform:uppercase; color:var(--accent); font-weight:900;">🛠️ Herramientas Inteligentes</h3>
+        <div class="grid2" style="gap:8px;">
+          <button id="btnAutoFormat" class="secondary" type="button" style="font-size:12px; padding:8px;">✨ Auto-formato</button>
+          <button id="btnSpellCheck" class="secondary" type="button" style="font-size:12px; padding:8px;">📝 Revisar texto</button>
+          <button id="btnCountWords" class="secondary" type="button" style="font-size:12px; padding:8px;">📊 Contar palabras</button>
+          <button id="btnDuplicateJob" class="secondary" type="button" style="font-size:12px; padding:8px;">📋 Duplicar último</button>
+        </div>
       </div>
 
       <!-- Template & Style Section -->
       <div class="collapsible-section" id="sectionTemplate">
         <div class="collapsible-header" onclick="toggleSection('sectionTemplate')">
-          <h3>Template & Style</h3>
+          <h3>Plantilla y Estilo</h3>
           <span class="collapsible-icon">▼</span>
         </div>
         <div class="collapsible-content">
           <div class="grid2">
             <div class="row">
-              <label>Template</label>
+              <label>Plantilla</label>
               <select id="inTemplate">
-                <option value="tpl-classic">Classic (ATS)</option>
-                <option value="tpl-modern">Modern (Cards)</option>
-                <option value="tpl-sidebar">Sidebar (Left)</option>
-                <option value="tpl-minimal">Minimal</option>
-                <option value="tpl-executive">Executive</option>
-                <option value="tpl-creative">Creative</option>
+                <option value="tpl-classic">Clásica (ATS)</option>
+                <option value="tpl-modern">Moderna (Tarjetas)</option>
+                <option value="tpl-sidebar">Barra Lateral</option>
+                <option value="tpl-minimal">Minimalista</option>
+                <option value="tpl-executive">Ejecutiva</option>
+                <option value="tpl-creative">Creativa</option>
               </select>
             </div>
             <div class="row">
-              <label>Layout</label>
+              <label>Diseño</label>
               <select id="inCompact">
                 <option value="off">Normal</option>
-                <option value="on">Compact</option>
+                <option value="on">Compacto</option>
               </select>
             </div>
           </div>
 
           <div class="row">
-            <label>Color Theme</label>
+            <label>Tema de Color</label>
             <select id="inTheme">
-              <option value="">Default</option>
-              <option value="theme-blue">Blue</option>
-              <option value="theme-purple">Purple</option>
-              <option value="theme-green">Green</option>
-              <option value="theme-red">Red</option>
-              <option value="theme-orange">Orange</option>
+              <option value="">Por defecto</option>
+              <option value="theme-blue">Azul</option>
+              <option value="theme-purple">Púrpura</option>
+              <option value="theme-green">Verde</option>
+              <option value="theme-red">Rojo</option>
+              <option value="theme-orange">Naranja</option>
             </select>
           </div>
 
           <div class="grid2">
             <div class="row">
-              <label>Photo</label>
+              <label>Foto</label>
               <select id="inPhotoMode">
-                <option value="with">With Photo</option>
-                <option value="without">Without Photo</option>
+                <option value="with">Con foto</option>
+                <option value="without">Sin foto</option>
               </select>
             </div>
             <div class="row">
-              <label>Upload Photo</label>
+              <label>Subir foto</label>
               <input id="inPhoto" type="file" accept="image/*" />
             </div>
           </div>
@@ -770,17 +781,17 @@
       <!-- Personal Info Section -->
       <div class="collapsible-section" id="sectionPersonal">
         <div class="collapsible-header" onclick="toggleSection('sectionPersonal')">
-          <h3>Personal Info</h3>
+          <h3>Información Personal</h3>
           <span class="collapsible-icon">▼</span>
         </div>
         <div class="collapsible-content">
           <div class="grid2">
             <div class="row">
-              <label>Full Name</label>
+              <label>Nombre completo</label>
               <input id="inName" value="Camilo Eguiazabal" />
             </div>
             <div class="row">
-              <label>Title</label>
+              <label>Título profesional</label>
               <input id="inDegree" value="Lic. en Recursos Humanos" />
             </div>
           </div>
@@ -796,23 +807,23 @@
               <input id="inEmail" value="ceguiazabal@gmail.com" />
             </div>
             <div class="row">
-              <label>Phone</label>
+              <label>Teléfono</label>
               <input id="inPhone" value="+54 11 2396-2046" />
             </div>
           </div>
 
           <div class="row">
-            <label>LinkedIn URL</label>
+            <label>LinkedIn (URL)</label>
             <input id="inLinkedIn" value="https://www.linkedin.com/in/cegui" />
           </div>
 
           <div class="row">
-            <label>Location</label>
+            <label>Ubicación</label>
             <input id="inLocation" value="Buenos Aires, Argentina" />
           </div>
 
           <div class="row">
-            <label id="tProfileLbl">Profile</label>
+            <label id="tProfileLbl">Perfil profesional</label>
             <textarea id="inProfile">Licenciado en Recursos Humanos con experiencia en entornos corporativos y trayectoria sólida en gestión administrativa y coordinación. Actualmente HRBP Contractor en Oracle, con foco en employee experience, comunicación interna, ejecución de iniciativas de RR.HH. y trabajo cross-functional.</textarea>
           </div>
         </div>
@@ -821,12 +832,12 @@
       <!-- Additional Sections -->
       <div class="collapsible-section" id="sectionAdditional">
         <div class="collapsible-header" onclick="toggleSection('sectionAdditional')">
-          <h3>Additional Info</h3>
+          <h3>Información Adicional</h3>
           <span class="collapsible-icon">▼</span>
         </div>
         <div class="collapsible-content">
           <div class="row">
-            <label id="tAreasLbl">HR Areas (one per line)</label>
+            <label id="tAreasLbl">Áreas HR (una por línea)</label>
             <textarea id="inAreas">HRBP Support
 Employee Experience
 HR Operations
@@ -837,13 +848,13 @@ HR Reporting</textarea>
           </div>
 
           <div class="row">
-            <label id="tEduLbl">Education (Title — Institution | Detail)</label>
+            <label id="tEduLbl">Educación (Título — Institución | Detalle)</label>
             <textarea id="inEdu">Lic. en Recursos Humanos — UADE | Finalizado
 Lic. en Psicología — UADE | En curso</textarea>
           </div>
 
           <div class="row">
-            <label id="tCoursesLbl">Additional Training (Course | Institution)</label>
+            <label id="tCoursesLbl">Formación complementaria (Curso | Institución)</label>
             <textarea id="inCourses">Planificación y gestión de RR.HH. para PyMEs | CAME / UTN
 Técnicas de selección de RR.HH. | CAME / UTN
 Conducción de equipos | CAME / UTN
@@ -854,29 +865,22 @@ Comunicación y organizaciones | CAME / UTN</textarea>
 
       <!-- Actions -->
       <div class="btns">
-        <button id="btnPDF" type="button">📄 Generate PDF</button>
-        <button id="btnTranslateEN" class="secondary" type="button">🌐 Translate to EN</button>
-        <button id="btnReset" class="secondary" type="button">🔄 Reset</button>
-      </div>
-
-      <div class="miniActions">
-        <button id="btnSave" class="secondary" type="button">💾 Save</button>
-        <button id="btnLoad" class="secondary" type="button">📂 Load</button>
-        <button id="btnExport" class="secondary" type="button">📤 Export</button>
-        <button id="btnImport" class="secondary" type="button">📥 Import</button>
+        <button id="btnPDF" type="button">📄 Descargar PDF</button>
+        <button id="btnTranslateEN" class="secondary" type="button">🌐 Traducir a EN</button>
+        <button id="btnReset" class="secondary" type="button">🔄 Reiniciar</button>
       </div>
 
       <!-- EDITOR EXPERIENCIA -->
       <div class="jobsEditor">
         <div class="jobsHeader">
-          <h3 id="tExpEdit">Experience (edit)</h3>
-          <button id="btnAddJob" class="secondary" type="button">+ Add Job</button>
+          <h3 id="tExpEdit">Experiencia laboral</h3>
+          <button id="btnAddJob" class="secondary" type="button">+ Agregar trabajo</button>
         </div>
         <div id="jobsEditorList"></div>
       </div>
 
       <div class="hint">
-        💡 Auto-pagination: Content flows to page 2 when needed. Drag jobs to reorder.
+        💡 Auto-paginación: El contenido pasa a página 2 cuando es necesario. Arrastrá los trabajos para reordenar.
       </div>
     </aside>
 
@@ -896,15 +900,15 @@ Comunicación y organizaciones | CAME / UTN</textarea>
 
                 <div class="contact" id="cvContact">
                   <span id="cvLocation">Buenos Aires, Argentina</span> ·
-                  <a id="cvEmail" href="mailto:ceguiazabal@gmail.com">ceguiazabal@gmail.com</a> ·
+                  <a id="cvEmail" href="/cdn-cgi/l/email-protection#7a191f1d0f131b001b181b163a1d171b131654191517"><span class="__cf_email__" data-cfemail="ccafa9abb9a5adb6adaeada08caba1ada5a0e2afa3a1">[email&#160;protected]</span></a> ·
                   <a id="cvPhone" href="tel:+541123962046">+54 11 2396-2046</a> ·
                   <a id="cvLinkedIn" href="https://www.linkedin.com/in/cegui" target="_blank">linkedin.com/in/cegui</a>
                 </div>
               </div>
 
               <div class="photo" id="cvPhotoBox">
-                <span id="cvPhotoLabel">PHOTO</span>
-                <img id="cvPhotoImg" alt="Photo" style="display:none"/>
+                <span id="cvPhotoLabel">FOTO</span>
+                <img id="cvPhotoImg" alt="Foto" style="display:none"/>
               </div>
             </div>
 
@@ -912,12 +916,12 @@ Comunicación y organizaciones | CAME / UTN</textarea>
               <!-- MAIN -->
               <div id="cvMain">
                 <div class="section card">
-                  <h2 class="title" id="tProfile">Profile</h2>
+                  <h2 class="title" id="tProfile">Perfil</h2>
                   <p class="p" id="cvProfile"></p>
                 </div>
 
                 <div class="section card">
-                  <h2 class="title" id="tExperience">Experience</h2>
+                  <h2 class="title" id="tExperience">Experiencia</h2>
                   <div id="cvJobsPage1"></div>
                 </div>
               </div>
@@ -925,17 +929,17 @@ Comunicación y organizaciones | CAME / UTN</textarea>
               <!-- SIDE -->
               <aside id="cvSide">
                 <div class="card" id="cardAreas">
-                  <h2 class="title" id="tAreas">HR Areas</h2>
+                  <h2 class="title" id="tAreas">Áreas HR</h2>
                   <ul class="list" id="cvAreas"></ul>
                 </div>
 
                 <div class="card" id="cardEdu">
-                  <h2 class="title" id="tEdu">Education</h2>
+                  <h2 class="title" id="tEdu">Educación</h2>
                   <div id="cvEdu"></div>
                 </div>
 
                 <div class="card" id="cardCourses" style="margin-bottom:0;">
-                  <h2 class="title" id="tCourses">Additional Training</h2>
+                  <h2 class="title" id="tCourses">Formación complementaria</h2>
                   <div class="rows" id="cvCourses"></div>
                 </div>
               </aside>
@@ -948,7 +952,7 @@ Comunicación y organizaciones | CAME / UTN</textarea>
         <div class="paper" data-page="2" id="paper2" style="display:none;">
           <div class="page" id="cvPage2">
             <div class="section card" style="margin-bottom:0;">
-              <h2 class="title" id="tExperience2">Experience</h2>
+              <h2 class="title" id="tExperience2">Experiencia</h2>
               <div id="cvJobsPage2"></div>
               <div id="cvPage2Extras"></div>
             </div>
@@ -960,7 +964,7 @@ Comunicación y organizaciones | CAME / UTN</textarea>
 
   </div>
 
-  <script>
+  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
     // -----------------------------
     // HELPERS
     // -----------------------------
@@ -1019,7 +1023,7 @@ Comunicación y organizaciones | CAME / UTN</textarea>
       }
     }
 
-    function showLoading(text = "Processing..."){
+    function showLoading(text = "Procesando..."){
       $("loadingText").textContent = text;
       $("loadingOverlay").classList.add("active");
     }
@@ -1168,17 +1172,17 @@ Comunicación y organizaciones | CAME / UTN</textarea>
     }
 
     async function aiOptimizeBullets(){
-      showLoading("✨ AI is optimizing your bullets...");
+      showLoading("✨ IA optimizando tus bullets...");
       
       try{
         const allBullets = jobs.flatMap(j => j.bullets || []);
-        const prompt = `Optimize these resume bullets for ATS and impact. Make them achievement-focused with metrics where possible. Keep the same number of bullets. Return ONLY the optimized bullets, one per line:
+        const prompt = `Optimiza estos bullets de CV para ATS e impacto. Hacelos orientados a logros con métricas cuando sea posible. Mantené la misma cantidad de bullets. Devolvé SOLAMENTE los bullets optimizados, uno por línea, en español:
 
 ${allBullets.join("\n")}`;
 
         const result = await callClaudeAPI([
           { role: "user", content: prompt }
-        ], "You are an expert resume writer. Optimize resume bullets to be achievement-focused, use strong action verbs, and include metrics when possible.");
+        ], "Sos un experto en escribir CVs. Optimiza bullets de CV para que estén enfocados en logros, usen verbos de acción fuertes e incluyan métricas cuando sea posible.");
 
         const optimizedBullets = result.split("\n").filter(b => b.trim());
         
@@ -1194,79 +1198,192 @@ ${allBullets.join("\n")}`;
         syncText();
         autoSaveSoft();
         hideLoading();
-        alert("✨ Bullets optimized! Review and adjust as needed.");
+        alert("✨ ¡Bullets optimizados! Revisá y ajustá según necesites.");
       }catch(error){
         hideLoading();
-        alert("❌ AI optimization failed. Please try again.");
+        alert("❌ Error al optimizar. Intentá nuevamente.");
       }
     }
 
     async function aiEnhanceProfile(){
-      showLoading("✨ AI is enhancing your profile...");
+      showLoading("✨ IA mejorando tu perfil...");
       
       try{
         const currentProfile = $("inProfile").value;
         const jobTitles = jobs.map(j => j.role).join(", ");
         
-        const prompt = `Enhance this professional profile to be more compelling and ATS-friendly. Keep it concise (2-3 sentences). Current profile:
+        const prompt = `Mejora este perfil profesional para que sea más impactante y optimizado para ATS. Mantenerlo conciso (2-3 oraciones). Perfil actual:
 
 ${currentProfile}
 
-Job history: ${jobTitles}
+Historial laboral: ${jobTitles}
 
-Return ONLY the enhanced profile text.`;
+Devolvé SOLAMENTE el texto del perfil mejorado en español.`;
 
         const result = await callClaudeAPI([
           { role: "user", content: prompt }
-        ], "You are an expert resume writer. Create compelling, ATS-optimized professional summaries.");
+        ], "Sos un experto en escribir CVs. Creá resúmenes profesionales convincentes y optimizados para ATS.");
 
         $("inProfile").value = result.trim();
         syncText();
         autoSaveSoft();
         hideLoading();
-        alert("✨ Profile enhanced!");
+        alert("✨ ¡Perfil mejorado!");
       }catch(error){
         hideLoading();
-        alert("❌ AI enhancement failed. Please try again.");
+        alert("❌ Error al mejorar el perfil. Intentá nuevamente.");
       }
     }
 
-    async function aiGenerateJobDescription(){
-      const jobTitle = prompt("Enter job title (e.g., 'Senior HRBP', 'HR Manager'):");
-      if(!jobTitle) return;
+    async function aiTranslateJob(){
+      if(jobs.length === 0){
+        alert("❌ No hay trabajos para traducir.");
+        return;
+      }
 
-      showLoading("✨ AI is generating job description...");
-      
+      const indices = jobs.map((j, i) => `${i+1}: ${j.role}`).join("\n");
+      const input = prompt(`Selecciona el número del trabajo a traducir:\n\n${indices}\n\nNúmero:`);
+      if(!input) return;
+
+      const idx = parseInt(input) - 1;
+      if(idx < 0 || idx >= jobs.length){
+        alert("❌ Número inválido.");
+        return;
+      }
+
+      const targetLang = confirm("¿Traducir a inglés? (Cancelar = traducir a español)") ? "inglés" : "español";
+      showLoading(`✨ IA traduciendo a ${targetLang}...`);
+
       try{
-        const prompt = `Generate 3-4 strong, achievement-focused resume bullets for a ${jobTitle} position. Include metrics and impact. Return ONLY the bullets, one per line.`;
+        const job = jobs[idx];
+        const prompt = `Traducí este trabajo de CV a ${targetLang} manteniendo el formato profesional:
+
+Rol: ${job.role}
+Ubicación: ${job.meta}
+Fechas: ${job.dates}
+Logros:
+${job.bullets.join("\n")}
+
+Devolvé en formato:
+ROL: [rol traducido]
+UBICACIÓN: [ubicación traducida]
+FECHAS: [fechas traducidas]
+LOGROS:
+- [logro 1]
+- [logro 2]
+...`;
 
         const result = await callClaudeAPI([
           { role: "user", content: prompt }
-        ], "You are an expert resume writer. Generate compelling, metrics-driven resume bullets.");
+        ], `Sos un traductor experto especializado en CVs. Traducí al ${targetLang} manteniendo el impacto profesional.`);
 
-        const bullets = result.split("\n").filter(b => b.trim());
-        
-        jobs.unshift({
-          role: jobTitle,
-          meta: "Location",
-          dates: "Year – Year",
-          bullets: bullets
-        });
+        // Parse result
+        const lines = result.split("\n");
+        let newRole = job.role;
+        let newMeta = job.meta;
+        let newDates = job.dates;
+        const newBullets = [];
+
+        for(const line of lines){
+          if(line.startsWith("ROL:")) newRole = line.substring(4).trim();
+          else if(line.startsWith("UBICACIÓN:")) newMeta = line.substring(10).trim();
+          else if(line.startsWith("FECHAS:")) newDates = line.substring(7).trim();
+          else if(line.trim().startsWith("-")) newBullets.push(line.trim().substring(1).trim());
+        }
+
+        jobs[idx] = { role: newRole, meta: newMeta, dates: newDates, bullets: newBullets.length > 0 ? newBullets : job.bullets };
 
         renderJobsEditor();
         syncText();
         autoSaveSoft();
         hideLoading();
-        alert("✨ Job description generated! Edit the details.");
+        alert(`✨ ¡Trabajo traducido a ${targetLang}!`);
       }catch(error){
         hideLoading();
-        alert("❌ AI generation failed. Please try again.");
+        alert("❌ Error al traducir. Intentá nuevamente.");
       }
+    }
+
+    // -----------------------------
+    // Smart Tools
+    // -----------------------------
+    function autoFormat(){
+      // Format bullets: capitalize first letter, remove trailing dots
+      jobs = jobs.map(j => ({
+        ...j,
+        bullets: (j.bullets || []).map(b => {
+          let text = b.trim();
+          if(!text) return text;
+          // Capitalize first letter
+          text = text[0].toUpperCase() + text.slice(1);
+          // Remove trailing period if exists
+          if(text.endsWith(".")) text = text.slice(0, -1);
+          return text;
+        })
+      }));
+
+      // Format profile: capitalize first letter
+      const profile = $("inProfile").value.trim();
+      if(profile) $("inProfile").value = profile[0].toUpperCase() + profile.slice(1);
+
+      renderJobsEditor();
+      syncText();
+      autoSaveSoft();
+      alert("✨ Formato aplicado automáticamente!");
+    }
+
+    function spellCheck(){
+      const allText = [
+        $("inProfile").value,
+        ...jobs.flatMap(j => [j.role, j.meta, ...j.bullets])
+      ].join(" ");
+
+      const wordCount = allText.split(/\s+/).filter(w => w.length > 0).length;
+      const charCount = allText.length;
+      const bulletCount = jobs.reduce((sum, j) => sum + (j.bullets?.length || 0), 0);
+
+      alert(`📊 Estadísticas del CV:\n\n✓ Palabras totales: ${wordCount}\n✓ Caracteres: ${charCount}\n✓ Bullets totales: ${bulletCount}\n✓ Trabajos: ${jobs.length}\n\n💡 Recomendación: Un CV ideal tiene 400-600 palabras.`);
+    }
+
+    function countWords(){
+      const profile = $("inProfile").value.split(/\s+/).filter(w => w.length > 0).length;
+      const jobWords = jobs.reduce((sum, j) => {
+        const bullets = (j.bullets || []).join(" ").split(/\s+/).filter(w => w.length > 0).length;
+        return sum + bullets;
+      }, 0);
+
+      alert(`📊 Conteo de palabras:\n\n✓ Perfil: ${profile} palabras\n✓ Experiencia: ${jobWords} palabras\n✓ Total: ${profile + jobWords} palabras\n\n💡 Ideal: 300-500 palabras totales`);
+    }
+
+    function duplicateLastJob(){
+      if(jobs.length === 0){
+        alert("❌ No hay trabajos para duplicar.");
+        return;
+      }
+
+      const lastJob = jobs[0];
+      jobs.unshift({
+        role: lastJob.role + " (copia)",
+        meta: lastJob.meta,
+        dates: lastJob.dates,
+        bullets: [...lastJob.bullets]
+      });
+
+      renderJobsEditor();
+      syncText();
+      autoSaveSoft();
+      alert("✅ Trabajo duplicado! Editá los detalles.");
     }
 
     $("btnAIOptimize").addEventListener("click", aiOptimizeBullets);
     $("btnAIProfile").addEventListener("click", aiEnhanceProfile);
-    $("btnAIGenerate").addEventListener("click", aiGenerateJobDescription);
+    $("btnAITranslate").addEventListener("click", aiTranslateJob);
+
+    // Smart tools
+    $("btnAutoFormat").addEventListener("click", autoFormat);
+    $("btnSpellCheck").addEventListener("click", spellCheck);
+    $("btnCountWords").addEventListener("click", countWords);
+    $("btnDuplicateJob").addEventListener("click", duplicateLastJob);
 
     // -----------------------------
     // Render CV
@@ -1456,32 +1573,32 @@ Return ONLY the enhanced profile text.`;
         
         card.innerHTML = `
           <div class="jobCardTop">
-            <div style="font-weight:900; font-size:13px;">💼 Job #${idx+1}</div>
+            <div style="font-weight:900; font-size:13px;">💼 Trabajo #${idx+1}</div>
             <div class="mini">
               <button class="secondary" data-act="up" data-idx="${idx}">↑</button>
               <button class="secondary" data-act="down" data-idx="${idx}">↓</button>
-              <button class="danger" data-act="del" data-idx="${idx}">Delete</button>
+              <button class="danger" data-act="del" data-idx="${idx}">Eliminar</button>
             </div>
           </div>
 
           <div class="grid2" style="margin-bottom:8px;">
             <div class="row" style="margin:0;">
-              <label>Role — Company</label>
+              <label>Rol — Empresa</label>
               <input data-k="role" data-idx="${idx}" value="${escapeHTML(j.role)}"/>
             </div>
             <div class="row" style="margin:0;">
-              <label>Dates</label>
+              <label>Fechas</label>
               <input data-k="dates" data-idx="${idx}" value="${escapeHTML(j.dates)}"/>
             </div>
           </div>
 
           <div class="row" style="margin-bottom:8px;">
-            <label>Location</label>
+            <label>Ubicación</label>
             <input data-k="meta" data-idx="${idx}" value="${escapeHTML(j.meta)}"/>
           </div>
 
           <div class="row" style="margin:0;">
-            <label>Bullets (one per line)</label>
+            <label>Logros (uno por línea)</label>
             <textarea data-k="bullets" data-idx="${idx}">${escapeHTML((j.bullets||[]).join("\n"))}</textarea>
           </div>
         `;
@@ -1526,7 +1643,7 @@ Return ONLY the enhanced profile text.`;
     }
 
     function deleteJob(idx){
-      if(!confirm("Delete this job?")) return;
+      if(!confirm("¿Eliminar este trabajo?")) return;
       jobs.splice(idx, 1);
       renderJobsEditor();
       syncText();
@@ -1534,10 +1651,10 @@ Return ONLY the enhanced profile text.`;
 
     function addJob(){
       jobs.unshift({
-        role: "New Role — Company",
-        meta: "Location",
-        dates: "Year – Year",
-        bullets: ["Achievement 1", "Achievement 2"]
+        role: "Nuevo Rol — Empresa",
+        meta: "Ubicación",
+        dates: "Año – Año",
+        bullets: ["Logro 1", "Logro 2"]
       });
       renderJobsEditor();
       syncText();
@@ -1732,36 +1849,6 @@ Return ONLY the enhanced profile text.`;
       }
     }
 
-    $("btnSave").addEventListener("click", () => {
-      saveDraftHard();
-      alert("✅ Draft saved!");
-    });
-
-    $("btnLoad").addEventListener("click", () => {
-      const ok = loadDraftHard();
-      if(ok) alert("✅ Draft loaded!");
-      else alert("❌ No saved draft found.");
-    });
-
-    $("btnExport").addEventListener("click", async () => {
-      const json = JSON.stringify(getDraft(), null, 2);
-      const copied = await tryCopy(json);
-      if(copied) alert("✅ JSON copied to clipboard!");
-      else prompt("Copy this JSON:", json);
-    });
-
-    $("btnImport").addEventListener("click", () => {
-      const raw = prompt("Paste exported JSON:");
-      if(!raw) return;
-      try{
-        const d = JSON.parse(raw);
-        applyDraft(d);
-        alert("✅ Imported successfully!");
-      }catch{
-        alert("❌ Invalid JSON.");
-      }
-    });
-
     // -----------------------------
     // PDF export
     // -----------------------------
@@ -1859,19 +1946,19 @@ Return ONLY the enhanced profile text.`;
 
     $("btnPDF").addEventListener("click", async () => {
       syncText();
-      showLoading("📄 Generating PDF...");
+      showLoading("📄 Generando PDF...");
       
       try{
         await exportPdfRobusto();
         hideLoading();
       }catch(err){
-        console.warn("Robust export failed, using fallback:", err);
+        console.warn("Export robusto falló, usando fallback:", err);
         try{
           await exportPdfFallbackHtml2Pdf();
           hideLoading();
         }catch(err2){
           hideLoading();
-          alert("❌ PDF generation failed. Please try again.");
+          alert("❌ Error al generar PDF. Intentá nuevamente.");
         }
       }
     });
@@ -1880,11 +1967,11 @@ Return ONLY the enhanced profile text.`;
     // Translate to EN
     // -----------------------------
     $("btnTranslateEN").addEventListener("click", () => {
-      if(confirm("Translate all content to English?")){
+      if(confirm("¿Traducir todo el contenido al inglés?")){
         translateStructuredToEN();
         syncText();
         autoSaveSoft();
-        alert("✅ Translated to English!");
+        alert("✅ ¡Traducido al inglés!");
       }
     });
 
@@ -1892,7 +1979,7 @@ Return ONLY the enhanced profile text.`;
     // Reset
     // -----------------------------
     $("btnReset").addEventListener("click", () => {
-      if(!confirm("Reset to default? This will erase all changes.")) return;
+      if(!confirm("¿Reiniciar a valores por defecto? Esto borrará todos los cambios.")) return;
       
       localStorage.removeItem(STORAGE_KEY);
       document.documentElement.lang = "es";
@@ -1906,18 +1993,18 @@ Return ONLY the enhanced profile text.`;
       $("inPhotoMode").value = "with";
       setPhotoMode("with");
 
-      $("tProfileLbl").textContent = "Profile";
-      $("tAreasLbl").textContent = "HR Areas (one per line)";
-      $("tEduLbl").textContent = "Education (Degree — Institution | Detail)";
-      $("tCoursesLbl").textContent = "Additional Training (Course | Institution)";
-      $("tExpEdit").textContent = "Experience (edit)";
+      $("tProfileLbl").textContent = "Perfil profesional";
+      $("tAreasLbl").textContent = "Áreas HR (una por línea)";
+      $("tEduLbl").textContent = "Educación (Título — Institución | Detalle)";
+      $("tCoursesLbl").textContent = "Formación complementaria (Curso | Institución)";
+      $("tExpEdit").textContent = "Experiencia laboral";
 
-      $("tProfile").textContent = "Profile";
-      $("tExperience").textContent = "Experience";
-      $("tExperience2").textContent = "Experience";
-      $("tAreas").textContent = "HR Areas";
-      $("tEdu").textContent = "Education";
-      $("tCourses").textContent = "Additional Training";
+      $("tProfile").textContent = "Perfil";
+      $("tExperience").textContent = "Experiencia";
+      $("tExperience2").textContent = "Experiencia";
+      $("tAreas").textContent = "Áreas HR";
+      $("tEdu").textContent = "Educación";
+      $("tCourses").textContent = "Formación complementaria";
 
       $("inName").value = "Camilo Eguiazabal";
       $("inDegree").value = "Lic. en Recursos Humanos";
@@ -1943,7 +2030,7 @@ Return ONLY the enhanced profile text.`;
 
       renderJobsEditor();
       syncText();
-      alert("✅ Reset complete!");
+      alert("✅ ¡Reiniciado!");
     });
 
     // -----------------------------
@@ -1952,14 +2039,4 @@ Return ONLY the enhanced profile text.`;
     setPhotoMode($("inPhotoMode").value);
     renderJobsEditor();
     const loaded = loadDraftHard();
-    if(!loaded) syncText();
-
-    // Collapse sections on mobile by default
-    if(window.innerWidth <= 768){
-      ["sectionTemplate", "sectionAdditional"].forEach(id => {
-        $(id).classList.add("collapsed");
-      });
-    }
-  </script>
-</body>
-</html>
+    if(!loa
