@@ -3,69 +3,58 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>CV Builder — Resume Builder</title>
+  <title>CV Builder</title>
 
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
   <style>
-    /* ============================================================
-       TOKENS & RESET
-    ============================================================ */
+    /* ===================================================
+       DESIGN TOKENS
+    =================================================== */
     :root {
-      --ink: #0D1117;
-      --muted: #6B7280;
+      --ink: #111827;
+      --muted: #4B5563;
       --line: #E5E7EB;
       --accent: #0B1F3A;
-      --bg: #F0F2F5;
+      --bg: #F3F4F6;
       --paper: #fff;
-      --panel-bg: #fff;
-      --radius-sm: 8px;
-      --radius-md: 14px;
-      --radius-lg: 20px;
-      --shadow-sm: 0 1px 3px rgba(0,0,0,.08);
-      --shadow-md: 0 4px 16px rgba(0,0,0,.10);
-      --shadow-lg: 0 12px 40px rgba(0,0,0,.14);
-      --font-display: 'Syne', system-ui, sans-serif;
-      --font-body: 'DM Sans', system-ui, sans-serif;
 
-      /* CV typographic scale */
+      /* CV scale */
       --name-size: 34px;
       --headline-size: 15.5px;
       --p-size: 12.6px;
       --bullet-size: 12.3px;
       --title-size: 11.8px;
       --jobrole-size: 13.4px;
-
-      /* CV layout */
       --pad-mm: 12mm;
       --gap-mm: 10mm;
+      --radius: 12px;
       --cv-cols: 1fr 62mm;
       --header-cols: 1fr 36mm;
-      --cv-radius: 12px;
     }
 
-    /* ── Templates ─────────────────────────────────────── */
-    body.tpl-classic { --accent:#0B1F3A; --cv-cols:1fr 62mm; --header-cols:1fr 36mm; --cv-radius:12px; --line:#E5E7EB; }
-    body.tpl-modern  { --accent:#111827; --line:#E6EAF0; --cv-cols:1fr; --header-cols:1fr 36mm; --cv-radius:16px; }
-    body.tpl-sidebar { --accent:#111827; --line:#E6EAF0; --cv-cols:70mm 1fr; --header-cols:1fr 36mm; --cv-radius:14px; }
-    body.tpl-minimal { --accent:#111827; --line:#F3F4F6; --cv-cols:1fr 58mm; --header-cols:1fr; --cv-radius:10px; }
-    body.tpl-executive { --accent:#1E40AF; --line:#DBEAFE; --cv-cols:1fr 65mm; --header-cols:1fr 36mm; --cv-radius:8px; --bg:#F8FAFC; }
-    body.tpl-creative { --accent:#7C3AED; --line:#EDE9FE; --cv-cols:1fr; --header-cols:1fr 36mm; --cv-radius:20px; --bg:#FAFAF9; }
+    /* Templates */
+    body.tpl-classic  { --accent:#0B1F3A; --cv-cols:1fr 62mm; --header-cols:1fr 36mm; --radius:12px; --line:#E5E7EB; }
+    body.tpl-modern   { --accent:#111827; --line:#E6EAF0; --cv-cols:1fr; --header-cols:1fr 36mm; --radius:16px; }
+    body.tpl-sidebar  { --accent:#111827; --line:#E6EAF0; --cv-cols:70mm 1fr; --header-cols:1fr 36mm; --radius:14px; }
+    body.tpl-minimal  { --accent:#111827; --line:#F3F4F6; --cv-cols:1fr 58mm; --header-cols:1fr; --radius:10px; }
+    body.tpl-executive{ --accent:#1E40AF; --line:#DBEAFE; --cv-cols:1fr 65mm; --header-cols:1fr 36mm; --radius:8px; --bg:#F8FAFC; }
+    body.tpl-creative { --accent:#7C3AED; --line:#EDE9FE; --cv-cols:1fr; --header-cols:1fr 36mm; --radius:20px; --bg:#FAFAF9; }
 
-    /* ── Color themes ───────────────────────────────────── */
+    /* Color themes */
     body.theme-blue   { --accent:#1E40AF; --line:#DBEAFE; }
     body.theme-purple { --accent:#7C3AED; --line:#EDE9FE; }
     body.theme-green  { --accent:#059669; --line:#D1FAE5; }
     body.theme-red    { --accent:#DC2626; --line:#FEE2E2; }
     body.theme-orange { --accent:#EA580C; --line:#FFEDD5; }
 
-    /* ── Photo / Compact ────────────────────────────────── */
+    /* Photo / compact */
     body.no-photo { --header-cols:1fr; }
     body.no-photo #cvPhotoBox { display:none !important; }
     body.compact {
@@ -74,886 +63,536 @@
       --pad-mm:11mm; --gap-mm:9mm;
     }
 
-    /* ── Base ───────────────────────────────────────────── */
+    /* ===================================================
+       BASE RESET
+    =================================================== */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
     html { scroll-behavior: smooth; }
-
     body {
-      font-family: var(--font-body);
+      font-family: Inter, system-ui, -apple-system, sans-serif;
       background: var(--bg);
       color: var(--ink);
       min-height: 100vh;
       line-height: 1.5;
-      transition: background .3s;
     }
 
-    /* ============================================================
-       APP SHELL — MOBILE FIRST
-    ============================================================ */
-    .app-shell {
-      display: flex;
-      flex-direction: column;
-      min-height: 100vh;
-    }
+    /* ===================================================
+       LAYOUT SHELL
+    =================================================== */
+    .shell { display: flex; flex-direction: column; min-height: 100vh; }
 
-    /* ── Top Nav (mobile) ────────────────────────────────── */
+    /* ===================================================
+       MOBILE: TOP NAV
+    =================================================== */
     .top-nav {
-      position: sticky;
-      top: 0;
-      z-index: 200;
-      background: var(--accent);
-      color: #fff;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 0 16px;
-      height: 56px;
-      box-shadow: 0 2px 12px rgba(0,0,0,.18);
-    }
-    .top-nav .brand {
-      font-family: var(--font-display);
-      font-weight: 800;
-      font-size: 18px;
-      letter-spacing: -.02em;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    .top-nav .brand .badge {
-      font-size: 9px;
-      background: rgba(255,255,255,.2);
-      border: 1px solid rgba(255,255,255,.3);
-      padding: 2px 7px;
-      border-radius: 20px;
-      font-weight: 700;
-      letter-spacing: .06em;
-    }
-    .top-nav .nav-actions {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    .nav-btn {
-      background: rgba(255,255,255,.15);
-      border: 1px solid rgba(255,255,255,.2);
+      background: var(--accent);
       color: #fff;
-      border-radius: var(--radius-sm);
-      padding: 7px 12px;
-      font: 700 12px var(--font-body);
+      height: 52px;
+      padding: 0 14px;
+      position: sticky;
+      top: 0;
+      z-index: 300;
+      box-shadow: 0 2px 8px rgba(0,0,0,.18);
+    }
+    .top-nav .brand { font-size: 16px; font-weight: 800; letter-spacing: -.02em; }
+    .top-nav .nav-acts { display: flex; gap: 8px; }
+    .nav-btn {
+      padding: 6px 12px;
+      border-radius: 8px;
+      border: 1px solid rgba(255,255,255,.25);
+      background: rgba(255,255,255,.12);
+      color: #fff;
+      font: 700 12px Inter, sans-serif;
       cursor: pointer;
-      transition: background .2s;
-      display: flex;
-      align-items: center;
-      gap: 5px;
+      transition: background .15s;
     }
-    .nav-btn:hover { background: rgba(255,255,255,.25); }
-    .nav-btn.primary-action {
-      background: #fff;
-      color: var(--accent);
-      padding: 7px 14px;
-    }
-    .nav-btn.primary-action:hover { background: rgba(255,255,255,.9); }
+    .nav-btn:hover { background: rgba(255,255,255,.22); }
+    .nav-btn.solid { background: #fff; color: var(--accent); border-color: #fff; }
+    .nav-btn.solid:hover { background: rgba(255,255,255,.9); }
 
-    /* ── Tab Bar (mobile) ────────────────────────────────── */
+    /* ===================================================
+       MOBILE: TAB BAR
+    =================================================== */
     .tab-bar {
       display: flex;
       background: #fff;
       border-bottom: 1px solid var(--line);
       position: sticky;
-      top: 56px;
-      z-index: 199;
-      overflow-x: auto;
-      scrollbar-width: none;
+      top: 52px;
+      z-index: 299;
     }
-    .tab-bar::-webkit-scrollbar { display: none; }
-    .tab-item {
+    .tab-btn {
       flex: 1;
-      min-width: 80px;
-      padding: 10px 8px;
-      font: 600 11px var(--font-body);
+      padding: 8px 4px 9px;
+      font: 600 11px Inter, sans-serif;
       color: var(--muted);
       text-align: center;
       cursor: pointer;
       border: none;
       background: none;
       border-bottom: 2px solid transparent;
-      transition: color .2s, border-color .2s;
-      white-space: nowrap;
-      letter-spacing: .03em;
+      transition: color .15s, border-color .15s;
     }
-    .tab-item.active {
-      color: var(--accent);
-      border-bottom-color: var(--accent);
+    .tab-btn span { display: block; font-size: 15px; margin-bottom: 2px; }
+    .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); font-weight: 700; }
+
+    /* ===================================================
+       MOBILE: PANELS
+    =================================================== */
+    .mobile-panels { flex: 1; }
+    .m-panel { display: none; padding: 14px; }
+    .m-panel.active { display: block; }
+
+    /* ===================================================
+       DESKTOP: SIDEBAR / LIVE PANEL hidden on mobile
+    =================================================== */
+    .desktop-sidebar { display: none; }
+    .live-panel { display: none; }
+
+    /* ===================================================
+       CV STAGE
+       Mobile: hidden unless Vista tab active
+       Desktop: always visible
+    =================================================== */
+    .cv-stage-wrap {
+      display: none;
+      padding: 12px;
+      background: var(--bg);
+      overflow: auto;
     }
-    .tab-item .tab-icon { display: block; font-size: 16px; margin-bottom: 2px; }
+    body.show-stage .cv-stage-wrap { display: block; }
+    body.show-stage .mobile-panels { display: none; }
 
-    /* ── Main content ─────────────────────────────────────── */
-    .main-content {
-      flex: 1;
-      padding: 16px;
+    /* ===================================================
+       DESKTOP OVERRIDES (>= 960px)
+    =================================================== */
+    @media (min-width: 960px) {
+      .top-nav        { display: none; }
+      .tab-bar        { display: none; }
+      .mobile-panels  { display: none !important; }
+      body.show-stage .mobile-panels { display: none !important; }
+
+      .shell { flex-direction: row; height: 100vh; overflow: hidden; }
+
+      /* Sidebar */
+      .desktop-sidebar {
+        display: flex;
+        flex-direction: column;
+        width: 360px;
+        flex-shrink: 0;
+        background: #fff;
+        border-right: 1px solid var(--line);
+        height: 100vh;
+        overflow: hidden;
+      }
+      .ds-head { padding: 18px 18px 0; flex-shrink: 0; }
+      .ds-brand {
+        font: 800 18px Inter, sans-serif;
+        letter-spacing: -.02em;
+        color: var(--accent);
+        margin-bottom: 14px;
+      }
+      .ds-tabs {
+        display: flex;
+        gap: 2px;
+        background: var(--bg);
+        border-radius: 10px;
+        padding: 3px;
+        margin-bottom: 2px;
+      }
+      .ds-tab {
+        flex: 1;
+        padding: 7px 4px;
+        font: 600 11px Inter, sans-serif;
+        color: var(--muted);
+        text-align: center;
+        border: none;
+        background: transparent;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all .15s;
+      }
+      .ds-tab.active {
+        background: #fff;
+        color: var(--accent);
+        font-weight: 700;
+        box-shadow: 0 1px 4px rgba(0,0,0,.08);
+      }
+      .ds-body { flex: 1; overflow-y: auto; padding: 14px 18px 24px; }
+      .ds-panel { display: none; }
+      .ds-panel.active { display: block; }
+      .ds-foot {
+        padding: 12px 18px;
+        border-top: 1px solid var(--line);
+        flex-shrink: 0;
+        display: flex;
+        gap: 8px;
+      }
+
+      /* Live panel */
+      .live-panel {
+        display: flex;
+        flex-direction: column;
+        width: 220px;
+        flex-shrink: 0;
+        background: #FAFAFA;
+        border-right: 1px solid var(--line);
+        height: 100vh;
+        overflow: hidden;
+      }
+      .lp-head {
+        padding: 13px 13px 9px;
+        border-bottom: 1px solid var(--line);
+        flex-shrink: 0;
+      }
+      .lp-head h4 {
+        font: 700 10px Inter, sans-serif;
+        letter-spacing: .12em;
+        text-transform: uppercase;
+        color: var(--muted);
+        margin-bottom: 1px;
+      }
+      .lp-head p { font: 400 10px Inter, sans-serif; color: #9CA3AF; }
+      .lp-body { flex: 1; overflow-y: auto; padding: 11px; }
+      .lp-sec { margin-bottom: 13px; }
+      .lp-label {
+        font: 700 9px Inter, sans-serif;
+        letter-spacing: .12em;
+        text-transform: uppercase;
+        color: #9CA3AF;
+        margin-bottom: 5px;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+      }
+      .lp-label::after { content:''; flex:1; height:1px; background:var(--line); }
+      .lp-name { font: 800 13px Inter, sans-serif; color: var(--ink); line-height: 1.2; word-break: break-word; }
+      .lp-hl   { font: 500 10px Inter, sans-serif; color: var(--muted); margin-top: 2px; }
+      .lp-deg  { font: 700 10px Inter, sans-serif; color: var(--accent); margin-top: 1px; }
+      .lp-ci   { display:flex; align-items:flex-start; gap:4px; margin-bottom:3px; font: 400 10px Inter,sans-serif; color:var(--muted); line-height:1.3; word-break:break-all; }
+      .lp-ci-ic { flex-shrink:0; }
+      .lp-text { font: 400 10px Inter, sans-serif; color: #374151; line-height: 1.55; }
+      .lp-job {
+        padding: 6px 8px 6px 10px;
+        border: 1px solid var(--line);
+        border-radius: 7px;
+        margin-bottom: 5px;
+        background: #fff;
+        position: relative;
+        overflow: hidden;
+      }
+      .lp-job::before { content:''; position:absolute; left:0; top:0; bottom:0; width:3px; background:var(--accent); }
+      .lp-job-role { font: 700 10px Inter, sans-serif; color: var(--ink); line-height: 1.3; }
+      .lp-job-meta { font: 400 9px Inter, sans-serif; color: var(--muted); margin-bottom: 3px; }
+      .lp-bullet { font: 400 9px Inter, sans-serif; color: #4B5563; line-height: 1.4; padding-left: 8px; position: relative; margin-bottom: 1px; }
+      .lp-bullet::before { content:'·'; position:absolute; left:1px; color:var(--accent); font-weight:900; }
+      .lp-tag { display:inline-block; padding:2px 7px; border-radius:20px; background:var(--bg); border:1px solid var(--line); font: 500 9px Inter,sans-serif; color:var(--muted); margin:2px 2px 0 0; }
+      .lp-edu-t { font: 600 10px Inter, sans-serif; color: var(--ink); line-height: 1.3; }
+      .lp-edu-s { font: 400 9px Inter, sans-serif; color: var(--muted); }
+      .lp-empty { font: 400 10px Inter, sans-serif; color: #D1D5DB; font-style: italic; }
+
+      /* CV stage always visible on desktop */
+      .cv-stage-wrap {
+        display: flex !important;
+        flex-direction: column;
+        flex: 1;
+        overflow: auto;
+        height: 100vh;
+        padding: 28px;
+        background: var(--bg);
+      }
+      .zoom-bar { display: none; }
     }
 
-    /* ── Tab panels ───────────────────────────────────────── */
-    .tab-panel { display: none; }
-    .tab-panel.active { display: block; }
-
-    /* ============================================================
-       PANEL CARDS (EDITOR)
-    ============================================================ */
+    /* ===================================================
+       SHARED FORM STYLES
+    =================================================== */
     .panel-card {
-      background: var(--panel-bg);
+      background: #fff;
       border: 1px solid var(--line);
-      border-radius: var(--radius-lg);
-      padding: 18px;
+      border-radius: 14px;
+      padding: 16px;
       margin-bottom: 12px;
-      box-shadow: var(--shadow-sm);
+      box-shadow: 0 1px 3px rgba(0,0,0,.05);
     }
     .panel-card h3 {
-      font: 800 12px var(--font-display);
-      letter-spacing: .12em;
+      font: 700 11px Inter, sans-serif;
+      letter-spacing: .1em;
       text-transform: uppercase;
       color: var(--accent);
       margin-bottom: 14px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
     }
-    .panel-card h3 .icon { font-size: 15px; }
-
-    /* ── Form elements ────────────────────────────────────── */
-    .field { margin-bottom: 12px; }
+    .field { margin-bottom: 11px; }
     .field:last-child { margin-bottom: 0; }
-    label {
-      display: block;
-      font: 600 11.5px var(--font-body);
-      color: var(--muted);
-      margin-bottom: 5px;
-      letter-spacing: .02em;
-    }
+    label { display: block; font: 600 11px Inter, sans-serif; color: var(--muted); margin-bottom: 4px; }
     input, textarea, select {
       width: 100%;
-      border: 1.5px solid var(--line);
-      border-radius: var(--radius-sm);
-      padding: 10px 12px;
-      font: 400 14px var(--font-body);
+      border: 1px solid var(--line);
+      border-radius: 9px;
+      padding: 9px 11px;
+      font: 400 13px Inter, sans-serif;
       color: var(--ink);
       background: #fff;
       outline: none;
-      transition: border-color .2s, box-shadow .2s;
+      transition: border-color .15s, box-shadow .15s;
       -webkit-appearance: none;
     }
     input:focus, textarea:focus, select:focus {
       border-color: var(--accent);
-      box-shadow: 0 0 0 3px rgba(11,31,58,.08);
+      box-shadow: 0 0 0 3px rgba(11,31,58,.07);
     }
     select {
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236B7280' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%236B7280' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
       background-repeat: no-repeat;
-      background-position: right 12px center;
-      padding-right: 36px;
+      background-position: right 11px center;
+      padding-right: 32px;
       cursor: pointer;
     }
-    textarea { min-height: 90px; resize: vertical; line-height: 1.6; }
+    textarea { min-height: 88px; resize: vertical; line-height: 1.55; }
     .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .divider { height: 1px; background: var(--line); margin: 12px 0; }
+    .sec-label { font: 700 10px Inter, sans-serif; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin: 14px 0 8px; }
 
-    /* ── Buttons ──────────────────────────────────────────── */
+    /* Buttons */
     .btn {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 6px;
+      gap: 5px;
       border: none;
-      border-radius: var(--radius-sm);
-      padding: 10px 16px;
-      font: 700 13px var(--font-body);
+      border-radius: 9px;
+      padding: 9px 14px;
+      font: 700 13px Inter, sans-serif;
       cursor: pointer;
-      transition: transform .15s, box-shadow .15s, background .2s;
-      white-space: nowrap;
       background: var(--accent);
       color: #fff;
+      transition: transform .12s, box-shadow .12s;
+      white-space: nowrap;
     }
-    .btn:hover:not(:disabled) { transform: translateY(-1px); box-shadow: var(--shadow-md); }
-    .btn:active:not(:disabled) { transform: translateY(0); }
+    .btn:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,.15); }
+    .btn:active:not(:disabled) { transform: none; }
     .btn:disabled { opacity: .5; cursor: not-allowed; }
-    .btn.secondary { background: var(--bg); color: var(--ink); border: 1.5px solid var(--line); }
-    .btn.danger { background: #EF4444; color: #fff; }
-    .btn.ghost { background: transparent; color: var(--accent); border: 1.5px solid var(--line); }
-    .btn.sm { padding: 7px 11px; font-size: 12px; border-radius: 7px; }
-    .btn.full { width: 100%; }
+    .btn.sec   { background: var(--bg); color: var(--ink); border: 1px solid var(--line); }
+    .btn.ghost { background: transparent; color: var(--accent); border: 1px solid var(--line); }
+    .btn.danger{ background: #EF4444; color: #fff; }
+    .btn.sm    { padding: 6px 10px; font-size: 12px; border-radius: 7px; }
+    .btn.full  { width: 100%; }
 
-    .btn-group { display: flex; gap: 8px; flex-wrap: wrap; }
-    .btn-group .btn { flex: 1; min-width: 0; }
-
-    /* ── Smart tools grid ─────────────────────────────────── */
-    .tools-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    /* Tools */
+    .tools-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }
     .tool-btn {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 4px;
-      padding: 12px 8px;
-      border: 1.5px solid var(--line);
-      border-radius: var(--radius-md);
-      background: var(--bg);
-      cursor: pointer;
-      transition: all .2s;
-      font: 600 11px var(--font-body);
-      color: var(--muted);
+      display: flex; flex-direction: column; align-items: center; gap: 4px;
+      padding: 11px 8px; border: 1px solid var(--line); border-radius: 11px;
+      background: var(--bg); cursor: pointer; font: 600 11px Inter,sans-serif;
+      color: var(--muted); transition: all .15s;
     }
-    .tool-btn .tool-icon { font-size: 20px; }
-    .tool-btn:hover { border-color: var(--accent); color: var(--accent); background: #fff; transform: translateY(-1px); box-shadow: var(--shadow-sm); }
+    .tool-btn .ti { font-size: 18px; }
+    .tool-btn:hover { border-color: var(--accent); color: var(--accent); background: #fff; transform: translateY(-1px); }
 
-    /* ── Job cards ────────────────────────────────────────── */
+    /* Job cards */
+    .jobs-hd { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+    .jobs-hd h3 { font: 700 11px Inter, sans-serif; letter-spacing: .1em; text-transform: uppercase; color: var(--accent); }
     .job-card {
-      border: 1.5px solid var(--line);
-      border-radius: var(--radius-md);
-      padding: 14px;
-      margin-bottom: 10px;
-      background: #fff;
-      transition: all .2s;
-      cursor: move;
-      position: relative;
+      border: 1px solid var(--line); border-radius: 11px; padding: 12px;
+      margin-bottom: 9px; background: #fff; cursor: move;
+      transition: box-shadow .15s, border-color .15s;
     }
-    .job-card:hover { box-shadow: var(--shadow-md); border-color: var(--accent); }
+    .job-card:hover { box-shadow: 0 3px 10px rgba(0,0,0,.08); border-color: var(--accent); }
     .job-card.dragging { opacity: .4; transform: scale(.97); }
+    .job-card-hd { display:flex; justify-content:space-between; align-items:center; gap:8px; margin-bottom:10px; }
+    .job-card-hd .num { font: 700 11px Inter, sans-serif; color: var(--accent); }
+    .job-card-hd .acts { display: flex; gap: 4px; }
 
-    .job-card-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 12px;
-      gap: 8px;
-    }
-    .job-card-num {
-      font: 800 12px var(--font-display);
-      color: var(--accent);
-      letter-spacing: .05em;
-    }
-    .job-card-actions { display: flex; gap: 5px; }
-
-    .jobs-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 12px;
-    }
-    .jobs-header h3 {
-      font: 800 12px var(--font-display);
-      letter-spacing: .12em;
-      text-transform: uppercase;
-      color: var(--accent);
-      margin: 0;
+    /* Hint */
+    .hint {
+      font: 400 11px Inter, sans-serif; color: var(--muted); line-height: 1.5;
+      margin-top: 8px; padding: 9px 12px; background: var(--bg);
+      border-radius: 8px; border-left: 3px solid var(--accent);
     }
 
-    /* ============================================================
-       PREVIEW TAB
-    ============================================================ */
-    .preview-controls {
-      background: #fff;
-      border: 1px solid var(--line);
-      border-radius: var(--radius-lg);
-      padding: 14px 16px;
-      margin-bottom: 14px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-      flex-wrap: wrap;
+    /* Zoom bar (mobile only) */
+    .zoom-bar {
+      display: flex; align-items: center; justify-content: space-between;
+      background: #fff; border: 1px solid var(--line); border-radius: 11px;
+      padding: 9px 13px; margin-bottom: 12px;
     }
-    .preview-controls span {
-      font: 600 12px var(--font-body);
-      color: var(--muted);
-    }
-    .zoom-controls { display: flex; gap: 6px; align-items: center; }
+    .zoom-bar > span { font: 600 12px Inter, sans-serif; color: var(--muted); }
+    .zoom-ctrls { display: flex; gap: 6px; align-items: center; }
     .zoom-btn {
-      width: 32px;
-      height: 32px;
-      border: 1.5px solid var(--line);
-      border-radius: 8px;
-      background: var(--bg);
-      cursor: pointer;
-      font-size: 16px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all .2s;
-      color: var(--ink);
+      width: 30px; height: 30px; border: 1px solid var(--line); border-radius: 7px;
+      background: var(--bg); cursor: pointer; font-size: 16px;
+      display: flex; align-items: center; justify-content: center; color: var(--ink);
     }
-    .zoom-btn:hover { border-color: var(--accent); background: #fff; }
-    #zoomLevel {
-      font: 700 12px var(--font-body);
-      color: var(--muted);
-      min-width: 38px;
-      text-align: center;
+    #zoomLevel { font: 700 12px Inter, sans-serif; color: var(--muted); min-width: 36px; text-align: center; }
+
+    /* FAB */
+    .fab {
+      display: none; position: fixed; bottom: 18px; right: 18px; z-index: 500;
+      width: 54px; height: 54px; border-radius: 50%; background: var(--accent);
+      color: #fff; border: none; font-size: 20px; cursor: pointer;
+      box-shadow: 0 6px 20px rgba(0,0,0,.22); align-items: center; justify-content: center;
     }
+    body.show-stage .fab { display: flex; }
+    @media (min-width: 960px) { .fab { display: none !important; } }
 
-    .stage {
-      display: flex;
-      justify-content: center;
-      overflow-x: auto;
-      padding-bottom: 24px;
-    }
-    .paperStack {
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-      transform-origin: top center;
-      transition: transform .2s;
-    }
-
-    /* ============================================================
-       CV PAPER
-    ============================================================ */
-    .paper {
-      width: 210mm;
-      height: 297mm;
-      background: var(--paper);
-      box-shadow: var(--shadow-lg);
-      border-radius: 6px;
-      overflow: hidden;
-      position: relative;
-      break-after: page;
-      page-break-after: always;
-      flex-shrink: 0;
-    }
-    .paper:last-child { break-after: auto; page-break-after: auto; }
-    .page {
-      padding: var(--pad-mm);
-      height: 100%;
-      position: relative;
-    }
-
-    /* ── CV Typography ─────────────────────────────────── */
-    .header {
-      display: grid;
-      grid-template-columns: var(--header-cols);
-      gap: var(--gap-mm);
-      align-items: center;
-      padding-bottom: 6mm;
-      border-bottom: 1px solid var(--line);
-    }
-    .cv-name { font-size: var(--name-size); font-weight: 900; letter-spacing: -.03em; line-height: 1.05; margin: 0; }
-    .headline { margin-top: 3mm; font-size: var(--headline-size); font-weight: 650; color: var(--muted); }
-    .degree   { margin-top: 2mm; font-size: 13.2px; font-weight: 850; color: var(--accent); }
-    .contact  { margin-top: 4mm; font-size: 12px; color: var(--muted); line-height: 1.45; word-break: break-word; }
-    .contact a { color: var(--accent); text-decoration: none; font-weight: 750; }
-    .contact a:hover { text-decoration: underline; }
-
-    .photo {
-      width: 36mm; height: 36mm;
-      border-radius: var(--cv-radius);
-      border: 1px solid var(--line);
-      background: #F3F4F6;
-      overflow: hidden;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #9CA3AF;
-      font-weight: 800;
-      font-size: 11px;
-    }
-    .photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
-
-    .layout {
-      display: grid;
-      grid-template-columns: var(--cv-cols);
-      gap: var(--gap-mm);
-      padding-top: 7mm;
-      height: calc(100% - 52mm);
-    }
-
-    .section { margin-bottom: 7mm; }
-    .title {
-      font-size: var(--title-size);
-      font-weight: 900;
-      letter-spacing: .16em;
-      text-transform: uppercase;
-      color: var(--accent);
-      margin: 0 0 3mm 0;
-    }
-    .p { font-size: var(--p-size); line-height: 1.6; margin: 0; white-space: pre-wrap; }
-
-    .job { margin-top: 4.5mm; }
-    .jobhead { display: grid; grid-template-columns: 1fr auto; gap: 8mm; align-items: baseline; }
-    .jobrole { font-size: var(--jobrole-size); font-weight: 900; margin: 0; }
-    .jobdate { font-size: 11.8px; color: var(--muted); white-space: nowrap; font-weight: 700; }
-    .jobmeta { margin-top: 1.2mm; font-size: 11.8px; color: var(--muted); font-weight: 600; }
-    ul.bullets { margin: 2.5mm 0 0 18px; padding: 0; }
-    ul.bullets li { font-size: var(--bullet-size); line-height: 1.55; margin: 0 0 2mm 0; }
-
-    .card { border: 1px solid var(--line); border-radius: var(--cv-radius); padding: 4.5mm; margin-bottom: 6mm; background: #fff; }
-    .list { margin: 0; padding-left: 16px; }
-    .list li { font-size: 12.1px; margin-bottom: 2mm; }
-    .rows { display: flex; flex-direction: column; gap: 2.2mm; }
-    .row2 { display: grid; grid-template-columns: 1fr auto; gap: 6mm; align-items: baseline; }
-    .row2 .l { font-size: 12.2px; line-height: 1.45; }
-    .row2 .r { font-size: 12.2px; color: var(--muted); font-weight: 750; white-space: nowrap; }
-
-    /* Template variants */
-    body.tpl-minimal .card { border: 0; padding: 0; background: transparent; }
-    body.tpl-modern .layout { grid-template-columns: 1fr; }
-    body.tpl-modern .layout > aside { display: grid; grid-template-columns: 1fr 1fr; gap: var(--gap-mm); align-content: start; }
-    body.tpl-modern .layout > aside .card:last-child { grid-column: 1 / -1; }
-    body.tpl-sidebar .layout { grid-template-columns: 70mm 1fr; }
-    body.tpl-sidebar .layout > aside { order: -1; }
-    body.tpl-creative .header { background: linear-gradient(135deg, var(--accent) 0%, var(--muted) 100%); color: #fff; padding: 8mm; margin: calc(var(--pad-mm) * -1); margin-bottom: 8mm; border-bottom: none; }
-    body.tpl-creative .cv-name,
-    body.tpl-creative .headline,
-    body.tpl-creative .degree,
-    body.tpl-creative .contact,
-    body.tpl-creative .contact a { color: #fff; }
-
-    .page2Grid { display: grid; grid-template-columns: 1fr 1fr; gap: var(--gap-mm); margin-top: 6mm; }
-    .page2Grid .span2 { grid-column: 1 / -1; }
-
-    /* ============================================================
-       LOADING OVERLAY
-    ============================================================ */
+    /* Loading */
     .loading-overlay {
-      position: fixed; inset: 0;
-      background: rgba(0,0,0,.7);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      z-index: 9999;
-      backdrop-filter: blur(6px);
+      position: fixed; inset: 0; background: rgba(0,0,0,.65);
+      display: none; align-items: center; justify-content: center;
+      z-index: 9999; backdrop-filter: blur(4px);
     }
     .loading-overlay.active { display: flex; }
-    .loading-content {
-      background: #fff;
-      padding: 32px 48px;
-      border-radius: var(--radius-lg);
-      text-align: center;
-      box-shadow: 0 24px 64px rgba(0,0,0,.3);
+    .loading-box {
+      background: #fff; padding: 28px 40px; border-radius: 16px;
+      text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,.25);
     }
     .spinner {
-      width: 44px; height: 44px;
-      border: 3px solid var(--line);
-      border-top-color: var(--accent);
-      border-radius: 50%;
-      animation: spin 1s linear infinite;
-      margin: 0 auto 16px;
+      width: 40px; height: 40px; border: 3px solid var(--line);
+      border-top-color: var(--accent); border-radius: 50%;
+      animation: spin 1s linear infinite; margin: 0 auto 14px;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
-    .loading-text { font: 700 15px var(--font-body); color: var(--ink); }
+    .loading-box p { font: 700 14px Inter, sans-serif; color: var(--ink); }
 
-    /* ============================================================
-       DESKTOP LAYOUT (sidebar + preview side by side)
-    ============================================================ */
-    @media (min-width: 900px) {
-      .top-nav { display: none; }
-      .tab-bar  { display: none; }
-
-      .app-shell { flex-direction: row; height: 100vh; overflow: hidden; }
-
-      .desktop-sidebar {
-        width: 400px;
-        flex-shrink: 0;
-        background: var(--panel-bg);
-        border-right: 1px solid var(--line);
-        display: flex;
-        flex-direction: column;
-        height: 100vh;
-        overflow: hidden;
-      }
-      .sidebar-header {
-        padding: 20px 20px 0;
-        flex-shrink: 0;
-      }
-      .sidebar-brand {
-        font: 800 20px var(--font-display);
-        color: var(--accent);
-        letter-spacing: -.02em;
-        margin-bottom: 4px;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-      }
-      .sidebar-brand .badge {
-        font-size: 9px;
-        background: var(--accent);
-        color: #fff;
-        padding: 2px 7px;
-        border-radius: 20px;
-        font-weight: 700;
-        letter-spacing: .06em;
-      }
-      .sidebar-tabs {
-        display: flex;
-        gap: 2px;
-        margin-top: 16px;
-        background: var(--bg);
-        border-radius: var(--radius-md);
-        padding: 3px;
-        margin-left: 0;
-        margin-right: 0;
-      }
-      .sidebar-tab {
-        flex: 1;
-        padding: 7px 4px;
-        font: 600 11px var(--font-body);
-        color: var(--muted);
-        text-align: center;
-        cursor: pointer;
-        border: none;
-        background: transparent;
-        border-radius: 10px;
-        transition: all .2s;
-        letter-spacing: .03em;
-      }
-      .sidebar-tab.active {
-        background: #fff;
-        color: var(--accent);
-        box-shadow: var(--shadow-sm);
-        font-weight: 700;
-      }
-      .sidebar-body {
-        flex: 1;
-        overflow-y: auto;
-        padding: 16px 20px 32px;
-      }
-      .sidebar-actions {
-        padding: 12px 20px;
-        border-top: 1px solid var(--line);
-        display: flex;
-        gap: 8px;
-        flex-shrink: 0;
-      }
-
-      /* Desktop main = full scroll preview */
-      .main-content { padding: 0; flex: 1; overflow: auto; }
-      .tab-panel { display: none; }
-      .tab-panel.active { display: block; }
-      .desktop-panel { display: none; }
-      .desktop-panel.active { display: block; }
-
-      .stage {
-        padding: 32px;
-        min-height: 100%;
-        align-items: flex-start;
-      }
-      .preview-controls { display: none; }
-    }
-
-    @media (max-width: 899px) {
-      .desktop-sidebar { display: none; }
-      .main-content { padding: 12px; }
-    }
-
-    /* ============================================================
-       HINT TEXT
-    ============================================================ */
-    .hint {
-      font: 400 12px var(--font-body);
-      color: var(--muted);
-      line-height: 1.5;
-      margin-top: 8px;
-      padding: 10px 14px;
-      background: var(--bg);
-      border-radius: var(--radius-sm);
-      border-left: 3px solid var(--accent);
-    }
-
-    /* ============================================================
-       SCROLL THUMB
-    ============================================================ */
-    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    /* scrollbar */
+    ::-webkit-scrollbar { width: 5px; height: 5px; }
     ::-webkit-scrollbar-track { background: transparent; }
     ::-webkit-scrollbar-thumb { background: #D1D5DB; border-radius: 3px; }
-    ::-webkit-scrollbar-thumb:hover { background: #9CA3AF; }
 
-    /* ============================================================
-       FLOATING ACTION BUTTON (mobile preview tab)
-    ============================================================ */
-    .fab-pdf {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      z-index: 100;
-      width: 56px;
-      height: 56px;
-      border-radius: 50%;
-      background: var(--accent);
-      color: #fff;
-      border: none;
-      font-size: 22px;
-      cursor: pointer;
-      box-shadow: 0 6px 24px rgba(0,0,0,.22);
-      display: none;
-      align-items: center;
-      justify-content: center;
-      transition: transform .2s, box-shadow .2s;
+    /* ===================================================
+       CV PAPER
+    =================================================== */
+    .stage { display: flex; justify-content: center; padding-bottom: 24px; }
+    .paperStack { display: flex; flex-direction: column; gap: 16px; transform-origin: top center; transition: transform .2s; }
+    .paper {
+      width: 210mm; height: 297mm; background: var(--paper);
+      box-shadow: 0 16px 40px rgba(0,0,0,.14); border-radius: 5px;
+      overflow: hidden; flex-shrink: 0; break-after: page; page-break-after: always;
     }
-    .fab-pdf.visible { display: flex; }
-    .fab-pdf:hover { transform: scale(1.08); box-shadow: 0 8px 28px rgba(0,0,0,.28); }
+    .paper:last-child { break-after: auto; page-break-after: auto; }
+    .page { padding: var(--pad-mm); height: 100%; position: relative; }
 
-    @media (min-width: 900px) { .fab-pdf { display: none !important; } }
+    .cv-header {
+      display: grid; grid-template-columns: var(--header-cols);
+      gap: var(--gap-mm); align-items: center;
+      padding-bottom: 6mm; border-bottom: 1px solid var(--line);
+    }
+    .cv-name    { font-size: var(--name-size); font-weight: 900; letter-spacing: -.03em; line-height: 1.05; margin: 0; }
+    .cv-hl      { margin-top: 3mm; font-size: var(--headline-size); font-weight: 650; color: var(--muted); }
+    .cv-deg     { margin-top: 2mm; font-size: 13.2px; font-weight: 850; color: var(--accent); }
+    .cv-contact { margin-top: 4mm; font-size: 12px; color: var(--muted); line-height: 1.45; word-break: break-word; }
+    .cv-contact a { color: var(--accent); text-decoration: none; font-weight: 750; }
+    .cv-contact a:hover { text-decoration: underline; }
 
-    /* ============================================================
-       MISC
-    ============================================================ */
-    .divider { height: 1px; background: var(--line); margin: 14px 0; }
-    .section-label {
-      font: 800 11px var(--font-display);
-      letter-spacing: .12em;
-      text-transform: uppercase;
-      color: var(--muted);
-      margin: 16px 0 10px;
+    .cv-photo {
+      width: 36mm; height: 36mm; border-radius: var(--radius); border: 1px solid var(--line);
+      background: #F3F4F6; overflow: hidden; display: flex; align-items: center;
+      justify-content: center; color: #9CA3AF; font-weight: 800; font-size: 11px;
     }
-    .chip {
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      padding: 4px 10px;
-      border-radius: 20px;
-      background: var(--bg);
-      font: 600 11px var(--font-body);
-      color: var(--muted);
-      border: 1px solid var(--line);
+    .cv-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+    .cv-layout {
+      display: grid; grid-template-columns: var(--cv-cols);
+      gap: var(--gap-mm); padding-top: 7mm; height: calc(100% - 52mm);
     }
+    .cv-section { margin-bottom: 7mm; }
+    .cv-title { font-size: var(--title-size); font-weight: 900; letter-spacing: .16em; text-transform: uppercase; color: var(--accent); margin: 0 0 3mm 0; }
+    .cv-p { font-size: var(--p-size); line-height: 1.6; margin: 0; white-space: pre-wrap; }
+
+    .cv-job { margin-top: 4.5mm; }
+    .cv-jobhead { display: grid; grid-template-columns: 1fr auto; gap: 8mm; align-items: baseline; }
+    .cv-jobrole { font-size: var(--jobrole-size); font-weight: 900; margin: 0; }
+    .cv-jobdate { font-size: 11.8px; color: var(--muted); white-space: nowrap; font-weight: 700; }
+    .cv-jobmeta { margin-top: 1.2mm; font-size: 11.8px; color: var(--muted); font-weight: 600; }
+    ul.cv-bullets { margin: 2.5mm 0 0 18px; padding: 0; }
+    ul.cv-bullets li { font-size: var(--bullet-size); line-height: 1.55; margin: 0 0 2mm 0; }
+
+    .cv-card { border: 1px solid var(--line); border-radius: var(--radius); padding: 4.5mm; margin-bottom: 6mm; background: #fff; }
+    .cv-list { margin: 0; padding-left: 16px; }
+    .cv-list li { font-size: 12.1px; margin-bottom: 2mm; }
+    .cv-rows { display: flex; flex-direction: column; gap: 2.2mm; }
+    .cv-row2 { display: grid; grid-template-columns: 1fr auto; gap: 6mm; align-items: baseline; }
+    .cv-row2 .l { font-size: 12.2px; line-height: 1.45; }
+    .cv-row2 .r { font-size: 12.2px; color: var(--muted); font-weight: 750; white-space: nowrap; }
+
+    /* Template variants */
+    body.tpl-minimal .cv-card { border:0; padding:0; background:transparent; }
+    body.tpl-modern  .cv-layout { grid-template-columns: 1fr; }
+    body.tpl-modern  .cv-layout > aside { display:grid; grid-template-columns:1fr 1fr; gap:var(--gap-mm); align-content:start; }
+    body.tpl-modern  .cv-layout > aside .cv-card:last-child { grid-column:1/-1; }
+    body.tpl-sidebar .cv-layout { grid-template-columns:70mm 1fr; }
+    body.tpl-sidebar .cv-layout > aside { order:-1; }
+    body.tpl-creative .cv-header {
+      background: linear-gradient(135deg, var(--accent) 0%, var(--muted) 100%);
+      color:#fff; padding:8mm; margin:calc(var(--pad-mm)*-1); margin-bottom:8mm; border-bottom:none;
+    }
+    body.tpl-creative .cv-name,
+    body.tpl-creative .cv-hl,
+    body.tpl-creative .cv-deg,
+    body.tpl-creative .cv-contact,
+    body.tpl-creative .cv-contact a { color:#fff; }
+
+    .page2Grid { display:grid; grid-template-columns:1fr 1fr; gap:var(--gap-mm); margin-top:6mm; }
+    .page2Grid .span2 { grid-column:1/-1; }
   </style>
 </head>
 
 <body class="tpl-classic">
-  <!-- Loading Overlay -->
+
   <div class="loading-overlay" id="loadingOverlay">
-    <div class="loading-content">
+    <div class="loading-box">
       <div class="spinner"></div>
-      <div class="loading-text" id="loadingText">Procesando...</div>
+      <p id="loadingText">Procesando...</p>
     </div>
   </div>
 
-  <div class="app-shell">
+  <div class="shell">
 
-    <!-- ═══════════════════════════════════════════════════════════
-         MOBILE TOP NAV
-    ═══════════════════════════════════════════════════════════ -->
+    <!-- ════ MOBILE TOP NAV ════ -->
     <nav class="top-nav">
-      <div class="brand">
-        📄 CV Builder
-      </div>
-      <div class="nav-actions">
+      <div class="brand">📄 CV Builder</div>
+      <div class="nav-acts">
         <button class="nav-btn" id="mBtnTranslate">🌐 EN</button>
-        <button class="nav-btn primary-action" id="mBtnPDF">⬇ PDF</button>
+        <button class="nav-btn solid" id="mBtnPDF">⬇ PDF</button>
       </div>
     </nav>
 
-    <!-- ═══════════════════════════════════════════════════════════
-         MOBILE TAB BAR
-    ═══════════════════════════════════════════════════════════ -->
-    <div class="tab-bar" id="mTabBar">
-      <button class="tab-item active" data-tab="m-edit">
-        <span class="tab-icon">✏️</span>Editar
-      </button>
-      <button class="tab-item" data-tab="m-style">
-        <span class="tab-icon">🎨</span>Estilo
-      </button>
-      <button class="tab-item" data-tab="m-jobs">
-        <span class="tab-icon">💼</span>Trabajos
-      </button>
-      <button class="tab-item" data-tab="m-preview">
-        <span class="tab-icon">👁</span>Vista
-      </button>
+    <!-- ════ MOBILE TAB BAR ════ -->
+    <div class="tab-bar">
+      <button class="tab-btn active" data-tab="m-edit"><span>✏️</span>Editar</button>
+      <button class="tab-btn" data-tab="m-style"><span>🎨</span>Estilo</button>
+      <button class="tab-btn" data-tab="m-jobs"><span>💼</span>Trabajos</button>
+      <button class="tab-btn" data-tab="m-preview"><span>👁</span>Vista</button>
     </div>
 
-    <!-- ═══════════════════════════════════════════════════════════
-         DESKTOP SIDEBAR
-    ═══════════════════════════════════════════════════════════ -->
-    <aside class="desktop-sidebar">
-      <div class="sidebar-header">
-        <div class="sidebar-brand">
-          📄 CV Builder
-        </div>
-        <div class="sidebar-tabs" id="dTabBar">
-          <button class="sidebar-tab active" data-dtab="d-edit">Datos</button>
-          <button class="sidebar-tab" data-dtab="d-style">Estilo</button>
-          <button class="sidebar-tab" data-dtab="d-jobs">Trabajos</button>
-          <button class="sidebar-tab" data-dtab="d-tools">Tools</button>
-        </div>
-      </div>
-      <div class="sidebar-body">
-        <!-- D-EDIT -->
-        <div class="desktop-panel active" id="d-edit">
-          <div class="field">
-            <label>Nombre completo</label>
-            <input id="dInName" value="Camilo Eguiazabal" />
-          </div>
-          <div class="field">
-            <label>Título profesional</label>
-            <input id="dInDegree" value="Lic. en Recursos Humanos" />
-          </div>
-          <div class="field">
-            <label>Headline</label>
-            <input id="dInHeadline" value="HRBP · People Analytics · Employee Experience" />
-          </div>
-          <div class="grid2">
-            <div class="field">
-              <label>Email</label>
-              <input id="dInEmail" value="ceguiazabal@gmail.com" />
-            </div>
-            <div class="field">
-              <label>Teléfono</label>
-              <input id="dInPhone" value="+54 11 2396-2046" />
-            </div>
-          </div>
-          <div class="field">
-            <label>LinkedIn (URL)</label>
-            <input id="dInLinkedIn" value="https://www.linkedin.com/in/cegui" />
-          </div>
-          <div class="field">
-            <label>Ubicación</label>
-            <input id="dInLocation" value="Buenos Aires, Argentina" />
-          </div>
-          <div class="field">
-            <label id="dTProfileLbl">Perfil profesional</label>
-            <textarea id="dInProfile">Licenciado en Recursos Humanos con experiencia en entornos corporativos y trayectoria sólida en gestión administrativa y coordinación. Actualmente HRBP Contractor en Oracle, con foco en employee experience, comunicación interna, ejecución de iniciativas de RR.HH. y trabajo cross-functional.</textarea>
-          </div>
-          <div class="section-label">Áreas y Formación</div>
-          <div class="field">
-            <label id="dTAreasLbl">Áreas HR (una por línea)</label>
-            <textarea id="dInAreas">HRBP Support
-Employee Experience
-HR Operations
-Onboarding
-Internal Communications
-Stakeholder Management
-HR Reporting</textarea>
-          </div>
-          <div class="field">
-            <label id="dTEduLbl">Educación (Título — Institución | Detalle)</label>
-            <textarea id="dInEdu">Lic. en Recursos Humanos — UADE | Finalizado
-Lic. en Psicología — UADE | En curso</textarea>
-          </div>
-          <div class="field">
-            <label id="dTCoursesLbl">Formación complementaria (Curso | Institución)</label>
-            <textarea id="dInCourses">Planificación y gestión de RR.HH. para PyMEs | CAME / UTN
-Técnicas de selección de RR.HH. | CAME / UTN
-Conducción de equipos | CAME / UTN
-Comunicación y organizaciones | CAME / UTN</textarea>
-          </div>
-        </div>
-        <!-- D-STYLE -->
-        <div class="desktop-panel" id="d-style">
-          <div class="field">
-            <label>Plantilla</label>
-            <select id="dInTemplate">
-              <option value="tpl-classic">Clásica (ATS)</option>
-              <option value="tpl-modern">Moderna</option>
-              <option value="tpl-sidebar">Barra Lateral</option>
-              <option value="tpl-minimal">Minimalista</option>
-              <option value="tpl-executive">Ejecutiva</option>
-              <option value="tpl-creative">Creativa</option>
-            </select>
-          </div>
-          <div class="field">
-            <label>Densidad</label>
-            <select id="dInCompact">
-              <option value="off">Normal</option>
-              <option value="on">Compacto</option>
-            </select>
-          </div>
-          <div class="field">
-            <label>Tema de Color</label>
-            <select id="dInTheme">
-              <option value="">Por defecto</option>
-              <option value="theme-blue">Azul</option>
-              <option value="theme-purple">Púrpura</option>
-              <option value="theme-green">Verde</option>
-              <option value="theme-red">Rojo</option>
-              <option value="theme-orange">Naranja</option>
-            </select>
-          </div>
-          <div class="divider"></div>
-          <div class="field">
-            <label>Foto en CV</label>
-            <select id="dInPhotoMode">
-              <option value="with">Con foto</option>
-              <option value="without">Sin foto</option>
-            </select>
-          </div>
-          <div class="field">
-            <label>Subir foto</label>
-            <input id="dInPhoto" type="file" accept="image/*" />
-          </div>
-        </div>
-        <!-- D-JOBS -->
-        <div class="desktop-panel" id="d-jobs">
-          <div class="jobs-header">
-            <h3 id="dTExpEdit">Experiencia laboral</h3>
-            <button class="btn sm secondary" id="dBtnAddJob">+ Agregar</button>
-          </div>
-          <div id="dJobsEditorList"></div>
-          <div class="hint">💡 Arrastrá para reordenar. El contenido pagina automáticamente.</div>
-        </div>
-        <!-- D-TOOLS -->
-        <div class="desktop-panel" id="d-tools">
-          <div class="tools-grid">
-            <button class="tool-btn" id="dBtnAutoFormat"><span class="tool-icon">✨</span>Auto-formato</button>
-            <button class="tool-btn" id="dBtnSpellCheck"><span class="tool-icon">📊</span>Estadísticas</button>
-            <button class="tool-btn" id="dBtnCountWords"><span class="tool-icon">🔢</span>Palabras</button>
-            <button class="tool-btn" id="dBtnDuplicateJob"><span class="tool-icon">📋</span>Duplicar trabajo</button>
-          </div>
-          <div class="divider"></div>
-          <div class="btn-group" style="flex-direction:column; gap:8px;">
-            <button class="btn secondary full" id="dBtnTranslate">🌐 Traducir a inglés</button>
-            <button class="btn ghost full" id="dBtnReset">🔄 Reiniciar todo</button>
-          </div>
-        </div>
-      </div>
-      <!-- Desktop bottom actions -->
-      <div class="sidebar-actions">
-        <button class="btn full" id="dBtnPDF">📄 Descargar PDF</button>
-      </div>
-    </aside>
+    <!-- ════ MOBILE PANELS ════ -->
+    <div class="mobile-panels">
 
-    <!-- ═══════════════════════════════════════════════════════════
-         MAIN CONTENT (mobile tabs + desktop preview)
-    ═══════════════════════════════════════════════════════════ -->
-    <main class="main-content">
-
-      <!-- ── Mobile: Edit tab ─────────────────────────────── -->
-      <div class="tab-panel active" id="m-edit">
+      <!-- EDITAR -->
+      <div class="m-panel active" id="m-edit">
         <div class="panel-card">
-          <h3><span class="icon">👤</span> Información Personal</h3>
-          <div class="field">
-            <label>Nombre completo</label>
-            <input id="inName" value="Camilo Eguiazabal" />
-          </div>
-          <div class="field">
-            <label>Título profesional</label>
-            <input id="inDegree" value="Lic. en Recursos Humanos" />
-          </div>
-          <div class="field">
-            <label>Headline</label>
-            <input id="inHeadline" value="HRBP · People Analytics · Employee Experience" />
-          </div>
+          <h3>Información Personal</h3>
           <div class="grid2">
-            <div class="field">
-              <label>Email</label>
-              <input id="inEmail" value="ceguiazabal@gmail.com" />
-            </div>
-            <div class="field">
-              <label>Teléfono</label>
-              <input id="inPhone" value="+54 11 2396-2046" />
-            </div>
+            <div class="field"><label>Nombre completo</label><input id="inName" value="Camilo Eguiazabal"/></div>
+            <div class="field"><label>Título profesional</label><input id="inDegree" value="Lic. en Recursos Humanos"/></div>
           </div>
-          <div class="field">
-            <label>LinkedIn (URL)</label>
-            <input id="inLinkedIn" value="https://www.linkedin.com/in/cegui" />
+          <div class="field"><label>Headline</label><input id="inHeadline" value="HRBP · People Analytics · Employee Experience"/></div>
+          <div class="grid2">
+            <div class="field"><label>Email</label><input id="inEmail" value="ceguiazabal@gmail.com"/></div>
+            <div class="field"><label>Teléfono</label><input id="inPhone" value="+54 11 2396-2046"/></div>
           </div>
-          <div class="field">
-            <label>Ubicación</label>
-            <input id="inLocation" value="Buenos Aires, Argentina" />
-          </div>
+          <div class="field"><label>LinkedIn (URL)</label><input id="inLinkedIn" value="https://www.linkedin.com/in/cegui"/></div>
+          <div class="field"><label>Ubicación</label><input id="inLocation" value="Buenos Aires, Argentina"/></div>
           <div class="field">
             <label id="tProfileLbl">Perfil profesional</label>
             <textarea id="inProfile">Licenciado en Recursos Humanos con experiencia en entornos corporativos y trayectoria sólida en gestión administrativa y coordinación. Actualmente HRBP Contractor en Oracle, con foco en employee experience, comunicación interna, ejecución de iniciativas de RR.HH. y trabajo cross-functional.</textarea>
           </div>
         </div>
-
         <div class="panel-card">
-          <h3><span class="icon">📚</span> Áreas y Formación</h3>
+          <h3>Áreas y Formación</h3>
           <div class="field">
             <label id="tAreasLbl">Áreas HR (una por línea)</label>
             <textarea id="inAreas">HRBP Support
@@ -979,30 +618,26 @@ Comunicación y organizaciones | CAME / UTN</textarea>
         </div>
       </div>
 
-      <!-- ── Mobile: Style tab ─────────────────────────────── -->
-      <div class="tab-panel" id="m-style">
+      <!-- ESTILO -->
+      <div class="m-panel" id="m-style">
         <div class="panel-card">
-          <h3><span class="icon">🎨</span> Plantilla y Estilo</h3>
-          <div class="field">
-            <label>Plantilla</label>
-            <select id="inTemplate">
-              <option value="tpl-classic">Clásica (ATS)</option>
-              <option value="tpl-modern">Moderna</option>
-              <option value="tpl-sidebar">Barra Lateral</option>
-              <option value="tpl-minimal">Minimalista</option>
-              <option value="tpl-executive">Ejecutiva</option>
-              <option value="tpl-creative">Creativa</option>
-            </select>
+          <h3>Plantilla y Estilo</h3>
+          <div class="grid2">
+            <div class="field"><label>Plantilla</label>
+              <select id="inTemplate">
+                <option value="tpl-classic">Clásica (ATS)</option>
+                <option value="tpl-modern">Moderna</option>
+                <option value="tpl-sidebar">Barra Lateral</option>
+                <option value="tpl-minimal">Minimalista</option>
+                <option value="tpl-executive">Ejecutiva</option>
+                <option value="tpl-creative">Creativa</option>
+              </select>
+            </div>
+            <div class="field"><label>Densidad</label>
+              <select id="inCompact"><option value="off">Normal</option><option value="on">Compacto</option></select>
+            </div>
           </div>
-          <div class="field">
-            <label>Densidad</label>
-            <select id="inCompact">
-              <option value="off">Normal</option>
-              <option value="on">Compacto</option>
-            </select>
-          </div>
-          <div class="field">
-            <label>Tema de Color</label>
+          <div class="field"><label>Tema de Color</label>
             <select id="inTheme">
               <option value="">Por defecto</option>
               <option value="theme-blue">Azul</option>
@@ -1013,723 +648,774 @@ Comunicación y organizaciones | CAME / UTN</textarea>
             </select>
           </div>
           <div class="divider"></div>
-          <div class="field">
-            <label>Foto en CV</label>
-            <select id="inPhotoMode">
-              <option value="with">Con foto</option>
-              <option value="without">Sin foto</option>
-            </select>
-          </div>
-          <div class="field">
-            <label>Subir foto</label>
-            <input id="inPhoto" type="file" accept="image/*" />
+          <div class="grid2">
+            <div class="field"><label>Foto</label>
+              <select id="inPhotoMode"><option value="with">Con foto</option><option value="without">Sin foto</option></select>
+            </div>
+            <div class="field"><label>Subir foto</label><input id="inPhoto" type="file" accept="image/*"/></div>
           </div>
         </div>
-
         <div class="panel-card">
-          <h3><span class="icon">🛠️</span> Herramientas</h3>
+          <h3>🛠 Herramientas</h3>
           <div class="tools-grid">
-            <button class="tool-btn" id="btnAutoFormat"><span class="tool-icon">✨</span>Auto-formato</button>
-            <button class="tool-btn" id="btnSpellCheck"><span class="tool-icon">📊</span>Estadísticas</button>
-            <button class="tool-btn" id="btnCountWords"><span class="tool-icon">🔢</span>Palabras</button>
-            <button class="tool-btn" id="btnDuplicateJob"><span class="tool-icon">📋</span>Duplicar trabajo</button>
+            <button class="tool-btn" id="btnAutoFormat"><span class="ti">✨</span>Auto-formato</button>
+            <button class="tool-btn" id="btnSpellCheck"><span class="ti">📊</span>Estadísticas</button>
+            <button class="tool-btn" id="btnCountWords"><span class="ti">🔢</span>Palabras</button>
+            <button class="tool-btn" id="btnDuplicateJob"><span class="ti">📋</span>Duplicar trabajo</button>
           </div>
-          <div class="divider"></div>
-          <div style="display:flex; flex-direction:column; gap:8px;">
-            <button class="btn secondary full" id="btnTranslateEN">🌐 Traducir a inglés</button>
+          <div style="display:flex;flex-direction:column;gap:8px;">
+            <button class="btn sec full" id="btnTranslateEN">🌐 Traducir a inglés</button>
             <button class="btn ghost full" id="btnReset">🔄 Reiniciar todo</button>
           </div>
         </div>
       </div>
 
-      <!-- ── Mobile: Jobs tab ──────────────────────────────── -->
-      <div class="tab-panel" id="m-jobs">
+      <!-- TRABAJOS -->
+      <div class="m-panel" id="m-jobs">
         <div class="panel-card">
-          <div class="jobs-header">
-            <h3 id="tExpEdit" style="margin-bottom:0;">Experiencia</h3>
-            <button class="btn sm secondary" id="btnAddJob">+ Agregar</button>
+          <div class="jobs-hd">
+            <h3 id="tExpEdit">Experiencia laboral</h3>
+            <button class="btn sm sec" id="btnAddJob">+ Agregar</button>
           </div>
           <div id="jobsEditorList"></div>
-          <div class="hint">💡 Arrastrá para reordenar. El contenido pagina automáticamente.</div>
+          <div class="hint">💡 Arrastrá para reordenar. El contenido pasa a página 2 automáticamente.</div>
         </div>
       </div>
 
-      <!-- ── Mobile/Desktop: Preview ─────────────────────── -->
-      <div class="tab-panel" id="m-preview">
-        <div class="preview-controls">
-          <span>Vista previa del CV</span>
-          <div class="zoom-controls">
-            <button class="zoom-btn" id="zoomOut">−</button>
-            <span id="zoomLevel">60%</span>
-            <button class="zoom-btn" id="zoomIn">+</button>
-          </div>
-        </div>
-        <div class="stage">
-          <div class="paperStack" id="paperStack">
-            <!-- PAGE 1 -->
-            <div class="paper" data-page="1">
-              <div class="page" id="cvPage1">
-                <div class="header">
-                  <div>
-                    <h1 class="cv-name" id="cvName">Camilo Eguiazabal</h1>
-                    <div class="headline" id="cvHeadline">HRBP · People Analytics · Employee Experience</div>
-                    <div class="degree" id="cvDegree">Lic. en Recursos Humanos</div>
-                    <div class="contact" id="cvContact">
-                      <span id="cvLocation">Buenos Aires, Argentina</span> ·
-                      <a id="cvEmail" href="/cdn-cgi/l/email-protection#89eaeceefce0e8f3e8ebe8e5c9eee4e8e0e5a7eae6e4"><span class="__cf_email__" data-cfemail="57343230223e362d3635363b17303a363e3b7934383a">[email&#160;protected]</span></a> ·
-                      <a id="cvPhone" href="tel:+541123962046">+54 11 2396-2046</a> ·
-                      <a id="cvLinkedIn" href="https://www.linkedin.com/in/cegui" target="_blank">linkedin.com/in/cegui</a>
-                    </div>
-                  </div>
-                  <div class="photo" id="cvPhotoBox">
-                    <span id="cvPhotoLabel">FOTO</span>
-                    <img id="cvPhotoImg" alt="Foto" style="display:none"/>
-                  </div>
-                </div>
+      <!-- VISTA (placeholder, stage lives outside) -->
+      <div class="m-panel" id="m-preview"></div>
 
-                <div class="layout" id="cvLayout">
-                  <div id="cvMain">
-                    <div class="section card">
-                      <h2 class="title" id="tProfile">Perfil</h2>
-                      <p class="p" id="cvProfile"></p>
-                    </div>
-                    <div class="section card">
-                      <h2 class="title" id="tExperience">Experiencia</h2>
-                      <div id="cvJobsPage1"></div>
-                    </div>
-                  </div>
-                  <aside id="cvSide">
-                    <div class="card" id="cardAreas">
-                      <h2 class="title" id="tAreas">Áreas HR</h2>
-                      <ul class="list" id="cvAreas"></ul>
-                    </div>
-                    <div class="card" id="cardEdu">
-                      <h2 class="title" id="tEdu">Educación</h2>
-                      <div id="cvEdu"></div>
-                    </div>
-                    <div class="card" id="cardCourses" style="margin-bottom:0;">
-                      <h2 class="title" id="tCourses">Formación complementaria</h2>
-                      <div class="rows" id="cvCourses"></div>
-                    </div>
-                  </aside>
-                </div>
-              </div>
-            </div>
+    </div><!-- /mobile-panels -->
 
-            <!-- PAGE 2 -->
-            <div class="paper" data-page="2" id="paper2" style="display:none;">
-              <div class="page" id="cvPage2">
-                <div class="section card" style="margin-bottom:0;">
-                  <h2 class="title" id="tExperience2">Experiencia</h2>
-                  <div id="cvJobsPage2"></div>
-                  <div id="cvPage2Extras"></div>
-                </div>
-              </div>
-            </div>
-          </div>
+    <!-- ════ DESKTOP SIDEBAR ════ -->
+    <aside class="desktop-sidebar">
+      <div class="ds-head">
+        <div class="ds-brand">📄 CV Builder</div>
+        <div class="ds-tabs">
+          <button class="ds-tab active" data-dtab="d-edit">Datos</button>
+          <button class="ds-tab" data-dtab="d-style">Estilo</button>
+          <button class="ds-tab" data-dtab="d-jobs">Trabajos</button>
+          <button class="ds-tab" data-dtab="d-tools">Tools</button>
         </div>
       </div>
+      <div class="ds-body">
 
-    </main>
-  </div>
-
-  <!-- FAB for mobile preview -->
-  <button class="fab-pdf" id="fabPDF" title="Descargar PDF">📄</button>
-
-  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
-    // ============================================================
-    // CONSTANTS & STATE
-    // ============================================================
-    const STORAGE_KEY = "cv_builder_draft_v4";
-
-    const DEFAULT_JOBS = [
-      {
-        role: "HRBP Contractor — Oracle",
-        meta: "Buenos Aires, Argentina",
-        dates: "2023 – Present",
-        bullets: [
-          "Partner with leaders and teams on employee lifecycle matters, driving engagement across 50+ employees",
-          "Coordinate cross-functionally with HR, Facilities, and Finance to execute strategic initiatives",
-          "Manage employee experience programs, benefits administration, and engagement activities",
-          "Build and maintain HR reports and operational documentation"
-        ]
-      },
-      {
-        role: "HR Analyst — Grupo Suessa",
-        meta: "CABA, Argentina",
-        dates: "Dec 2022 – 2023",
-        bullets: [
-          "Organized end-to-end recruitment processes, onboarding, and administrative follow-up",
-          "Coordinated with candidates and provided operational support to HR team"
-        ]
-      },
-      {
-        role: "Academic & Administrative Management — CFP Nº26",
-        meta: "CABA, Argentina",
-        dates: "2015 – 2022",
-        bullets: [
-          "Progressive career: Administrative Assistant / Preceptor → Pedagogical Team → Head of Student Department",
-          "Managed documentation, student services, and institutional coordination"
-        ]
-      }
-    ];
-
-    let jobs = JSON.parse(JSON.stringify(DEFAULT_JOBS));
-    let zoomScale = 0.6;
-
-    const $ = (id) => document.getElementById(id);
-    const esc = (str) => (str ?? "").replace(/[&<>"']/g, m => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"}[m]));
-
-    function toTelHref(p) {
-      const c = (p || "").trim().replace(/[^\d+]/g, "");
-      return c.startsWith("+") ? c : "+" + c;
-    }
-    function linkedinLabel(url) {
-      try { const u = new URL(url); return (u.hostname.replace(/^www\./, "") + u.pathname).replace(/\/$/, ""); }
-      catch { return (url || "").replace(/^https?:\/\//, "").replace(/\/$/, ""); }
-    }
-    function showLoading(t = "Procesando...") { $("loadingText").textContent = t; $("loadingOverlay").classList.add("active"); }
-    function hideLoading() { $("loadingOverlay").classList.remove("active"); }
-
-    // ============================================================
-    // SYNC: mobile ↔ desktop fields
-    // Mobile inputs are the "source of truth"; desktop mirror them
-    // ============================================================
-    const FIELD_PAIRS = [
-      ["inName","dInName"],["inDegree","dInDegree"],["inHeadline","dInHeadline"],
-      ["inEmail","dInEmail"],["inPhone","dInPhone"],["inLinkedIn","dInLinkedIn"],
-      ["inLocation","dInLocation"],["inProfile","dInProfile"],["inAreas","dInAreas"],
-      ["inEdu","dInEdu"],["inCourses","dInCourses"],["inTemplate","dInTemplate"],
-      ["inCompact","dInCompact"],["inTheme","dInTheme"],["inPhotoMode","dInPhotoMode"]
-    ];
-
-    function syncFields(sourceId, targetId) {
-      const src = $(sourceId), tgt = $(targetId);
-      if(!src || !tgt) return;
-      tgt.value = src.value;
-    }
-
-    function mirrorToDesktop() {
-      FIELD_PAIRS.forEach(([m,d]) => syncFields(m,d));
-    }
-    function mirrorToMobile() {
-      FIELD_PAIRS.forEach(([m,d]) => syncFields(d,m));
-    }
-
-    // ============================================================
-    // TABS — MOBILE
-    // ============================================================
-    function activateMobileTab(id) {
-      document.querySelectorAll(".tab-item").forEach(b => b.classList.remove("active"));
-      document.querySelectorAll(".tab-panel").forEach(p => p.classList.remove("active"));
-      const tab = document.querySelector(`.tab-item[data-tab="${id}"]`);
-      if(tab) tab.classList.add("active");
-      const panel = $(id);
-      if(panel) panel.classList.add("active");
-      // Show FAB only on preview
-      const fab = $("fabPDF");
-      if(id === "m-preview") fab.classList.add("visible");
-      else fab.classList.remove("visible");
-    }
-
-    document.querySelectorAll(".tab-item[data-tab]").forEach(btn => {
-      btn.addEventListener("click", () => activateMobileTab(btn.dataset.tab));
-    });
-
-    // ============================================================
-    // TABS — DESKTOP
-    // ============================================================
-    function activateDesktopTab(id) {
-      document.querySelectorAll(".sidebar-tab").forEach(b => b.classList.remove("active"));
-      document.querySelectorAll(".desktop-panel").forEach(p => p.classList.remove("active"));
-      const tab = document.querySelector(`.sidebar-tab[data-dtab="${id}"]`);
-      if(tab) tab.classList.add("active");
-      const panel = $(id);
-      if(panel) panel.classList.add("active");
-    }
-
-    document.querySelectorAll(".sidebar-tab[data-dtab]").forEach(btn => {
-      btn.addEventListener("click", () => activateDesktopTab(btn.dataset.dtab));
-    });
-
-    // ============================================================
-    // ZOOM (mobile preview)
-    // ============================================================
-    function applyZoom() {
-      const stack = $("paperStack");
-      stack.style.transform = `scale(${zoomScale})`;
-      $("zoomLevel").textContent = Math.round(zoomScale * 100) + "%";
-    }
-    $("zoomIn").addEventListener("click", () => { zoomScale = Math.min(1.2, zoomScale + 0.1); applyZoom(); });
-    $("zoomOut").addEventListener("click", () => { zoomScale = Math.max(0.3, zoomScale - 0.1); applyZoom(); });
-
-    function setDefaultZoom() {
-      if(window.innerWidth < 600) zoomScale = 0.45;
-      else if(window.innerWidth < 900) zoomScale = 0.60;
-      else zoomScale = 0.9;
-      applyZoom();
-    }
-
-    // ============================================================
-    // PHOTO MODE
-    // ============================================================
-    function setPhotoMode(mode) {
-      const withPhoto = (mode === "with");
-      $("inPhoto").disabled = !withPhoto;
-      if($("dInPhoto")) $("dInPhoto").disabled = !withPhoto;
-      document.body.classList.toggle("no-photo", !withPhoto);
-      if(!withPhoto) {
-        $("inPhoto").value = "";
-        $("cvPhotoImg").style.display = "none";
-        $("cvPhotoLabel").style.display = "block";
-      }
-    }
-
-    // ============================================================
-    // RENDER CV
-    // ============================================================
-    function renderAreas() {
-      const lines = $("inAreas").value.split("\n").map(s=>s.trim()).filter(Boolean);
-      $("cvAreas").innerHTML = lines.map(l => `<li>${esc(l)}</li>`).join("");
-    }
-    function renderEdu() {
-      const lines = $("inEdu").value.split("\n").map(s=>s.trim()).filter(Boolean);
-      $("cvEdu").innerHTML = lines.map(l => {
-        const p = l.split("|").map(s=>s.trim());
-        return p.length === 2
-          ? `<p style="margin:0 0 3mm 0;"><strong>${esc(p[0])}</strong><br><span style="color:var(--muted)">${esc(p[1])}</span></p>`
-          : `<p style="margin:0 0 3mm 0;"><strong>${esc(l)}</strong></p>`;
-      }).join("");
-    }
-    function renderCourses() {
-      const lines = $("inCourses").value.split("\n").map(s=>s.trim()).filter(Boolean);
-      $("cvCourses").innerHTML = lines.map(l => {
-        const p = l.split("|").map(s=>s.trim());
-        return `<div class="row2"><div class="l">${esc(p[0]||"")}</div><div class="r">${esc(p[1]||"")}</div></div>`;
-      }).join("");
-    }
-
-    function jobNode(j) {
-      const w = document.createElement("div");
-      w.className = "job";
-      w.innerHTML = `
-        <div class="jobhead">
-          <p class="jobrole">${esc(j.role)}</p>
-          <div class="jobdate">${esc(j.dates)}</div>
+        <!-- D-EDIT -->
+        <div class="ds-panel active" id="d-edit">
+          <div class="grid2">
+            <div class="field"><label>Nombre completo</label><input id="dInName" value="Camilo Eguiazabal"/></div>
+            <div class="field"><label>Título profesional</label><input id="dInDegree" value="Lic. en Recursos Humanos"/></div>
+          </div>
+          <div class="field"><label>Headline</label><input id="dInHeadline" value="HRBP · People Analytics · Employee Experience"/></div>
+          <div class="grid2">
+            <div class="field"><label>Email</label><input id="dInEmail" value="ceguiazabal@gmail.com"/></div>
+            <div class="field"><label>Teléfono</label><input id="dInPhone" value="+54 11 2396-2046"/></div>
+          </div>
+          <div class="field"><label>LinkedIn (URL)</label><input id="dInLinkedIn" value="https://www.linkedin.com/in/cegui"/></div>
+          <div class="field"><label>Ubicación</label><input id="dInLocation" value="Buenos Aires, Argentina"/></div>
+          <div class="field">
+            <label id="dTProfileLbl">Perfil profesional</label>
+            <textarea id="dInProfile">Licenciado en Recursos Humanos con experiencia en entornos corporativos y trayectoria sólida en gestión administrativa y coordinación. Actualmente HRBP Contractor en Oracle, con foco en employee experience, comunicación interna, ejecución de iniciativas de RR.HH. y trabajo cross-functional.</textarea>
+          </div>
+          <div class="sec-label">Áreas y Formación</div>
+          <div class="field">
+            <label id="dTAreasLbl">Áreas HR (una por línea)</label>
+            <textarea id="dInAreas">HRBP Support
+Employee Experience
+HR Operations
+Onboarding
+Internal Communications
+Stakeholder Management
+HR Reporting</textarea>
+          </div>
+          <div class="field">
+            <label id="dTEduLbl">Educación (Título — Institución | Detalle)</label>
+            <textarea id="dInEdu">Lic. en Recursos Humanos — UADE | Finalizado
+Lic. en Psicología — UADE | En curso</textarea>
+          </div>
+          <div class="field">
+            <label id="dTCoursesLbl">Formación complementaria (Curso | Institución)</label>
+            <textarea id="dInCourses">Planificación y gestión de RR.HH. para PyMEs | CAME / UTN
+Técnicas de selección de RR.HH. | CAME / UTN
+Conducción de equipos | CAME / UTN
+Comunicación y organizaciones | CAME / UTN</textarea>
+          </div>
         </div>
-        <div class="jobmeta">${esc(j.meta)}</div>
-        <ul class="bullets">${(j.bullets||[]).map(b=>`<li>${esc(b)}</li>`).join("")}</ul>`;
-      return w;
-    }
 
-    function getHighlights(max=4) {
-      const out = [];
-      for(const j of jobs.slice(0,2)) {
-        for(const b of (j.bullets||[])) {
-          const s = (b||"").trim();
-          if(!s) continue;
-          out.push(s);
-          if(out.length >= max) return out;
-        }
-      }
-      return out;
-    }
-
-    function renderPage2ExtrasIfNeeded() {
-      const extras = $("cvPage2Extras");
-      extras.innerHTML = "";
-      if($("paper2").style.display === "none") return;
-      const p2Jobs = $("cvJobsPage2");
-      if(p2Jobs.children.length >= 2 && $("cvPage2").scrollHeight / $("cvPage2").clientHeight > 0.75) return;
-
-      const highlights = getHighlights(4);
-      const areasLines = $("inAreas").value.split("\n").map(s=>s.trim()).filter(Boolean);
-      const w = document.createElement("div");
-      w.className = "page2Grid";
-      w.innerHTML = `
-        <div class="card span2"><h2 class="title">Highlights</h2>
-          <ul class="bullets">${highlights.map(h=>`<li>${esc(h)}</li>`).join("")}</ul>
+        <!-- D-STYLE -->
+        <div class="ds-panel" id="d-style">
+          <div class="field"><label>Plantilla</label>
+            <select id="dInTemplate">
+              <option value="tpl-classic">Clásica (ATS)</option>
+              <option value="tpl-modern">Moderna</option>
+              <option value="tpl-sidebar">Barra Lateral</option>
+              <option value="tpl-minimal">Minimalista</option>
+              <option value="tpl-executive">Ejecutiva</option>
+              <option value="tpl-creative">Creativa</option>
+            </select>
+          </div>
+          <div class="field"><label>Densidad</label>
+            <select id="dInCompact"><option value="off">Normal</option><option value="on">Compacto</option></select>
+          </div>
+          <div class="field"><label>Tema de Color</label>
+            <select id="dInTheme">
+              <option value="">Por defecto</option>
+              <option value="theme-blue">Azul</option>
+              <option value="theme-purple">Púrpura</option>
+              <option value="theme-green">Verde</option>
+              <option value="theme-red">Rojo</option>
+              <option value="theme-orange">Naranja</option>
+            </select>
+          </div>
+          <div class="divider"></div>
+          <div class="field"><label>Foto</label>
+            <select id="dInPhotoMode"><option value="with">Con foto</option><option value="without">Sin foto</option></select>
+          </div>
+          <div class="field"><label>Subir foto</label><input id="dInPhoto" type="file" accept="image/*"/></div>
         </div>
-        <div class="card"><h2 class="title">${esc($("tAreas").textContent||"HR Areas")}</h2>
-          <ul class="list">${areasLines.slice(0,10).map(l=>`<li>${esc(l)}</li>`).join("")}</ul>
+
+        <!-- D-JOBS -->
+        <div class="ds-panel" id="d-jobs">
+          <div class="jobs-hd">
+            <h3 id="dTExpEdit">Experiencia laboral</h3>
+            <button class="btn sm sec" id="dBtnAddJob">+ Agregar</button>
+          </div>
+          <div id="dJobsEditorList"></div>
+          <div class="hint">💡 Arrastrá para reordenar.</div>
         </div>
-        <div class="card"><h2 class="title">${esc($("tEdu").textContent||"Education")}</h2><div>${$("cvEdu").innerHTML}</div></div>
-        <div class="card span2"><h2 class="title">${esc($("tCourses").textContent||"Training")}</h2><div class="rows">${$("cvCourses").innerHTML}</div></div>`;
-      extras.appendChild(w);
-    }
 
-    function renderJobsAutoPaginate() {
-      const p1 = $("cvJobsPage1"), p2 = $("cvJobsPage2");
-      p1.innerHTML = ""; p2.innerHTML = ""; $("cvPage2Extras").innerHTML = "";
-      $("paper2").style.display = "none";
-      jobs.forEach(j => p1.appendChild(jobNode(j)));
-      const page1 = $("cvPage1");
-      const overflow1 = () => (page1.scrollHeight - page1.clientHeight);
-      if(overflow1() <= 2) return;
-      $("paper2").style.display = "block";
-      for(let g=0; g<260; g++) {
-        if(overflow1() <= 2) break;
-        const last = p1.lastElementChild;
-        if(!last) break;
-        p2.insertBefore(last, p2.firstChild);
-      }
-      renderPage2ExtrasIfNeeded();
-    }
+        <!-- D-TOOLS -->
+        <div class="ds-panel" id="d-tools">
+          <div class="tools-grid">
+            <button class="tool-btn" id="dBtnAutoFormat"><span class="ti">✨</span>Auto-formato</button>
+            <button class="tool-btn" id="dBtnSpellCheck"><span class="ti">📊</span>Estadísticas</button>
+            <button class="tool-btn" id="dBtnCountWords"><span class="ti">🔢</span>Palabras</button>
+            <button class="tool-btn" id="dBtnDuplicateJob"><span class="ti">📋</span>Duplicar trabajo</button>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:8px;">
+            <button class="btn sec full" id="dBtnTranslate">🌐 Traducir a inglés</button>
+            <button class="btn ghost full" id="dBtnReset">🔄 Reiniciar todo</button>
+          </div>
+        </div>
 
-    function syncText() {
-      $("cvName").textContent = $("inName").value || "";
-      $("cvHeadline").textContent = $("inHeadline").value || "";
-      $("cvDegree").textContent = $("inDegree").value || "";
-      $("cvProfile").textContent = $("inProfile").value || "";
-      $("cvLocation").textContent = $("inLocation").value || "";
-      const email = $("inEmail").value || "";
-      const phone = $("inPhone").value || "";
-      const linkedin = $("inLinkedIn").value || "";
-      $("cvEmail").textContent = email;
-      $("cvEmail").href = email ? `mailto:${email}` : "#";
-      $("cvPhone").textContent = phone;
-      $("cvPhone").href = phone ? `tel:${toTelHref(phone)}` : "#";
-      $("cvLinkedIn").textContent = linkedinLabel(linkedin);
-      $("cvLinkedIn").href = linkedin || "#";
-      renderAreas(); renderEdu(); renderCourses(); renderJobsAutoPaginate();
-    }
+      </div><!-- /ds-body -->
+      <div class="ds-foot">
+        <button class="btn full" id="dBtnPDF">📄 Descargar PDF</button>
+      </div>
+    </aside>
 
-    // ============================================================
-    // LIVE INPUTS — Mobile fields → sync CV + mirror to desktop
-    // ============================================================
-    const LIVE_IDS = ["inName","inDegree","inHeadline","inEmail","inPhone","inLinkedIn","inLocation","inProfile","inAreas","inEdu","inCourses"];
-    LIVE_IDS.forEach(id => $(id)?.addEventListener("input", () => { syncText(); mirrorToDesktop(); autoSaveSoft(); }));
+    <!-- ════ LIVE PANEL ════ -->
+    <div class="live-panel">
+      <div class="lp-head">
+        <h4>Vista en tiempo real</h4>
+        <p>Se actualiza al escribir</p>
+      </div>
+      <div class="lp-body">
+        <div class="lp-sec">
+          <div class="lp-label">Identidad</div>
+          <div class="lp-name" id="lpName">—</div>
+          <div class="lp-hl"   id="lpHeadline"></div>
+          <div class="lp-deg"  id="lpDegree"></div>
+        </div>
+        <div class="lp-sec">
+          <div class="lp-label">Contacto</div>
+          <div class="lp-ci"><span class="lp-ci-ic">📍</span><span id="lpLocation">—</span></div>
+          <div class="lp-ci"><span class="lp-ci-ic">✉️</span><span id="lpEmail">—</span></div>
+          <div class="lp-ci"><span class="lp-ci-ic">📱</span><span id="lpPhone">—</span></div>
+          <div class="lp-ci"><span class="lp-ci-ic">🔗</span><span id="lpLinkedIn">—</span></div>
+        </div>
+        <div class="lp-sec">
+          <div class="lp-label">Perfil</div>
+          <div id="lpProfile"><span class="lp-empty">Sin texto aún</span></div>
+        </div>
+        <div class="lp-sec">
+          <div class="lp-label">Experiencia</div>
+          <div id="lpJobs"><span class="lp-empty">Sin trabajos aún</span></div>
+        </div>
+        <div class="lp-sec">
+          <div class="lp-label">Áreas HR</div>
+          <div id="lpAreas"><span class="lp-empty">—</span></div>
+        </div>
+        <div class="lp-sec">
+          <div class="lp-label">Educación</div>
+          <div id="lpEdu"><span class="lp-empty">—</span></div>
+        </div>
+      </div>
+    </div>
 
-    // Desktop fields → sync CV + mirror to mobile
-    const D_LIVE = ["dInName","dInDegree","dInHeadline","dInEmail","dInPhone","dInLinkedIn","dInLocation","dInProfile","dInAreas","dInEdu","dInCourses"];
-    D_LIVE.forEach(id => $(id)?.addEventListener("input", () => { mirrorToMobile(); syncText(); autoSaveSoft(); }));
+    <!-- ════ CV STAGE ════ -->
+    <div class="cv-stage-wrap" id="cvStageWrap">
+      <div class="zoom-bar">
+        <span>Vista previa</span>
+        <div class="zoom-ctrls">
+          <button class="zoom-btn" id="zoomOut">−</button>
+          <span id="zoomLevel">55%</span>
+          <button class="zoom-btn" id="zoomIn">+</button>
+        </div>
+      </div>
+      <div class="stage">
+        <div class="paperStack" id="paperStack">
 
-    // ============================================================
-    // TEMPLATE / COMPACT / THEME / PHOTO — wired for both
-    // ============================================================
-    function applyTemplate(val) {
-      document.body.classList.remove("tpl-classic","tpl-modern","tpl-sidebar","tpl-minimal","tpl-executive","tpl-creative");
-      document.body.classList.add(val);
-      syncText();
-    }
-    function applyCompact(val) {
-      document.body.classList.toggle("compact", val === "on");
-    }
-    function applyTheme(val) {
-      document.body.classList.remove("theme-blue","theme-purple","theme-green","theme-red","theme-orange");
-      if(val) document.body.classList.add(val);
-    }
+          <!-- PAGE 1 -->
+          <div class="paper" data-page="1">
+            <div class="page" id="cvPage1">
+              <div class="cv-header">
+                <div>
+                  <h1 class="cv-name" id="cvName">Camilo Eguiazabal</h1>
+                  <div class="cv-hl"  id="cvHeadline">HRBP · People Analytics · Employee Experience</div>
+                  <div class="cv-deg" id="cvDegree">Lic. en Recursos Humanos</div>
+                  <div class="cv-contact">
+                    <span id="cvLocation">Buenos Aires, Argentina</span> ·
+                    <a id="cvEmail"    href="mailto:ceguiazabal@gmail.com">ceguiazabal@gmail.com</a> ·
+                    <a id="cvPhone"    href="tel:+541123962046">+54 11 2396-2046</a> ·
+                    <a id="cvLinkedIn" href="https://www.linkedin.com/in/cegui" target="_blank">linkedin.com/in/cegui</a>
+                  </div>
+                </div>
+                <div class="cv-photo" id="cvPhotoBox">
+                  <span id="cvPhotoLabel">FOTO</span>
+                  <img id="cvPhotoImg" alt="Foto" style="display:none"/>
+                </div>
+              </div>
 
-    // Mobile selects
-    $("inTemplate").addEventListener("change", () => { applyTemplate($("inTemplate").value); if($("dInTemplate")) $("dInTemplate").value=$("inTemplate").value; autoSaveSoft(); });
-    $("inCompact").addEventListener("change",  () => { applyCompact($("inCompact").value);   if($("dInCompact"))  $("dInCompact").value=$("inCompact").value;   autoSaveSoft(); });
-    $("inTheme").addEventListener("change",    () => { applyTheme($("inTheme").value);       if($("dInTheme"))    $("dInTheme").value=$("inTheme").value;         autoSaveSoft(); });
-    $("inPhotoMode").addEventListener("change",() => { setPhotoMode($("inPhotoMode").value); if($("dInPhotoMode")) $("dInPhotoMode").value=$("inPhotoMode").value; syncText(); autoSaveSoft(); });
-
-    // Desktop selects
-    $("dInTemplate")?.addEventListener("change", () => { $("inTemplate").value=$("dInTemplate").value; applyTemplate($("dInTemplate").value); autoSaveSoft(); });
-    $("dInCompact")?.addEventListener("change",  () => { $("inCompact").value=$("dInCompact").value;   applyCompact($("dInCompact").value);   autoSaveSoft(); });
-    $("dInTheme")?.addEventListener("change",    () => { $("inTheme").value=$("dInTheme").value;       applyTheme($("dInTheme").value);       autoSaveSoft(); });
-    $("dInPhotoMode")?.addEventListener("change",() => { $("inPhotoMode").value=$("dInPhotoMode").value; setPhotoMode($("dInPhotoMode").value); syncText(); autoSaveSoft(); });
-
-    // Photo upload
-    function setupPhotoInput(inputId) {
-      $(inputId)?.addEventListener("change", (e) => {
-        if($("inPhotoMode").value !== "with") return;
-        const file = e.target.files?.[0];
-        if(!file) return;
-        const reader = new FileReader();
-        reader.onload = () => {
-          $("cvPhotoImg").src = reader.result;
-          $("cvPhotoImg").style.display = "block";
-          $("cvPhotoLabel").style.display = "none";
-          autoSaveSoft();
-        };
-        reader.readAsDataURL(file);
-      });
-    }
-    setupPhotoInput("inPhoto");
-    setupPhotoInput("dInPhoto");
-
-    // ============================================================
-    // JOBS EDITOR
-    // ============================================================
-    let draggedIndex = null;
-
-    function renderJobsEditor() {
-      ["jobsEditorList","dJobsEditorList"].forEach(listId => {
-        const list = $(listId);
-        if(!list) return;
-        list.innerHTML = "";
-        jobs.forEach((j, idx) => {
-          const card = document.createElement("div");
-          card.className = "job-card";
-          card.draggable = true;
-          card.dataset.idx = idx;
-          card.innerHTML = `
-            <div class="job-card-header">
-              <span class="job-card-num">💼 Trabajo #${idx+1}</span>
-              <div class="job-card-actions">
-                <button class="btn sm secondary" data-act="up" data-idx="${idx}">↑</button>
-                <button class="btn sm secondary" data-act="down" data-idx="${idx}">↓</button>
-                <button class="btn sm danger" data-act="del" data-idx="${idx}">✕</button>
+              <div class="cv-layout" id="cvLayout">
+                <div id="cvMain">
+                  <div class="cv-section cv-card">
+                    <h2 class="cv-title" id="tProfile">Perfil</h2>
+                    <p class="cv-p" id="cvProfile"></p>
+                  </div>
+                  <div class="cv-section cv-card">
+                    <h2 class="cv-title" id="tExperience">Experiencia</h2>
+                    <div id="cvJobsPage1"></div>
+                  </div>
+                </div>
+                <aside id="cvSide">
+                  <div class="cv-card">
+                    <h2 class="cv-title" id="tAreas">Áreas HR</h2>
+                    <ul class="cv-list" id="cvAreas"></ul>
+                  </div>
+                  <div class="cv-card">
+                    <h2 class="cv-title" id="tEdu">Educación</h2>
+                    <div id="cvEdu"></div>
+                  </div>
+                  <div class="cv-card" style="margin-bottom:0">
+                    <h2 class="cv-title" id="tCourses">Formación complementaria</h2>
+                    <div class="cv-rows" id="cvCourses"></div>
+                  </div>
+                </aside>
               </div>
             </div>
-            <div class="grid2" style="margin-bottom:8px;">
-              <div class="field" style="margin:0;"><label>Rol — Empresa</label><input data-k="role" data-idx="${idx}" value="${esc(j.role)}"/></div>
-              <div class="field" style="margin:0;"><label>Fechas</label><input data-k="dates" data-idx="${idx}" value="${esc(j.dates)}"/></div>
+          </div>
+
+          <!-- PAGE 2 -->
+          <div class="paper" data-page="2" id="paper2" style="display:none">
+            <div class="page" id="cvPage2">
+              <div class="cv-section cv-card" style="margin-bottom:0">
+                <h2 class="cv-title" id="tExperience2">Experiencia</h2>
+                <div id="cvJobsPage2"></div>
+                <div id="cvPage2Extras"></div>
+              </div>
             </div>
-            <div class="field" style="margin-bottom:8px;"><label>Ubicación</label><input data-k="meta" data-idx="${idx}" value="${esc(j.meta)}"/></div>
-            <div class="field" style="margin:0;"><label>Logros (uno por línea)</label><textarea data-k="bullets" data-idx="${idx}">${esc((j.bullets||[]).join("\n"))}</textarea></div>`;
-          card.addEventListener("dragstart", () => { draggedIndex = idx; card.classList.add("dragging"); });
-          card.addEventListener("dragend",   () => { card.classList.remove("dragging"); draggedIndex = null; });
-          card.addEventListener("dragover",  (e) => e.preventDefault());
-          card.addEventListener("drop",      (e) => {
-            e.preventDefault();
-            if(draggedIndex === null || draggedIndex === idx) return;
-            const item = jobs.splice(draggedIndex, 1)[0];
-            jobs.splice(idx, 0, item);
-            renderJobsEditor(); syncText(); autoSaveSoft();
-          });
-          list.appendChild(card);
-        });
-      });
-    }
+          </div>
 
-    function handleJobAction(act, idx) {
-      if(act === "up") {
-        if(idx > 0) { [jobs[idx], jobs[idx-1]] = [jobs[idx-1], jobs[idx]]; renderJobsEditor(); syncText(); }
-      } else if(act === "down") {
-        if(idx < jobs.length-1) { [jobs[idx], jobs[idx+1]] = [jobs[idx+1], jobs[idx]]; renderJobsEditor(); syncText(); }
-      } else if(act === "del") {
-        if(!confirm("¿Eliminar este trabajo?")) return;
-        jobs.splice(idx, 1); renderJobsEditor(); syncText();
-      }
-      autoSaveSoft();
-    }
+        </div>
+      </div>
+    </div><!-- /cv-stage-wrap -->
 
-    ["jobsEditorList","dJobsEditorList"].forEach(listId => {
-      $(listId)?.addEventListener("click", e => {
-        const btn = e.target.closest("button");
-        if(!btn) return;
-        const act = btn.dataset.act, idx = Number(btn.dataset.idx);
-        if(!act || isNaN(idx)) return;
-        handleJobAction(act, idx);
-      });
-      $(listId)?.addEventListener("input", e => {
-        const el = e.target;
-        const idx = Number(el.dataset.idx), k = el.dataset.k;
-        if(isNaN(idx) || !k) return;
-        if(k === "bullets") { jobs[idx].bullets = el.value.split("\n").map(s=>s.trim()).filter(Boolean); if(!jobs[idx].bullets.length) jobs[idx].bullets = [""]; }
-        else jobs[idx][k] = el.value;
-        // Mirror to other editor
-        const otherList = listId === "jobsEditorList" ? "dJobsEditorList" : "jobsEditorList";
-        const otherInputs = document.querySelectorAll(`#${otherList} [data-idx="${idx}"][data-k="${k}"]`);
-        otherInputs.forEach(inp => { inp.value = el.value; });
-        syncText(); autoSaveSoft();
-      });
-    });
+  </div><!-- /shell -->
 
-    function addJob() {
-      jobs.unshift({ role:"Nuevo Rol — Empresa", meta:"Ubicación", dates:"Año – Año", bullets:["Logro 1","Logro 2"] });
-      renderJobsEditor(); syncText(); autoSaveSoft();
-    }
-    $("btnAddJob")?.addEventListener("click", addJob);
-    $("dBtnAddJob")?.addEventListener("click", addJob);
+  <button class="fab" id="fabPDF" title="Descargar PDF">📄</button>
 
-    // ============================================================
-    // SMART TOOLS
-    // ============================================================
-    function autoFormat() {
-      jobs = jobs.map(j => ({...j, bullets:(j.bullets||[]).map(b=>{
-        let t = b.trim(); if(!t) return t;
-        t = t[0].toUpperCase() + t.slice(1);
-        if(t.endsWith(".")) t = t.slice(0,-1);
-        return t;
-      })}));
-      const p = $("inProfile").value.trim();
-      if(p) $("inProfile").value = p[0].toUpperCase() + p.slice(1);
-      renderJobsEditor(); syncText(); mirrorToDesktop(); autoSaveSoft();
-      alert("✨ Formato aplicado!");
+  <script>
+  /* =====================================================
+     CONSTANTS & STATE
+  ===================================================== */
+  const STORAGE_KEY = "cv_builder_v5";
+  const DEFAULT_JOBS = [
+    {
+      role:"HRBP Contractor — Oracle", meta:"Buenos Aires, Argentina", dates:"2023 – Present",
+      bullets:[
+        "Partner with leaders and teams on employee lifecycle matters, driving engagement across 50+ employees",
+        "Coordinate cross-functionally with HR, Facilities, and Finance to execute strategic initiatives",
+        "Manage employee experience programs, benefits administration, and engagement activities",
+        "Build and maintain HR reports and operational documentation"
+      ]
+    },
+    {
+      role:"HR Analyst — Grupo Suessa", meta:"CABA, Argentina", dates:"Dec 2022 – 2023",
+      bullets:[
+        "Organized end-to-end recruitment processes, onboarding, and administrative follow-up",
+        "Coordinated with candidates and provided operational support to HR team"
+      ]
+    },
+    {
+      role:"Academic & Administrative Management — CFP Nº26", meta:"CABA, Argentina", dates:"2015 – 2022",
+      bullets:[
+        "Progressive career: Administrative Assistant / Preceptor → Pedagogical Team → Head of Student Department",
+        "Managed documentation, student services, and institutional coordination"
+      ]
     }
-    function spellCheck() {
-      const all = [$("inProfile").value, ...jobs.flatMap(j=>[j.role,j.meta,...j.bullets])].join(" ");
-      const wc = all.split(/\s+/).filter(w=>w.length>0).length;
-      alert(`📊 Estadísticas:\n\n✓ Palabras: ${wc}\n✓ Caracteres: ${all.length}\n✓ Bullets: ${jobs.reduce((s,j)=>s+(j.bullets?.length||0),0)}\n✓ Trabajos: ${jobs.length}\n\n💡 Ideal: 400-600 palabras.`);
-    }
-    function countWords() {
-      const p = $("inProfile").value.split(/\s+/).filter(w=>w.length>0).length;
-      const jw = jobs.reduce((s,j)=>s+(j.bullets||[]).join(" ").split(/\s+/).filter(w=>w.length>0).length,0);
-      alert(`📊 Palabras:\n\n✓ Perfil: ${p}\n✓ Experiencia: ${jw}\n✓ Total: ${p+jw}\n\n💡 Ideal: 300-500 palabras`);
-    }
-    function duplicateLastJob() {
-      if(!jobs.length){ alert("❌ No hay trabajos."); return; }
-      const l = jobs[0];
-      jobs.unshift({role:l.role+" (copia)", meta:l.meta, dates:l.dates, bullets:[...l.bullets]});
-      renderJobsEditor(); syncText(); autoSaveSoft();
-      alert("✅ Duplicado! Editá los detalles.");
-    }
+  ];
 
-    $("btnAutoFormat")?.addEventListener("click", autoFormat);
-    $("btnSpellCheck")?.addEventListener("click", spellCheck);
-    $("btnCountWords")?.addEventListener("click", countWords);
-    $("btnDuplicateJob")?.addEventListener("click", duplicateLastJob);
-    $("dBtnAutoFormat")?.addEventListener("click", autoFormat);
-    $("dBtnSpellCheck")?.addEventListener("click", spellCheck);
-    $("dBtnCountWords")?.addEventListener("click", countWords);
-    $("dBtnDuplicateJob")?.addEventListener("click", duplicateLastJob);
+  let jobs = JSON.parse(JSON.stringify(DEFAULT_JOBS));
+  let zoomScale = 0.6;
+  let draggedIdx = null;
 
-    // ============================================================
-    // TRANSLATION
-    // ============================================================
-    const GLOSSARY = [
-      [/\bRecursos Humanos\b/gi,"Human Resources"],[/\bRR\.?HH\.?\b/gi,"HR"],
-      [/\bActualidad\b/gi,"Present"],[/\bExperiencia\b/gi,"Experience"],
-      [/\bPerfil\b/gi,"Profile"],[/\bEducación\b/gi,"Education"],
-      [/\bFormación complementaria\b/gi,"Additional Training"],[/\bÁreas HR\b/gi,"HR Areas"],
-      [/\bComunicaci[oó]n interna\b/gi,"Internal Communications"],[/\bGestión\b/gi,"Management"],
-      [/\bCoordinaci[oó]n\b/gi,"Coordination"],[/\bSoporte\b/gi,"Support"],
-      [/\bDic\b/gi,"Dec"]
-    ];
-    function tH(t){ let o=t||""; for(const[r,s] of GLOSSARY) o=o.replace(r,s); return o; }
+  /* =====================================================
+     HELPERS
+  ===================================================== */
+  const $ = id => document.getElementById(id);
+  const esc = s => (s??"").replace(/[&<>"']/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"}[c]));
+  const toTelHref = p => { const c=(p||"").trim().replace(/[^\d+]/g,""); return c.startsWith("+") ? c : "+"+c; };
+  const linkedinLabel = url => { try{ const u=new URL(url); return(u.hostname.replace(/^www\./,"")+u.pathname).replace(/\/$/,""); }catch{ return(url||"").replace(/^https?:\/\//,"").replace(/\/$/,""); }};
+  const showLoading = (t="Procesando...") => { $("loadingText").textContent=t; $("loadingOverlay").classList.add("active"); };
+  const hideLoading = () => $("loadingOverlay").classList.remove("active");
 
-    function translateToEN() {
-      document.documentElement.lang = "en";
-      ["tProfileLbl","dTProfileLbl"].forEach(id=>$(id)&&($(id).textContent="Profile"));
-      ["tAreasLbl","dTAreasLbl"].forEach(id=>$(id)&&($(id).textContent="HR Areas (one per line)"));
-      ["tEduLbl","dTEduLbl"].forEach(id=>$(id)&&($(id).textContent="Education (Degree — Institution | Detail)"));
-      ["tCoursesLbl","dTCoursesLbl"].forEach(id=>$(id)&&($(id).textContent="Additional Training (Course | Institution)"));
-      ["tExpEdit","dTExpEdit"].forEach(id=>$(id)&&($(id).textContent="Experience"));
-      $("tProfile").textContent="Profile"; $("tExperience").textContent="Experience"; $("tExperience2").textContent="Experience";
-      $("tAreas").textContent="HR Areas"; $("tEdu").textContent="Education"; $("tCourses").textContent="Additional Training";
-      $("inDegree").value = tH($("inDegree").value);
-      $("inProfile").value = tH($("inProfile").value);
-      $("inAreas").value = $("inAreas").value.split("\n").map(s=>tH(s.trim())).filter(Boolean).join("\n");
-      $("inEdu").value = $("inEdu").value.split("\n").map(s=>{ const p=s.trim().split("|").map(x=>x.trim()); return p.length===2?`${tH(p[0])} | ${tH(p[1])}`:tH(s.trim()); }).filter(Boolean).join("\n");
-      $("inCourses").value = $("inCourses").value.split("\n").map(s=>{ const p=s.trim().split("|").map(x=>x.trim()); return p.length===2?`${tH(p[0])} | ${tH(p[1])}`:tH(s.trim()); }).filter(Boolean).join("\n");
-      jobs = jobs.map(j=>({role:tH(j.role),meta:tH(j.meta),dates:tH(j.dates),bullets:(j.bullets||[]).map(b=>tH(b))}));
-      mirrorToDesktop(); renderJobsEditor();
+  /* =====================================================
+     MOBILE TABS
+  ===================================================== */
+  function activateTab(id) {
+    document.querySelectorAll(".tab-btn").forEach(b => b.classList.toggle("active", b.dataset.tab===id));
+    document.querySelectorAll(".m-panel").forEach(p => p.classList.toggle("active", p.id===id));
+    const isPreview = id==="m-preview";
+    document.body.classList.toggle("show-stage", isPreview);
+  }
+  document.querySelectorAll(".tab-btn[data-tab]").forEach(btn =>
+    btn.addEventListener("click", () => activateTab(btn.dataset.tab))
+  );
+
+  /* =====================================================
+     DESKTOP SIDEBAR TABS
+  ===================================================== */
+  function activateDTab(id) {
+    document.querySelectorAll(".ds-tab").forEach(b => b.classList.toggle("active", b.dataset.dtab===id));
+    document.querySelectorAll(".ds-panel").forEach(p => p.classList.toggle("active", p.id===id));
+  }
+  document.querySelectorAll(".ds-tab[data-dtab]").forEach(btn =>
+    btn.addEventListener("click", () => activateDTab(btn.dataset.dtab))
+  );
+
+  /* =====================================================
+     ZOOM
+  ===================================================== */
+  function applyZoom() {
+    $("paperStack").style.transform = `scale(${zoomScale})`;
+    $("zoomLevel").textContent = Math.round(zoomScale*100)+"%";
+  }
+  function setDefaultZoom() {
+    zoomScale = window.innerWidth < 500 ? 0.38 : window.innerWidth < 960 ? 0.52 : 0.85;
+    applyZoom();
+  }
+  $("zoomIn").addEventListener("click",  () => { zoomScale=Math.min(1.3, zoomScale+0.1); applyZoom(); });
+  $("zoomOut").addEventListener("click", () => { zoomScale=Math.max(0.25,zoomScale-0.1); applyZoom(); });
+
+  /* =====================================================
+     PHOTO MODE
+  ===================================================== */
+  function setPhotoMode(mode) {
+    const on = mode==="with";
+    ["inPhoto","dInPhoto"].forEach(id => { const e=$(id); if(e) e.disabled=!on; });
+    document.body.classList.toggle("no-photo", !on);
+    if(!on) {
+      ["inPhoto","dInPhoto"].forEach(id => { const e=$(id); if(e) e.value=""; });
+      $("cvPhotoImg").style.display="none";
+      $("cvPhotoLabel").style.display="block";
     }
-
-    function doTranslate() {
-      if(confirm("¿Traducir todo al inglés?")) { translateToEN(); syncText(); autoSaveSoft(); alert("✅ Traducido al inglés!"); }
-    }
-    $("btnTranslateEN")?.addEventListener("click", doTranslate);
-    $("dBtnTranslate")?.addEventListener("click", doTranslate);
-    $("mBtnTranslate")?.addEventListener("click", doTranslate);
-
-    // ============================================================
-    // RESET
-    // ============================================================
-    function doReset() {
-      if(!confirm("¿Reiniciar a valores por defecto?")) return;
-      localStorage.removeItem(STORAGE_KEY);
-      document.documentElement.lang = "es";
-      document.body.classList.remove("tpl-classic","tpl-modern","tpl-sidebar","tpl-minimal","tpl-executive","tpl-creative","compact","no-photo","theme-blue","theme-purple","theme-green","theme-red","theme-orange");
-      document.body.classList.add("tpl-classic");
-      $("inTemplate").value="tpl-classic"; if($("dInTemplate")) $("dInTemplate").value="tpl-classic";
-      $("inCompact").value="off";         if($("dInCompact"))  $("dInCompact").value="off";
-      $("inTheme").value="";              if($("dInTheme"))    $("dInTheme").value="";
-      $("inPhotoMode").value="with";      if($("dInPhotoMode")) $("dInPhotoMode").value="with";
-      setPhotoMode("with");
-      const labels = { tProfileLbl:"Perfil profesional", tAreasLbl:"Áreas HR (una por línea)", tEduLbl:"Educación (Título — Institución | Detalle)", tCoursesLbl:"Formación complementaria (Curso | Institución)", tExpEdit:"Experiencia laboral", tProfile:"Perfil", tExperience:"Experiencia", tExperience2:"Experiencia", tAreas:"Áreas HR", tEdu:"Educación", tCourses:"Formación complementaria" };
-      Object.entries(labels).forEach(([id,v])=>{ if($(id)) $(id).textContent=v; });
-      ["dTProfileLbl","dTAreasLbl","dTEduLbl","dTCoursesLbl","dTExpEdit"].forEach(id=>{ if($(id)) $(id).textContent=labels[id.replace("dT","t").replace(/^d/,"")]||""; });
-      $("inName").value="Camilo Eguiazabal"; $("inDegree").value="Lic. en Recursos Humanos";
-      $("inHeadline").value="HRBP · People Analytics · Employee Experience";
-      $("inEmail").value="ceguiazabal@gmail.com"; $("inPhone").value="+54 11 2396-2046";
-      $("inLinkedIn").value="https://www.linkedin.com/in/cegui"; $("inLocation").value="Buenos Aires, Argentina";
-      $("inProfile").value="Licenciado en Recursos Humanos con experiencia en entornos corporativos y trayectoria sólida en gestión administrativa y coordinación. Actualmente HRBP Contractor en Oracle, con foco en employee experience, comunicación interna, ejecución de iniciativas de RR.HH. y trabajo cross-functional.";
-      $("inAreas").value="HRBP Support\nEmployee Experience\nHR Operations\nOnboarding\nInternal Communications\nStakeholder Management\nHR Reporting";
-      $("inEdu").value="Lic. en Recursos Humanos — UADE | Finalizado\nLic. en Psicología — UADE | En curso";
-      $("inCourses").value="Planificación y gestión de RR.HH. para PyMEs | CAME / UTN\nTécnicas de selección de RR.HH. | CAME / UTN\nConducción de equipos | CAME / UTN\nComunicación y organizaciones | CAME / UTN";
-      jobs = JSON.parse(JSON.stringify(DEFAULT_JOBS));
-      $("inPhoto").value=""; $("cvPhotoImg").style.display="none"; $("cvPhotoLabel").style.display="block";
-      mirrorToDesktop(); renderJobsEditor(); syncText(); alert("✅ Reiniciado!");
-    }
-    $("btnReset")?.addEventListener("click", doReset);
-    $("dBtnReset")?.addEventListener("click", doReset);
-
-    // ============================================================
-    // PDF EXPORT
-    // ============================================================
-    function getVisiblePapers() { return Array.from(document.querySelectorAll(".paper")).filter(p=>p.style.display!=="none"); }
-    function pxToMm(px, w) { return (px * 210) / w; }
-    function getRectMm(el, pageEl) {
-      const r=el.getBoundingClientRect(), pr=pageEl.getBoundingClientRect(), w=pr.width;
-      return { x:pxToMm(r.left-pr.left,w), y:pxToMm(r.top-pr.top,w), w:pxToMm(r.width,w), h:pxToMm(r.height,w) };
-    }
-
-    async function exportPdfRobusto() {
-      if(!window.html2canvas || !window.jspdf?.jsPDF) throw new Error("libs missing");
-      const { jsPDF } = window.jspdf;
-      const pdf = new jsPDF({ unit:"mm", format:"a4", orientation:"portrait" });
-      const pages = getVisiblePapers();
-      const filename = `CV_${($("inName").value||"CV").replace(/\s+/g,"_")}.pdf`;
-      for(let i=0;i<pages.length;i++) {
-        const paper = pages[i];
-        const canvas = await window.html2canvas(paper, { scale:2, useCORS:true, backgroundColor:"#ffffff", scrollX:0, scrollY:0 });
-        const imgData = canvas.toDataURL("image/jpeg", 0.98);
-        if(i>0) pdf.addPage("a4","portrait");
-        pdf.addImage(imgData,"JPEG",0,0,210,297);
-        const pageEl = paper.querySelector(".page");
-        if(pageEl) {
-          const pad=0.6;
-          const addLink=(el,url)=>{ const r=getRectMm(el,pageEl); pdf.link(r.x-pad,r.y-pad,r.w+pad*2,r.h+pad*2,{url}); };
-          if(pageEl.contains($("cvEmail"))&&$("cvEmail").href!=="#") addLink($("cvEmail"),$("cvEmail").href);
-          if(pageEl.contains($("cvPhone"))&&$("cvPhone").href!=="#") addLink($("cvPhone"),$("cvPhone").href);
-          if(pageEl.contains($("cvLinkedIn"))&&$("cvLinkedIn").href!=="#") addLink($("cvLinkedIn"),$("cvLinkedIn").href);
-        }
-      }
-      pdf.save(filename);
-    }
-
-    async function exportPdfFallback() {
-      const filename = `CV_${($("inName").value||"CV").replace(/\s+/g,"_")}.pdf`;
-      await html2pdf().set({ margin:0, filename, image:{type:"jpeg",quality:0.98}, html2canvas:{scale:2,useCORS:true,backgroundColor:"#ffffff",scrollX:0,scrollY:0}, jsPDF:{unit:"mm",format:"a4",orientation:"portrait"}, pagebreak:{mode:["css","legacy"]} }).from($("paperStack")).save();
-    }
-
-    async function doPDF() {
-      syncText(); showLoading("📄 Generando PDF...");
-      try { await exportPdfRobusto(); hideLoading(); }
-      catch(e) { console.warn("Fallback:", e); try { await exportPdfFallback(); hideLoading(); } catch(e2) { hideLoading(); alert("❌ Error al generar PDF. Intentá nuevamente."); } }
-    }
-    $("dBtnPDF")?.addEventListener("click", doPDF);
-    $("mBtnPDF")?.addEventListener("click", doPDF);
-    $("fabPDF")?.addEventListener("click", doPDF);
-
-    // ============================================================
-    // SAVE / LOAD
-    // ============================================================
-    function getDraft() {
-      const photoEnabled = ($("inPhotoMode").value==="with");
-      return {
-        meta:{ template:$("inTemplate").value, compact:$("inCompact").value, theme:$("inTheme").value, photoMode:$("inPhotoMode").value, photoDataUrl:(photoEnabled&&$("cvPhotoImg").style.display!=="none")?$("cvPhotoImg").src:"" },
-        fields:{ inName:$("inName").value, inDegree:$("inDegree").value, inHeadline:$("inHeadline").value, inEmail:$("inEmail").value, inPhone:$("inPhone").value, inLinkedIn:$("inLinkedIn").value, inLocation:$("inLocation").value, inProfile:$("inProfile").value, inAreas:$("inAreas").value, inEdu:$("inEdu").value, inCourses:$("inCourses").value },
-        jobs
+  }
+  function setupPhotoUpload(id) {
+    $(id)?.addEventListener("change", e => {
+      if($("inPhotoMode").value!=="with") return;
+      const file = e.target.files?.[0]; if(!file) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        $("cvPhotoImg").src=reader.result;
+        $("cvPhotoImg").style.display="block";
+        $("cvPhotoLabel").style.display="none";
+        autoSave();
       };
+      reader.readAsDataURL(file);
+    });
+  }
+  setupPhotoUpload("inPhoto");
+  setupPhotoUpload("dInPhoto");
+
+  /* =====================================================
+     RENDER CV SECTIONS
+  ===================================================== */
+  function renderAreas() {
+    $("cvAreas").innerHTML = $("inAreas").value.split("\n").map(s=>s.trim()).filter(Boolean)
+      .map(l=>`<li>${esc(l)}</li>`).join("");
+  }
+  function renderEdu() {
+    $("cvEdu").innerHTML = $("inEdu").value.split("\n").map(s=>s.trim()).filter(Boolean)
+      .map(l=>{ const p=l.split("|").map(s=>s.trim());
+        return p.length===2
+          ? `<p style="margin:0 0 3mm 0"><strong>${esc(p[0])}</strong><br><span style="color:var(--muted)">${esc(p[1])}</span></p>`
+          : `<p style="margin:0 0 3mm 0"><strong>${esc(l)}</strong></p>`; }).join("");
+  }
+  function renderCourses() {
+    $("cvCourses").innerHTML = $("inCourses").value.split("\n").map(s=>s.trim()).filter(Boolean)
+      .map(l=>{ const p=l.split("|").map(s=>s.trim());
+        return `<div class="cv-row2"><div class="l">${esc(p[0]||"")}</div><div class="r">${esc(p[1]||"")}</div></div>`; }).join("");
+  }
+  function makeJobNode(j) {
+    const d = document.createElement("div");
+    d.className="cv-job";
+    d.innerHTML=`
+      <div class="cv-jobhead">
+        <p class="cv-jobrole">${esc(j.role)}</p>
+        <div class="cv-jobdate">${esc(j.dates)}</div>
+      </div>
+      <div class="cv-jobmeta">${esc(j.meta)}</div>
+      <ul class="cv-bullets">${(j.bullets||[]).map(b=>`<li>${esc(b)}</li>`).join("")}</ul>`;
+    return d;
+  }
+  function getHighlights(max=4) {
+    const out=[];
+    for(const j of jobs.slice(0,2)) for(const b of j.bullets||[]) { if(b.trim()){ out.push(b.trim()); if(out.length>=max) return out; } }
+    return out;
+  }
+  function renderPage2Extras() {
+    const extras=$("cvPage2Extras"); extras.innerHTML="";
+    if($("paper2").style.display==="none") return;
+    const p2=$("cvJobsPage2");
+    if(p2.children.length>=2 && $("cvPage2").scrollHeight/$("cvPage2").clientHeight>0.75) return;
+    const highlights=getHighlights(4);
+    const areas=$("inAreas").value.split("\n").map(s=>s.trim()).filter(Boolean);
+    const w=document.createElement("div"); w.className="page2Grid";
+    w.innerHTML=`
+      <div class="cv-card span2"><h2 class="cv-title">Highlights</h2>
+        <ul class="cv-bullets">${highlights.map(h=>`<li>${esc(h)}</li>`).join("")}</ul></div>
+      <div class="cv-card"><h2 class="cv-title">${esc($("tAreas").textContent||"Áreas HR")}</h2>
+        <ul class="cv-list">${areas.slice(0,10).map(a=>`<li>${esc(a)}</li>`).join("")}</ul></div>
+      <div class="cv-card"><h2 class="cv-title">${esc($("tEdu").textContent||"Educación")}</h2>
+        <div>${$("cvEdu").innerHTML}</div></div>
+      <div class="cv-card span2"><h2 class="cv-title">${esc($("tCourses").textContent||"Formación complementaria")}</h2>
+        <div class="cv-rows">${$("cvCourses").innerHTML}</div></div>`;
+    extras.appendChild(w);
+  }
+  function paginateJobs() {
+    const p1=$("cvJobsPage1"), p2=$("cvJobsPage2");
+    p1.innerHTML=""; p2.innerHTML=""; $("cvPage2Extras").innerHTML=""; $("paper2").style.display="none";
+    jobs.forEach(j=>p1.appendChild(makeJobNode(j)));
+    const page1=$("cvPage1"), ov=()=>page1.scrollHeight-page1.clientHeight;
+    if(ov()<=2) return;
+    $("paper2").style.display="block";
+    for(let i=0;i<260;i++){ if(ov()<=2) break; const l=p1.lastElementChild; if(!l) break; p2.insertBefore(l,p2.firstChild); }
+    renderPage2Extras();
+  }
+
+  /* =====================================================
+     LIVE PANEL
+  ===================================================== */
+  function updateLivePanel() {
+    const t=(id,v)=>{ const e=$(id); if(e) e.textContent=v||""; };
+    const h=(id,v)=>{ const e=$(id); if(e) e.innerHTML=v; };
+    t("lpName",     $("inName").value    ||"—");
+    t("lpHeadline", $("inHeadline").value||"");
+    t("lpDegree",   $("inDegree").value  ||"");
+    t("lpLocation", $("inLocation").value||"—");
+    t("lpEmail",    $("inEmail").value   ||"—");
+    t("lpPhone",    $("inPhone").value   ||"—");
+    t("lpLinkedIn", linkedinLabel($("inLinkedIn").value)||"—");
+    const prof=($("inProfile").value||"").trim();
+    h("lpProfile", prof ? `<div class="lp-text">${esc(prof.slice(0,180))}${prof.length>180?"…":""}</div>` : `<span class="lp-empty">Sin texto aún</span>`);
+    h("lpJobs", jobs.length ? jobs.map(j=>`
+      <div class="lp-job">
+        <div class="lp-job-role">${esc(j.role)}</div>
+        <div class="lp-job-meta">${esc(j.dates)}${j.meta?" · "+esc(j.meta):""}</div>
+        ${(j.bullets||[]).slice(0,2).map(b=>`<div class="lp-bullet">${esc(b.slice(0,70))}${b.length>70?"…":""}</div>`).join("")}
+      </div>`).join("") : `<span class="lp-empty">Sin trabajos aún</span>`);
+    const areas=($("inAreas").value||"").split("\n").map(s=>s.trim()).filter(Boolean);
+    h("lpAreas", areas.length ? areas.map(a=>`<span class="lp-tag">${esc(a)}</span>`).join("") : `<span class="lp-empty">—</span>`);
+    const eduLines=($("inEdu").value||"").split("\n").map(s=>s.trim()).filter(Boolean);
+    h("lpEdu", eduLines.length ? eduLines.map(l=>{ const p=l.split("|").map(s=>s.trim());
+      return `<div style="margin-bottom:4px"><div class="lp-edu-t">${esc(p[0]||"")}</div>${p[1]?`<div class="lp-edu-s">${esc(p[1])}</div>`:""}</div>`;
+    }).join("") : `<span class="lp-empty">—</span>`);
+  }
+
+  /* =====================================================
+     SYNC TEXT → CV
+  ===================================================== */
+  function syncText() {
+    $("cvName").textContent     = $("inName").value     ||"";
+    $("cvHeadline").textContent = $("inHeadline").value ||"";
+    $("cvDegree").textContent   = $("inDegree").value   ||"";
+    $("cvProfile").textContent  = $("inProfile").value  ||"";
+    $("cvLocation").textContent = $("inLocation").value ||"";
+    const email=$("inEmail").value||"", phone=$("inPhone").value||"", li=$("inLinkedIn").value||"";
+    $("cvEmail").textContent=$("cvEmail").href=email ? (($("cvEmail").textContent=email)&&`mailto:${email}`) : "#";
+    $("cvEmail").textContent=email; $("cvEmail").href=email?`mailto:${email}`:"#";
+    $("cvPhone").textContent=phone; $("cvPhone").href=phone?`tel:${toTelHref(phone)}`:"#";
+    $("cvLinkedIn").textContent=linkedinLabel(li); $("cvLinkedIn").href=li||"#";
+    renderAreas(); renderEdu(); renderCourses(); paginateJobs(); updateLivePanel();
+  }
+
+  /* =====================================================
+     MIRROR MOBILE ↔ DESKTOP
+  ===================================================== */
+  const PAIRS=[
+    ["inName","dInName"],["inDegree","dInDegree"],["inHeadline","dInHeadline"],
+    ["inEmail","dInEmail"],["inPhone","dInPhone"],["inLinkedIn","dInLinkedIn"],
+    ["inLocation","dInLocation"],["inProfile","dInProfile"],
+    ["inAreas","dInAreas"],["inEdu","dInEdu"],["inCourses","dInCourses"],
+    ["inTemplate","dInTemplate"],["inCompact","dInCompact"],["inTheme","dInTheme"],["inPhotoMode","dInPhotoMode"]
+  ];
+  const mirrorToDesktop = () => PAIRS.forEach(([m,d])=>{ const a=$(m),b=$(d); if(a&&b) b.value=a.value; });
+  const mirrorToMobile  = () => PAIRS.forEach(([m,d])=>{ const a=$(m),b=$(d); if(a&&b) a.value=b.value; });
+
+  ["inName","inDegree","inHeadline","inEmail","inPhone","inLinkedIn","inLocation","inProfile","inAreas","inEdu","inCourses"]
+    .forEach(id => $(id)?.addEventListener("input", ()=>{ mirrorToDesktop(); syncText(); autoSave(); }));
+  ["dInName","dInDegree","dInHeadline","dInEmail","dInPhone","dInLinkedIn","dInLocation","dInProfile","dInAreas","dInEdu","dInCourses"]
+    .forEach(id => $(id)?.addEventListener("input", ()=>{ mirrorToMobile(); syncText(); autoSave(); }));
+
+  /* =====================================================
+     SELECTS: TEMPLATE / COMPACT / THEME / PHOTO
+  ===================================================== */
+  function applyTemplate(v) {
+    document.body.classList.remove("tpl-classic","tpl-modern","tpl-sidebar","tpl-minimal","tpl-executive","tpl-creative");
+    document.body.classList.add(v); syncText();
+  }
+  function applyCompact(v)  { document.body.classList.toggle("compact",v==="on"); }
+  function applyTheme(v)    {
+    document.body.classList.remove("theme-blue","theme-purple","theme-green","theme-red","theme-orange");
+    if(v) document.body.classList.add(v);
+  }
+
+  function wireSelect(mId, dId, fn) {
+    $(mId)?.addEventListener("change", ()=>{ if($(dId)) $(dId).value=$(mId).value; fn($(mId).value); autoSave(); });
+    $(dId)?.addEventListener("change", ()=>{ if($(mId)) $(mId).value=$(dId).value; fn($(dId).value); autoSave(); });
+  }
+  wireSelect("inTemplate","dInTemplate", applyTemplate);
+  wireSelect("inCompact","dInCompact",   applyCompact);
+  wireSelect("inTheme","dInTheme",       applyTheme);
+  wireSelect("inPhotoMode","dInPhotoMode", v=>{ setPhotoMode(v); syncText(); });
+
+  /* =====================================================
+     JOBS EDITOR
+  ===================================================== */
+  function renderJobsEditor() {
+    ["jobsEditorList","dJobsEditorList"].forEach(listId=>{
+      const list=$(listId); if(!list) return;
+      list.innerHTML="";
+      jobs.forEach((j,idx)=>{
+        const card=document.createElement("div");
+        card.className="job-card"; card.draggable=true; card.dataset.idx=idx;
+        card.innerHTML=`
+          <div class="job-card-hd">
+            <span class="num">💼 Trabajo #${idx+1}</span>
+            <div class="acts">
+              <button class="btn sm sec" data-act="up"   data-idx="${idx}">↑</button>
+              <button class="btn sm sec" data-act="down" data-idx="${idx}">↓</button>
+              <button class="btn sm danger" data-act="del" data-idx="${idx}">✕</button>
+            </div>
+          </div>
+          <div class="grid2" style="margin-bottom:8px">
+            <div class="field" style="margin:0"><label>Rol — Empresa</label><input data-k="role" data-idx="${idx}" value="${esc(j.role)}"/></div>
+            <div class="field" style="margin:0"><label>Fechas</label><input data-k="dates" data-idx="${idx}" value="${esc(j.dates)}"/></div>
+          </div>
+          <div class="field" style="margin-bottom:8px"><label>Ubicación</label><input data-k="meta" data-idx="${idx}" value="${esc(j.meta)}"/></div>
+          <div class="field" style="margin:0"><label>Logros (uno por línea)</label><textarea data-k="bullets" data-idx="${idx}">${esc((j.bullets||[]).join("\n"))}</textarea></div>`;
+        card.addEventListener("dragstart",()=>{ draggedIdx=idx; card.classList.add("dragging"); });
+        card.addEventListener("dragend",  ()=>{ card.classList.remove("dragging"); draggedIdx=null; });
+        card.addEventListener("dragover", e=>e.preventDefault());
+        card.addEventListener("drop", e=>{
+          e.preventDefault();
+          if(draggedIdx===null||draggedIdx===idx) return;
+          const item=jobs.splice(draggedIdx,1)[0]; jobs.splice(idx,0,item);
+          renderJobsEditor(); syncText(); autoSave();
+        });
+        list.appendChild(card);
+      });
+    });
+  }
+
+  function handleJobClick(e) {
+    const btn=e.target.closest("button[data-act]"); if(!btn) return;
+    const act=btn.dataset.act, idx=Number(btn.dataset.idx); if(isNaN(idx)) return;
+    if(act==="up"   && idx>0)             { [jobs[idx],jobs[idx-1]]=[jobs[idx-1],jobs[idx]]; }
+    if(act==="down" && idx<jobs.length-1) { [jobs[idx],jobs[idx+1]]=[jobs[idx+1],jobs[idx]]; }
+    if(act==="del") { if(!confirm("¿Eliminar este trabajo?")) return; jobs.splice(idx,1); }
+    renderJobsEditor(); syncText(); autoSave();
+  }
+
+  function handleJobInput(e) {
+    const el=e.target, idx=Number(el.dataset.idx), k=el.dataset.k;
+    if(isNaN(idx)||!k) return;
+    if(k==="bullets") {
+      jobs[idx].bullets=el.value.split("\n").map(s=>s.trim()).filter(Boolean);
+      if(!jobs[idx].bullets.length) jobs[idx].bullets=[""];
+    } else { jobs[idx][k]=el.value; }
+    // Mirror to other list
+    ["jobsEditorList","dJobsEditorList"].forEach(lid=>{
+      document.querySelectorAll(`#${lid} [data-idx="${idx}"][data-k="${k}"]`)
+        .forEach(inp=>{ if(inp!==el) inp.value=el.value; });
+    });
+    syncText(); autoSave();
+  }
+
+  ["jobsEditorList","dJobsEditorList"].forEach(id=>{
+    $(id)?.addEventListener("click", handleJobClick);
+    $(id)?.addEventListener("input", handleJobInput);
+  });
+
+  const addJob = () => {
+    jobs.unshift({role:"Nuevo Rol — Empresa",meta:"Ubicación",dates:"Año – Año",bullets:["Logro 1","Logro 2"]});
+    renderJobsEditor(); syncText(); autoSave();
+  };
+  ["btnAddJob","dBtnAddJob"].forEach(id=>$(id)?.addEventListener("click", addJob));
+
+  /* =====================================================
+     SMART TOOLS
+  ===================================================== */
+  function autoFormat() {
+    jobs=jobs.map(j=>({...j,bullets:(j.bullets||[]).map(b=>{ let t=b.trim(); if(!t) return t;
+      t=t[0].toUpperCase()+t.slice(1); if(t.endsWith(".")) t=t.slice(0,-1); return t; })}));
+    const p=$("inProfile").value.trim();
+    if(p){ $("inProfile").value=p[0].toUpperCase()+p.slice(1); if($("dInProfile")) $("dInProfile").value=$("inProfile").value; }
+    renderJobsEditor(); syncText(); autoSave(); alert("✨ Formato aplicado!");
+  }
+  function spellCheck() {
+    const all=[$("inProfile").value,...jobs.flatMap(j=>[j.role,j.meta,...(j.bullets||[])])].join(" ");
+    const wc=all.split(/\s+/).filter(w=>w.length>0).length;
+    alert(`📊 Estadísticas del CV:\n\n✓ Palabras: ${wc}\n✓ Caracteres: ${all.length}\n✓ Bullets: ${jobs.reduce((s,j)=>s+(j.bullets?.length||0),0)}\n✓ Trabajos: ${jobs.length}\n\n💡 Ideal: 400-600 palabras.`);
+  }
+  function countWords() {
+    const p=$("inProfile").value.split(/\s+/).filter(w=>w.length>0).length;
+    const jw=jobs.reduce((s,j)=>s+(j.bullets||[]).join(" ").split(/\s+/).filter(w=>w.length>0).length,0);
+    alert(`📊 Palabras:\n\n✓ Perfil: ${p}\n✓ Experiencia: ${jw}\n✓ Total: ${p+jw}\n\n💡 Ideal: 300-500 palabras`);
+  }
+  function duplicateLastJob() {
+    if(!jobs.length){ alert("❌ No hay trabajos para duplicar."); return; }
+    const l=jobs[0];
+    jobs.unshift({role:l.role+" (copia)",meta:l.meta,dates:l.dates,bullets:[...l.bullets]});
+    renderJobsEditor(); syncText(); autoSave(); alert("✅ Duplicado! Editá los detalles.");
+  }
+
+  [["btnAutoFormat","dBtnAutoFormat",autoFormat],
+   ["btnSpellCheck","dBtnSpellCheck",spellCheck],
+   ["btnCountWords","dBtnCountWords",countWords],
+   ["btnDuplicateJob","dBtnDuplicateJob",duplicateLastJob]
+  ].forEach(([m,d,fn])=>{ $(m)?.addEventListener("click",fn); $(d)?.addEventListener("click",fn); });
+
+  /* =====================================================
+     TRANSLATION ES → EN
+  ===================================================== */
+  const GLOSSARY=[
+    [/\bRecursos Humanos\b/gi,"Human Resources"],[/\bRR\.?HH\.?\b/gi,"HR"],
+    [/\bActualidad\b/gi,"Present"],[/\bExperiencia\b/gi,"Experience"],
+    [/\bPerfil\b/gi,"Profile"],[/\bEducación\b/gi,"Education"],
+    [/\bFormación complementaria\b/gi,"Additional Training"],[/\bÁreas HR\b/gi,"HR Areas"],
+    [/\bComunicaci[oó]n interna\b/gi,"Internal Communications"],[/\bGestión\b/gi,"Management"],
+    [/\bCoordinaci[oó]n\b/gi,"Coordination"],[/\bSoporte\b/gi,"Support"],[/\bDic\b/gi,"Dec"]
+  ];
+  const tH = t => { let o=t||""; for(const[r,s] of GLOSSARY) o=o.replace(r,s); return o; };
+
+  function translateToEN() {
+    document.documentElement.lang="en";
+    [["tProfileLbl","dTProfileLbl","Profile"],["tAreasLbl","dTAreasLbl","HR Areas (one per line)"],
+     ["tEduLbl","dTEduLbl","Education (Degree — Institution | Detail)"],
+     ["tCoursesLbl","dTCoursesLbl","Additional Training (Course | Institution)"],
+     ["tExpEdit","dTExpEdit","Experience"]
+    ].forEach(([m,d,v])=>{ $(m)&&($(m).textContent=v); $(d)&&($(d).textContent=v); });
+    $("tProfile").textContent="Profile"; $("tExperience").textContent="Experience";
+    $("tExperience2").textContent="Experience"; $("tAreas").textContent="HR Areas";
+    $("tEdu").textContent="Education"; $("tCourses").textContent="Additional Training";
+    $("inDegree").value=tH($("inDegree").value); $("inProfile").value=tH($("inProfile").value);
+    $("inAreas").value=$("inAreas").value.split("\n").map(s=>tH(s.trim())).filter(Boolean).join("\n");
+    ["inEdu","inCourses"].forEach(id=>{ $(id).value=$(id).value.split("\n").map(s=>{ const p=s.trim().split("|").map(x=>x.trim()); return p.length===2?`${tH(p[0])} | ${tH(p[1])}`:tH(s.trim()); }).filter(Boolean).join("\n"); });
+    jobs=jobs.map(j=>({role:tH(j.role),meta:tH(j.meta),dates:tH(j.dates),bullets:(j.bullets||[]).map(b=>tH(b))}));
+    mirrorToDesktop(); renderJobsEditor();
+  }
+  const doTranslate=()=>{ if(!confirm("¿Traducir todo al inglés?")) return; translateToEN(); syncText(); autoSave(); alert("✅ Traducido!"); };
+  ["btnTranslateEN","dBtnTranslate","mBtnTranslate"].forEach(id=>$(id)?.addEventListener("click",doTranslate));
+
+  /* =====================================================
+     RESET
+  ===================================================== */
+  const doReset=()=>{ if(!confirm("¿Reiniciar a valores por defecto?")) return; localStorage.removeItem(STORAGE_KEY); location.reload(); };
+  ["btnReset","dBtnReset"].forEach(id=>$(id)?.addEventListener("click",doReset));
+
+  /* =====================================================
+     PDF EXPORT
+  ===================================================== */
+  function getVisiblePapers() { return Array.from(document.querySelectorAll(".paper")).filter(p=>p.style.display!=="none"); }
+  const pxToMm=(px,pw)=>(px*210)/pw;
+  function getRect(el,pageEl) {
+    const r=el.getBoundingClientRect(),pr=pageEl.getBoundingClientRect(),w=pr.width;
+    return{x:pxToMm(r.left-pr.left,w),y:pxToMm(r.top-pr.top,w),w:pxToMm(r.width,w),h:pxToMm(r.height,w)};
+  }
+  async function exportPDF() {
+    if(!window.html2canvas||!window.jspdf?.jsPDF) throw new Error("libs");
+    const{jsPDF}=window.jspdf;
+    const pdf=new jsPDF({unit:"mm",format:"a4",orientation:"portrait"});
+    const pages=getVisiblePapers();
+    const fn=`CV_${($("inName").value||"CV").replace(/\s+/g,"_")}.pdf`;
+    for(let i=0;i<pages.length;i++){
+      const canvas=await window.html2canvas(pages[i],{scale:2,useCORS:true,backgroundColor:"#fff",scrollX:0,scrollY:0});
+      if(i>0) pdf.addPage("a4","portrait");
+      pdf.addImage(canvas.toDataURL("image/jpeg",0.98),"JPEG",0,0,210,297);
+      const pe=pages[i].querySelector(".page");
+      if(pe){
+        const pad=0.6, addLink=(el,url)=>{ const r=getRect(el,pe); pdf.link(r.x-pad,r.y-pad,r.w+pad*2,r.h+pad*2,{url}); };
+        if(pe.contains($("cvEmail"))    && $("cvEmail").href   !="#") addLink($("cvEmail"),   $("cvEmail").href);
+        if(pe.contains($("cvPhone"))    && $("cvPhone").href   !="#") addLink($("cvPhone"),   $("cvPhone").href);
+        if(pe.contains($("cvLinkedIn")) && $("cvLinkedIn").href!="#") addLink($("cvLinkedIn"),$("cvLinkedIn").href);
+      }
     }
+    pdf.save(fn);
+  }
+  async function exportPDFFallback() {
+    await html2pdf().set({margin:0,filename:`CV_${($("inName").value||"CV").replace(/\s+/g,"_")}.pdf`,
+      image:{type:"jpeg",quality:0.98},html2canvas:{scale:2,useCORS:true,backgroundColor:"#fff",scrollX:0,scrollY:0},
+      jsPDF:{unit:"mm",format:"a4",orientation:"portrait"},pagebreak:{mode:["css","legacy"]}
+    }).from($("paperStack")).save();
+  }
+  async function doPDF() {
+    syncText(); showLoading("📄 Generando PDF...");
+    try{ await exportPDF(); hideLoading(); }
+    catch(e){ console.warn("fallback",e); try{ await exportPDFFallback(); hideLoading(); }catch(e2){ hideLoading(); alert("❌ Error al generar PDF."); } }
+  }
+  ["dBtnPDF","mBtnPDF","fabPDF"].forEach(id=>$(id)?.addEventListener("click",doPDF));
 
-    function applyDraft(d) {
-      if(!d||typeof d!=="object") return;
-      if(d.meta?.template){ $("inTemplate").value=d.meta.template; applyTemplate(d.meta.template); }
-      if(d.meta?.compact){ $("inCompact").value=d.meta.compact; applyCompact(d.meta.compact); }
-      if(d.meta?.theme!==undefined){ $("inTheme").value=d.meta.theme||""; applyTheme(d.meta.theme||""); }
-      if(d.meta?.photoMode){ $("inPhotoMode").value=d.meta.photoMode; setPhotoMode(d.meta.photoMode); }
-      const f=d.fields||{};
-      for(const k of Object.keys(f)) if($(k)) $(k).value=f[k]??""  ;
-      if(Array.isArray(d.jobs)) jobs=d.jobs;
-      if(d.meta?.photoMode==="with"&&d.meta?.photoDataUrl){ $("cvPhotoImg").src=d.meta.photoDataUrl; $("cvPhotoImg").style.display="block"; $("cvPhotoLabel").style.display="none"; }
-      mirrorToDesktop(); renderJobsEditor(); syncText();
-    }
+  /* =====================================================
+     SAVE / LOAD
+  ===================================================== */
+  function getDraft() {
+    return {
+      meta:{template:$("inTemplate").value,compact:$("inCompact").value,theme:$("inTheme").value,
+            photoMode:$("inPhotoMode").value,
+            photoUrl:($("inPhotoMode").value==="with"&&$("cvPhotoImg").style.display!=="none")?$("cvPhotoImg").src:""},
+      fields:{inName:$("inName").value,inDegree:$("inDegree").value,inHeadline:$("inHeadline").value,
+              inEmail:$("inEmail").value,inPhone:$("inPhone").value,inLinkedIn:$("inLinkedIn").value,
+              inLocation:$("inLocation").value,inProfile:$("inProfile").value,
+              inAreas:$("inAreas").value,inEdu:$("inEdu").value,inCourses:$("inCourses").value},
+      jobs
+    };
+  }
+  function applyDraft(d) {
+    if(!d||typeof d!=="object") return;
+    const m=d.meta||{};
+    if(m.template){ $("inTemplate").value=m.template; applyTemplate(m.template); }
+    if(m.compact) { $("inCompact").value=m.compact;   applyCompact(m.compact); }
+    if(m.theme!==undefined){ $("inTheme").value=m.theme||""; applyTheme(m.theme||""); }
+    if(m.photoMode){ $("inPhotoMode").value=m.photoMode; setPhotoMode(m.photoMode); }
+    const f=d.fields||{}; Object.keys(f).forEach(k=>{ if($(k)) $(k).value=f[k]??""; });
+    if(Array.isArray(d.jobs)) jobs=d.jobs;
+    if(m.photoMode==="with"&&m.photoUrl){ $("cvPhotoImg").src=m.photoUrl; $("cvPhotoImg").style.display="block"; $("cvPhotoLabel").style.display="none"; }
+    mirrorToDesktop(); renderJobsEditor(); syncText();
+  }
+  let saveTimer=null;
+  const autoSave=()=>{ clearTimeout(saveTimer); saveTimer=setTimeout(()=>{ try{localStorage.setItem(STORAGE_KEY,JSON.stringify(getDraft()));}catch{} },500); };
+  function loadDraft() { try{ const r=localStorage.getItem(STORAGE_KEY); if(r){ applyDraft(JSON.parse(r)); return true; } }catch{} return false; }
 
-    function saveDraft() { try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(getDraft())); }catch{} }
-    function loadDraft() { try{ const r=localStorage.getItem(STORAGE_KEY); if(r){ applyDraft(JSON.parse(r)); return true; } }catch{} return false; }
-
-    let saveTimer=null;
-    function autoSaveSoft() { clearTimeout(saveTimer); saveTimer=setTimeout(saveDraft, 500); }
-
-    // ============================================================
-    // INIT
-    // ============================================================
-    set
+  /* =====================================================
+     INIT
+  ===================================================== */
+  setPhotoMode($("inPhotoMode").value);
+  renderJobsEditor();
+  if(!loadDraft()) { mirrorToDesktop(); syncText(); }
+  setDefaultZoom();
+  window.addEventListener("resize", setDefaultZoom);
+  </script>
+</body>
+</html>
