@@ -1,494 +1,222 @@
 <!doctype html>
 <html lang="es">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>CV Builder</title>
-
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-
   <style>
-    /* ===================================================
-       DESIGN TOKENS
-    =================================================== */
-    :root {
-      --ink: #111827;
-      --muted: #4B5563;
-      --line: #E5E7EB;
-      --accent: #0B1F3A;
-      --bg: #F3F4F6;
-      --paper: #fff;
+  /* ============================================================
+     TOKENS
+  ============================================================ */
+  :root {
+    --ink:#111827; --muted:#4B5563; --line:#E5E7EB;
+    --accent:#0B1F3A; --bg:#F3F4F6; --paper:#fff;
+    --radius:10px;
+    --cv-pad:38px; --cv-gap:26px;
+    --cv-cols:1fr 168px; --hdr-cols:1fr 100px;
+    --name-sz:36px; --hl-sz:14px; --deg-sz:12.5px;
+    --contact-sz:11px; --title-sz:10px; --p-sz:11.5px;
+    --jobrole-sz:12.5px; --bullet-sz:11px; --small-sz:10.5px;
+  }
+  body.tpl-classic   {--accent:#0B1F3A;--cv-cols:1fr 168px;--hdr-cols:1fr 100px;}
+  body.tpl-modern    {--accent:#111827;--line:#E6EAF0;--cv-cols:1fr;--hdr-cols:1fr 100px;}
+  body.tpl-sidebar   {--accent:#1E293B;--line:#E6EAF0;--cv-cols:160px 1fr;--hdr-cols:1fr 100px;}
+  body.tpl-minimal   {--accent:#111827;--line:#F3F4F6;--cv-cols:1fr 150px;--hdr-cols:1fr;}
+  body.tpl-executive {--accent:#1E40AF;--line:#DBEAFE;--cv-cols:1fr 175px;--hdr-cols:1fr 100px;}
+  body.tpl-creative  {--accent:#7C3AED;--line:#EDE9FE;--cv-cols:1fr;--hdr-cols:1fr 100px;}
+  body.theme-blue    {--accent:#1E40AF;--line:#DBEAFE;}
+  body.theme-purple  {--accent:#7C3AED;--line:#EDE9FE;}
+  body.theme-green   {--accent:#059669;--line:#D1FAE5;}
+  body.theme-red     {--accent:#DC2626;--line:#FEE2E2;}
+  body.theme-orange  {--accent:#EA580C;--line:#FFEDD5;}
+  body.no-photo      {--hdr-cols:1fr;}
+  body.no-photo #cvPhotoBox {display:none!important;}
+  body.compact {
+    --name-sz:30px;--hl-sz:12.5px;--deg-sz:11.5px;
+    --p-sz:10.5px;--jobrole-sz:11.5px;--bullet-sz:10px;
+    --cv-pad:30px;--cv-gap:20px;
+  }
 
-      /* CV scale */
-      --name-size: 34px;
-      --headline-size: 15.5px;
-      --p-size: 12.6px;
-      --bullet-size: 12.3px;
-      --title-size: 11.8px;
-      --jobrole-size: 13.4px;
-      --pad-mm: 12mm;
-      --gap-mm: 10mm;
-      --radius: 12px;
-      --cv-cols: 1fr 62mm;
-      --header-cols: 1fr 36mm;
-    }
+  /* ============================================================
+     RESET
+  ============================================================ */
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;line-height:1.5;}
 
-    /* Templates */
-    body.tpl-classic  { --accent:#0B1F3A; --cv-cols:1fr 62mm; --header-cols:1fr 36mm; --radius:12px; --line:#E5E7EB; }
-    body.tpl-modern   { --accent:#111827; --line:#E6EAF0; --cv-cols:1fr; --header-cols:1fr 36mm; --radius:16px; }
-    body.tpl-sidebar  { --accent:#111827; --line:#E6EAF0; --cv-cols:70mm 1fr; --header-cols:1fr 36mm; --radius:14px; }
-    body.tpl-minimal  { --accent:#111827; --line:#F3F4F6; --cv-cols:1fr 58mm; --header-cols:1fr; --radius:10px; }
-    body.tpl-executive{ --accent:#1E40AF; --line:#DBEAFE; --cv-cols:1fr 65mm; --header-cols:1fr 36mm; --radius:8px; --bg:#F8FAFC; }
-    body.tpl-creative { --accent:#7C3AED; --line:#EDE9FE; --cv-cols:1fr; --header-cols:1fr 36mm; --radius:20px; --bg:#FAFAF9; }
+  /* ============================================================
+     SHELL
+  ============================================================ */
+  .shell{display:flex;flex-direction:column;min-height:100vh;}
 
-    /* Color themes */
-    body.theme-blue   { --accent:#1E40AF; --line:#DBEAFE; }
-    body.theme-purple { --accent:#7C3AED; --line:#EDE9FE; }
-    body.theme-green  { --accent:#059669; --line:#D1FAE5; }
-    body.theme-red    { --accent:#DC2626; --line:#FEE2E2; }
-    body.theme-orange { --accent:#EA580C; --line:#FFEDD5; }
+  /* ============================================================
+     MOBILE NAV
+  ============================================================ */
+  .top-nav{display:flex;align-items:center;justify-content:space-between;background:var(--accent);color:#fff;height:52px;padding:0 14px;position:sticky;top:0;z-index:300;box-shadow:0 2px 8px rgba(0,0,0,.18);}
+  .top-nav .brand{font-size:16px;font-weight:800;letter-spacing:-.02em;}
+  .top-nav .nav-acts{display:flex;gap:8px;}
+  .nav-btn{padding:6px 12px;border-radius:8px;border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.12);color:#fff;font:700 12px Inter,sans-serif;cursor:pointer;}
+  .nav-btn.solid{background:#fff;color:var(--accent);border-color:#fff;}
 
-    /* Photo / compact */
-    body.no-photo { --header-cols:1fr; }
-    body.no-photo #cvPhotoBox { display:none !important; }
-    body.compact {
-      --name-size:31px; --headline-size:14.5px; --p-size:12px;
-      --bullet-size:11.8px; --title-size:11.2px; --jobrole-size:13px;
-      --pad-mm:11mm; --gap-mm:9mm;
-    }
+  /* ============================================================
+     MOBILE TABS
+  ============================================================ */
+  .tab-bar{display:flex;background:#fff;border-bottom:1px solid var(--line);position:sticky;top:52px;z-index:299;}
+  .tab-btn{flex:1;padding:8px 4px 9px;font:600 11px Inter,sans-serif;color:var(--muted);text-align:center;cursor:pointer;border:none;background:none;border-bottom:2px solid transparent;transition:color .15s,border-color .15s;}
+  .tab-btn span{display:block;font-size:15px;margin-bottom:2px;}
+  .tab-btn.active{color:var(--accent);border-bottom-color:var(--accent);font-weight:700;}
 
-    /* ===================================================
-       BASE RESET
-    =================================================== */
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; }
-    body {
-      font-family: Inter, system-ui, -apple-system, sans-serif;
-      background: var(--bg);
-      color: var(--ink);
-      min-height: 100vh;
-      line-height: 1.5;
-    }
+  /* ============================================================
+     MOBILE PANELS
+  ============================================================ */
+  .mobile-panels{flex:1;}
+  .m-panel{display:none;padding:14px;}
+  .m-panel.active{display:block;}
+  .desktop-sidebar{display:none;}
 
-    /* ===================================================
-       LAYOUT SHELL
-    =================================================== */
-    .shell { display: flex; flex-direction: column; min-height: 100vh; }
+  /* CV STAGE */
+  .cv-stage-wrap{display:none;padding:14px;background:var(--bg);overflow:auto;}
+  body.show-stage .cv-stage-wrap{display:block;}
+  body.show-stage .mobile-panels{display:none;}
 
-    /* ===================================================
-       MOBILE: TOP NAV
-    =================================================== */
-    .top-nav {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      background: var(--accent);
-      color: #fff;
-      height: 52px;
-      padding: 0 14px;
-      position: sticky;
-      top: 0;
-      z-index: 300;
-      box-shadow: 0 2px 8px rgba(0,0,0,.18);
-    }
-    .top-nav .brand { font-size: 16px; font-weight: 800; letter-spacing: -.02em; }
-    .top-nav .nav-acts { display: flex; gap: 8px; }
-    .nav-btn {
-      padding: 6px 12px;
-      border-radius: 8px;
-      border: 1px solid rgba(255,255,255,.25);
-      background: rgba(255,255,255,.12);
-      color: #fff;
-      font: 700 12px Inter, sans-serif;
-      cursor: pointer;
-      transition: background .15s;
-    }
-    .nav-btn:hover { background: rgba(255,255,255,.22); }
-    .nav-btn.solid { background: #fff; color: var(--accent); border-color: #fff; }
-    .nav-btn.solid:hover { background: rgba(255,255,255,.9); }
+  /* ============================================================
+     DESKTOP (≥960px)
+  ============================================================ */
+  @media(min-width:960px){
+    .top-nav,.tab-bar{display:none;}
+    .mobile-panels{display:none!important;}
+    .shell{flex-direction:row;height:100vh;overflow:hidden;}
+    .desktop-sidebar{display:flex;flex-direction:column;width:360px;flex-shrink:0;background:#fff;border-right:1px solid var(--line);height:100vh;overflow:hidden;}
+    .ds-head{padding:18px 18px 0;flex-shrink:0;}
+    .ds-brand{font:800 18px Inter,sans-serif;letter-spacing:-.02em;color:var(--accent);margin-bottom:14px;}
+    .ds-tabs{display:flex;gap:2px;background:var(--bg);border-radius:10px;padding:3px;}
+    .ds-tab{flex:1;padding:7px 4px;font:600 11px Inter,sans-serif;color:var(--muted);text-align:center;border:none;background:transparent;border-radius:8px;cursor:pointer;transition:all .15s;}
+    .ds-tab.active{background:#fff;color:var(--accent);font-weight:700;box-shadow:0 1px 4px rgba(0,0,0,.08);}
+    .ds-body{flex:1;overflow-y:auto;padding:14px 18px 24px;}
+    .ds-panel{display:none;}
+    .ds-panel.active{display:block;}
+    .ds-foot{padding:12px 18px;border-top:1px solid var(--line);flex-shrink:0;display:flex;gap:8px;}
+    .cv-stage-wrap{display:flex!important;flex-direction:column;flex:1;overflow:auto;height:100vh;padding:28px;background:var(--bg);}
+    .zoom-bar{display:none;}
+  }
 
-    /* ===================================================
-       MOBILE: TAB BAR
-    =================================================== */
-    .tab-bar {
-      display: flex;
-      background: #fff;
-      border-bottom: 1px solid var(--line);
-      position: sticky;
-      top: 52px;
-      z-index: 299;
-    }
-    .tab-btn {
-      flex: 1;
-      padding: 8px 4px 9px;
-      font: 600 11px Inter, sans-serif;
-      color: var(--muted);
-      text-align: center;
-      cursor: pointer;
-      border: none;
-      background: none;
-      border-bottom: 2px solid transparent;
-      transition: color .15s, border-color .15s;
-    }
-    .tab-btn span { display: block; font-size: 15px; margin-bottom: 2px; }
-    .tab-btn.active { color: var(--accent); border-bottom-color: var(--accent); font-weight: 700; }
+  /* ============================================================
+     FORM
+  ============================================================ */
+  .panel-card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:12px;box-shadow:0 1px 3px rgba(0,0,0,.05);}
+  .panel-card h3{font:700 11px Inter,sans-serif;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);margin-bottom:14px;}
+  .field{margin-bottom:11px;}
+  .field:last-child{margin-bottom:0;}
+  label{display:block;font:600 11px Inter,sans-serif;color:var(--muted);margin-bottom:4px;}
+  input,textarea,select{width:100%;border:1px solid var(--line);border-radius:9px;padding:9px 11px;font:400 13px Inter,sans-serif;color:var(--ink);background:#fff;outline:none;transition:border-color .15s,box-shadow .15s;-webkit-appearance:none;}
+  input:focus,textarea:focus,select:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(11,31,58,.07);}
+  select{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%236B7280' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 11px center;padding-right:32px;cursor:pointer;}
+  textarea{min-height:88px;resize:vertical;line-height:1.55;}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  .divider{height:1px;background:var(--line);margin:12px 0;}
+  .sec-label{font:700 10px Inter,sans-serif;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin:14px 0 8px;}
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:5px;border:none;border-radius:9px;padding:9px 14px;font:700 13px Inter,sans-serif;cursor:pointer;background:var(--accent);color:#fff;transition:transform .12s,box-shadow .12s;white-space:nowrap;}
+  .btn:hover:not(:disabled){transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,0,0,.15);}
+  .btn:disabled{opacity:.5;cursor:not-allowed;}
+  .btn.sec{background:var(--bg);color:var(--ink);border:1px solid var(--line);}
+  .btn.ghost{background:transparent;color:var(--accent);border:1px solid var(--line);}
+  .btn.danger{background:#EF4444;color:#fff;}
+  .btn.sm{padding:6px 10px;font-size:12px;border-radius:7px;}
+  .btn.full{width:100%;}
+  .tools-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;}
+  .tool-btn{display:flex;flex-direction:column;align-items:center;gap:4px;padding:11px 8px;border:1px solid var(--line);border-radius:11px;background:var(--bg);cursor:pointer;font:600 11px Inter,sans-serif;color:var(--muted);transition:all .15s;}
+  .tool-btn .ti{font-size:18px;}
+  .tool-btn:hover{border-color:var(--accent);color:var(--accent);background:#fff;transform:translateY(-1px);}
+  .jobs-hd{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
+  .jobs-hd h3{font:700 11px Inter,sans-serif;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);}
+  .job-card{border:1px solid var(--line);border-radius:11px;padding:12px;margin-bottom:9px;background:#fff;cursor:move;transition:box-shadow .15s,border-color .15s;}
+  .job-card:hover{box-shadow:0 3px 10px rgba(0,0,0,.08);border-color:var(--accent);}
+  .job-card.dragging{opacity:.4;transform:scale(.97);}
+  .job-card-hd{display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:10px;}
+  .job-card-hd .num{font:700 11px Inter,sans-serif;color:var(--accent);}
+  .job-card-hd .acts{display:flex;gap:4px;}
+  .hint{font:400 11px Inter,sans-serif;color:var(--muted);line-height:1.5;margin-top:8px;padding:9px 12px;background:var(--bg);border-radius:8px;border-left:3px solid var(--accent);}
+  .zoom-bar{display:flex;align-items:center;justify-content:space-between;background:#fff;border:1px solid var(--line);border-radius:11px;padding:9px 13px;margin-bottom:12px;}
+  .zoom-bar>span{font:600 12px Inter,sans-serif;color:var(--muted);}
+  .zoom-ctrls{display:flex;gap:6px;align-items:center;}
+  .zoom-btn{width:30px;height:30px;border:1px solid var(--line);border-radius:7px;background:var(--bg);cursor:pointer;font-size:16px;display:flex;align-items:center;justify-content:center;}
+  #zoomLevel{font:700 12px Inter,sans-serif;color:var(--muted);min-width:36px;text-align:center;}
+  .fab{display:none;position:fixed;bottom:18px;right:18px;z-index:500;width:54px;height:54px;border-radius:50%;background:var(--accent);color:#fff;border:none;font-size:20px;cursor:pointer;box-shadow:0 6px 20px rgba(0,0,0,.22);align-items:center;justify-content:center;}
+  body.show-stage .fab{display:flex;}
+  @media(min-width:960px){.fab{display:none!important;}}
+  ::-webkit-scrollbar{width:5px;height:5px;}
+  ::-webkit-scrollbar-track{background:transparent;}
+  ::-webkit-scrollbar-thumb{background:#D1D5DB;border-radius:3px;}
 
-    /* ===================================================
-       MOBILE: PANELS
-    =================================================== */
-    .mobile-panels { flex: 1; }
-    .m-panel { display: none; padding: 14px; }
-    .m-panel.active { display: block; }
+  /* ============================================================
+     CV PAPER — px units so html2canvas is pixel-perfect
+  ============================================================ */
+  .stage{display:flex;justify-content:center;padding-bottom:24px;}
+  .paperStack{display:flex;flex-direction:column;gap:16px;transform-origin:top center;transition:transform .2s;}
+  .paper{width:794px;height:1123px;background:#fff;box-shadow:0 16px 40px rgba(0,0,0,.14);border-radius:4px;overflow:hidden;flex-shrink:0;position:relative;}
+  .cv-page{width:794px;height:1123px;padding:var(--cv-pad);box-sizing:border-box;overflow:hidden;position:relative;background:#fff;}
+  .cv-header{display:grid;grid-template-columns:var(--hdr-cols);gap:var(--cv-gap);align-items:center;padding-bottom:16px;border-bottom:1.5px solid var(--line);}
+  .cv-name{font-size:var(--name-sz);font-weight:900;letter-spacing:-.03em;line-height:1.05;color:var(--ink);}
+  .cv-hl{margin-top:7px;font-size:var(--hl-sz);font-weight:600;color:var(--muted);}
+  .cv-deg{margin-top:5px;font-size:var(--deg-sz);font-weight:800;color:var(--accent);}
+  .cv-contact{margin-top:10px;font-size:var(--contact-sz);color:var(--muted);line-height:1.5;word-break:break-word;}
+  .cv-contact a{color:var(--accent);text-decoration:none;font-weight:700;}
+  .cv-photo{width:100px;height:100px;border-radius:var(--radius);border:1.5px solid var(--line);background:#F3F4F6;overflow:hidden;display:flex;align-items:center;justify-content:center;color:#9CA3AF;font-weight:800;font-size:10px;flex-shrink:0;}
+  .cv-photo img{width:100%;height:100%;object-fit:cover;display:block;}
+  .cv-layout{display:grid;grid-template-columns:var(--cv-cols);gap:var(--cv-gap);padding-top:18px;height:calc(1123px - var(--cv-pad)*2 - 140px);}
+  .cv-section{margin-bottom:18px;}
+  .cv-title{font-size:var(--title-sz);font-weight:900;letter-spacing:.16em;text-transform:uppercase;color:var(--accent);margin:0 0 8px 0;}
+  .cv-p{font-size:var(--p-sz);line-height:1.6;color:var(--ink);white-space:pre-wrap;}
+  .cv-job{margin-top:14px;}
+  .cv-job:first-child{margin-top:0;}
+  .cv-jobhead{display:flex;justify-content:space-between;align-items:baseline;gap:8px;}
+  .cv-jobrole{font-size:var(--jobrole-sz);font-weight:800;color:var(--ink);}
+  .cv-jobdate{font-size:var(--small-sz);color:var(--muted);white-space:nowrap;font-weight:700;flex-shrink:0;}
+  .cv-jobmeta{margin-top:3px;font-size:var(--small-sz);color:var(--muted);font-weight:600;}
+  ul.cv-bullets{margin:6px 0 0 16px;padding:0;}
+  ul.cv-bullets li{font-size:var(--bullet-sz);line-height:1.55;color:var(--ink);margin-bottom:4px;}
+  .cv-card{border:1px solid var(--line);border-radius:var(--radius);padding:12px;margin-bottom:14px;background:#fff;}
+  .cv-card:last-child{margin-bottom:0;}
+  .cv-list{margin:0;padding-left:14px;}
+  .cv-list li{font-size:var(--small-sz);margin-bottom:5px;color:var(--ink);}
+  .cv-rows{display:flex;flex-direction:column;gap:5px;}
+  .cv-row2{display:flex;justify-content:space-between;align-items:baseline;gap:12px;}
+  .cv-row2 .l{font-size:var(--small-sz);line-height:1.4;color:var(--ink);}
+  .cv-row2 .r{font-size:var(--small-sz);color:var(--muted);font-weight:700;white-space:nowrap;flex-shrink:0;}
+  .cv-edu-item{margin-bottom:8px;}
+  .cv-edu-item:last-child{margin-bottom:0;}
+  .cv-edu-item strong{font-size:var(--small-sz);display:block;color:var(--ink);}
+  .cv-edu-item span{font-size:var(--small-sz);color:var(--muted);display:block;}
+  body.tpl-minimal .cv-card{border:0;padding:0;background:transparent;border-radius:0;}
+  body.tpl-modern  .cv-layout{grid-template-columns:1fr;}
+  body.tpl-modern  .cv-layout>aside{display:grid;grid-template-columns:1fr 1fr;gap:var(--cv-gap);align-content:start;}
+  body.tpl-sidebar .cv-layout>aside{order:-1;}
+  body.tpl-creative .cv-header{background:linear-gradient(135deg,var(--accent) 0%,#374151 100%);color:#fff;padding:20px var(--cv-pad);margin:calc(var(--cv-pad)*-1) calc(var(--cv-pad)*-1) 0;border-bottom:none;}
+  body.tpl-creative .cv-name,body.tpl-creative .cv-hl,body.tpl-creative .cv-deg,
+  body.tpl-creative .cv-contact,body.tpl-creative .cv-contact a{color:#fff;}
+  .page2Grid{display:grid;grid-template-columns:1fr 1fr;gap:var(--cv-gap);margin-top:16px;}
+  .page2Grid .span2{grid-column:1/-1;}
 
-    /* ===================================================
-       DESKTOP: SIDEBAR / LIVE PANEL hidden on mobile
-    =================================================== */
-    .desktop-sidebar { display: none; }
-
-    /* ===================================================
-       CV STAGE
-       Mobile: hidden unless Vista tab active
-       Desktop: always visible
-    =================================================== */
-    .cv-stage-wrap {
-      display: none;
-      padding: 12px;
-      background: var(--bg);
-      overflow: auto;
-    }
-    body.show-stage .cv-stage-wrap { display: block; }
-    body.show-stage .mobile-panels { display: none; }
-
-    /* ===================================================
-       DESKTOP OVERRIDES (>= 960px)
-    =================================================== */
-    @media (min-width: 960px) {
-      .top-nav        { display: none; }
-      .tab-bar        { display: none; }
-      .mobile-panels  { display: none !important; }
-      body.show-stage .mobile-panels { display: none !important; }
-
-      .shell { flex-direction: row; height: 100vh; overflow: hidden; }
-
-      /* Sidebar */
-      .desktop-sidebar {
-        display: flex;
-        flex-direction: column;
-        width: 360px;
-        flex-shrink: 0;
-        background: #fff;
-        border-right: 1px solid var(--line);
-        height: 100vh;
-        overflow: hidden;
-      }
-      .ds-head { padding: 18px 18px 0; flex-shrink: 0; }
-      .ds-brand {
-        font: 800 18px Inter, sans-serif;
-        letter-spacing: -.02em;
-        color: var(--accent);
-        margin-bottom: 14px;
-      }
-      .ds-tabs {
-        display: flex;
-        gap: 2px;
-        background: var(--bg);
-        border-radius: 10px;
-        padding: 3px;
-        margin-bottom: 2px;
-      }
-      .ds-tab {
-        flex: 1;
-        padding: 7px 4px;
-        font: 600 11px Inter, sans-serif;
-        color: var(--muted);
-        text-align: center;
-        border: none;
-        background: transparent;
-        border-radius: 8px;
-        cursor: pointer;
-        transition: all .15s;
-      }
-      .ds-tab.active {
-        background: #fff;
-        color: var(--accent);
-        font-weight: 700;
-        box-shadow: 0 1px 4px rgba(0,0,0,.08);
-      }
-      .ds-body { flex: 1; overflow-y: auto; padding: 14px 18px 24px; }
-      .ds-panel { display: none; }
-      .ds-panel.active { display: block; }
-      .ds-foot {
-        padding: 12px 18px;
-        border-top: 1px solid var(--line);
-        flex-shrink: 0;
-        display: flex;
-        gap: 8px;
-      }
-
-      /* CV stage always visible on desktop */
-      .cv-stage-wrap {
-        display: flex !important;
-        flex-direction: column;
-        flex: 1;
-        overflow: auto;
-        height: 100vh;
-        padding: 28px;
-        background: var(--bg);
-      }
-      .zoom-bar { display: none; }
-    }
-
-    /* ===================================================
-       SHARED FORM STYLES
-    =================================================== */
-    .panel-card {
-      background: #fff;
-      border: 1px solid var(--line);
-      border-radius: 14px;
-      padding: 16px;
-      margin-bottom: 12px;
-      box-shadow: 0 1px 3px rgba(0,0,0,.05);
-    }
-    .panel-card h3 {
-      font: 700 11px Inter, sans-serif;
-      letter-spacing: .1em;
-      text-transform: uppercase;
-      color: var(--accent);
-      margin-bottom: 14px;
-    }
-    .field { margin-bottom: 11px; }
-    .field:last-child { margin-bottom: 0; }
-    label { display: block; font: 600 11px Inter, sans-serif; color: var(--muted); margin-bottom: 4px; }
-    input, textarea, select {
-      width: 100%;
-      border: 1px solid var(--line);
-      border-radius: 9px;
-      padding: 9px 11px;
-      font: 400 13px Inter, sans-serif;
-      color: var(--ink);
-      background: #fff;
-      outline: none;
-      transition: border-color .15s, box-shadow .15s;
-      -webkit-appearance: none;
-    }
-    input:focus, textarea:focus, select:focus {
-      border-color: var(--accent);
-      box-shadow: 0 0 0 3px rgba(11,31,58,.07);
-    }
-    select {
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%236B7280' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
-      background-repeat: no-repeat;
-      background-position: right 11px center;
-      padding-right: 32px;
-      cursor: pointer;
-    }
-    textarea { min-height: 88px; resize: vertical; line-height: 1.55; }
-    .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-    .divider { height: 1px; background: var(--line); margin: 12px 0; }
-    .sec-label { font: 700 10px Inter, sans-serif; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); margin: 14px 0 8px; }
-
-    /* Buttons */
-    .btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 5px;
-      border: none;
-      border-radius: 9px;
-      padding: 9px 14px;
-      font: 700 13px Inter, sans-serif;
-      cursor: pointer;
-      background: var(--accent);
-      color: #fff;
-      transition: transform .12s, box-shadow .12s;
-      white-space: nowrap;
-    }
-    .btn:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(0,0,0,.15); }
-    .btn:active:not(:disabled) { transform: none; }
-    .btn:disabled { opacity: .5; cursor: not-allowed; }
-    .btn.sec   { background: var(--bg); color: var(--ink); border: 1px solid var(--line); }
-    .btn.ghost { background: transparent; color: var(--accent); border: 1px solid var(--line); }
-    .btn.danger{ background: #EF4444; color: #fff; }
-    .btn.sm    { padding: 6px 10px; font-size: 12px; border-radius: 7px; }
-    .btn.full  { width: 100%; }
-
-    /* Tools */
-    .tools-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }
-    .tool-btn {
-      display: flex; flex-direction: column; align-items: center; gap: 4px;
-      padding: 11px 8px; border: 1px solid var(--line); border-radius: 11px;
-      background: var(--bg); cursor: pointer; font: 600 11px Inter,sans-serif;
-      color: var(--muted); transition: all .15s;
-    }
-    .tool-btn .ti { font-size: 18px; }
-    .tool-btn:hover { border-color: var(--accent); color: var(--accent); background: #fff; transform: translateY(-1px); }
-
-    /* Job cards */
-    .jobs-hd { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-    .jobs-hd h3 { font: 700 11px Inter, sans-serif; letter-spacing: .1em; text-transform: uppercase; color: var(--accent); }
-    .job-card {
-      border: 1px solid var(--line); border-radius: 11px; padding: 12px;
-      margin-bottom: 9px; background: #fff; cursor: move;
-      transition: box-shadow .15s, border-color .15s;
-    }
-    .job-card:hover { box-shadow: 0 3px 10px rgba(0,0,0,.08); border-color: var(--accent); }
-    .job-card.dragging { opacity: .4; transform: scale(.97); }
-    .job-card-hd { display:flex; justify-content:space-between; align-items:center; gap:8px; margin-bottom:10px; }
-    .job-card-hd .num { font: 700 11px Inter, sans-serif; color: var(--accent); }
-    .job-card-hd .acts { display: flex; gap: 4px; }
-
-    /* Hint */
-    .hint {
-      font: 400 11px Inter, sans-serif; color: var(--muted); line-height: 1.5;
-      margin-top: 8px; padding: 9px 12px; background: var(--bg);
-      border-radius: 8px; border-left: 3px solid var(--accent);
-    }
-
-    /* Zoom bar (mobile only) */
-    .zoom-bar {
-      display: flex; align-items: center; justify-content: space-between;
-      background: #fff; border: 1px solid var(--line); border-radius: 11px;
-      padding: 9px 13px; margin-bottom: 12px;
-    }
-    .zoom-bar > span { font: 600 12px Inter, sans-serif; color: var(--muted); }
-    .zoom-ctrls { display: flex; gap: 6px; align-items: center; }
-    .zoom-btn {
-      width: 30px; height: 30px; border: 1px solid var(--line); border-radius: 7px;
-      background: var(--bg); cursor: pointer; font-size: 16px;
-      display: flex; align-items: center; justify-content: center; color: var(--ink);
-    }
-    #zoomLevel { font: 700 12px Inter, sans-serif; color: var(--muted); min-width: 36px; text-align: center; }
-
-    /* FAB */
-    .fab {
-      display: none; position: fixed; bottom: 18px; right: 18px; z-index: 500;
-      width: 54px; height: 54px; border-radius: 50%; background: var(--accent);
-      color: #fff; border: none; font-size: 20px; cursor: pointer;
-      box-shadow: 0 6px 20px rgba(0,0,0,.22); align-items: center; justify-content: center;
-    }
-    body.show-stage .fab { display: flex; }
-    @media (min-width: 960px) { .fab { display: none !important; } }
-
-    /* Loading */
-    .loading-overlay {
-      position: fixed; inset: 0; background: rgba(0,0,0,.65);
-      display: none; align-items: center; justify-content: center;
-      z-index: 9999; backdrop-filter: blur(4px);
-    }
-    .loading-overlay.active { display: flex; }
-    .loading-box {
-      background: #fff; padding: 28px 40px; border-radius: 16px;
-      text-align: center; box-shadow: 0 20px 60px rgba(0,0,0,.25);
-    }
-    .spinner {
-      width: 40px; height: 40px; border: 3px solid var(--line);
-      border-top-color: var(--accent); border-radius: 50%;
-      animation: spin 1s linear infinite; margin: 0 auto 14px;
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
-    .loading-box p { font: 700 14px Inter, sans-serif; color: var(--ink); }
-
-    /* scrollbar */
-    ::-webkit-scrollbar { width: 5px; height: 5px; }
-    ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: #D1D5DB; border-radius: 3px; }
-
-    /* ===================================================
-       CV PAPER
-    =================================================== */
-    .stage { display: flex; justify-content: center; padding-bottom: 24px; }
-    .paperStack { display: flex; flex-direction: column; gap: 16px; transform-origin: top center; transition: transform .2s; }
-    .paper {
-      width: 210mm; height: 297mm; background: var(--paper);
-      box-shadow: 0 16px 40px rgba(0,0,0,.14); border-radius: 5px;
-      overflow: hidden; flex-shrink: 0; break-after: page; page-break-after: always;
-    }
-    .paper:last-child { break-after: auto; page-break-after: auto; }
-    .page { padding: var(--pad-mm); height: 100%; position: relative; }
-
-    .cv-header {
-      display: grid; grid-template-columns: var(--header-cols);
-      gap: var(--gap-mm); align-items: center;
-      padding-bottom: 6mm; border-bottom: 1px solid var(--line);
-    }
-    .cv-name    { font-size: var(--name-size); font-weight: 900; letter-spacing: -.03em; line-height: 1.05; margin: 0; }
-    .cv-hl      { margin-top: 3mm; font-size: var(--headline-size); font-weight: 650; color: var(--muted); }
-    .cv-deg     { margin-top: 2mm; font-size: 13.2px; font-weight: 850; color: var(--accent); }
-    .cv-contact { margin-top: 4mm; font-size: 12px; color: var(--muted); line-height: 1.45; word-break: break-word; }
-    .cv-contact a { color: var(--accent); text-decoration: none; font-weight: 750; }
-    .cv-contact a:hover { text-decoration: underline; }
-
-    .cv-photo {
-      width: 36mm; height: 36mm; border-radius: var(--radius); border: 1px solid var(--line);
-      background: #F3F4F6; overflow: hidden; display: flex; align-items: center;
-      justify-content: center; color: #9CA3AF; font-weight: 800; font-size: 11px;
-    }
-    .cv-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
-
-    .cv-layout {
-      display: grid; grid-template-columns: var(--cv-cols);
-      gap: var(--gap-mm); padding-top: 7mm; height: calc(100% - 52mm);
-    }
-    .cv-section { margin-bottom: 7mm; }
-    .cv-title { font-size: var(--title-size); font-weight: 900; letter-spacing: .16em; text-transform: uppercase; color: var(--accent); margin: 0 0 3mm 0; }
-    .cv-p { font-size: var(--p-size); line-height: 1.6; margin: 0; white-space: pre-wrap; }
-
-    .cv-job { margin-top: 4.5mm; }
-    .cv-jobhead { display: grid; grid-template-columns: 1fr auto; gap: 8mm; align-items: baseline; }
-    .cv-jobrole { font-size: var(--jobrole-size); font-weight: 900; margin: 0; }
-    .cv-jobdate { font-size: 11.8px; color: var(--muted); white-space: nowrap; font-weight: 700; }
-    .cv-jobmeta { margin-top: 1.2mm; font-size: 11.8px; color: var(--muted); font-weight: 600; }
-    ul.cv-bullets { margin: 2.5mm 0 0 18px; padding: 0; }
-    ul.cv-bullets li { font-size: var(--bullet-size); line-height: 1.55; margin: 0 0 2mm 0; }
-
-    .cv-card { border: 1px solid var(--line); border-radius: var(--radius); padding: 4.5mm; margin-bottom: 6mm; background: #fff; }
-    .cv-list { margin: 0; padding-left: 16px; }
-    .cv-list li { font-size: 12.1px; margin-bottom: 2mm; }
-    .cv-rows { display: flex; flex-direction: column; gap: 2.2mm; }
-    .cv-row2 { display: grid; grid-template-columns: 1fr auto; gap: 6mm; align-items: baseline; }
-    .cv-row2 .l { font-size: 12.2px; line-height: 1.45; }
-    .cv-row2 .r { font-size: 12.2px; color: var(--muted); font-weight: 750; white-space: nowrap; }
-
-    /* Template variants */
-    body.tpl-minimal .cv-card { border:0; padding:0; background:transparent; }
-    body.tpl-modern  .cv-layout { grid-template-columns: 1fr; }
-    body.tpl-modern  .cv-layout > aside { display:grid; grid-template-columns:1fr 1fr; gap:var(--gap-mm); align-content:start; }
-    body.tpl-modern  .cv-layout > aside .cv-card:last-child { grid-column:1/-1; }
-    body.tpl-sidebar .cv-layout { grid-template-columns:70mm 1fr; }
-    body.tpl-sidebar .cv-layout > aside { order:-1; }
-    body.tpl-creative .cv-header {
-      background: linear-gradient(135deg, var(--accent) 0%, var(--muted) 100%);
-      color:#fff; padding:8mm; margin:calc(var(--pad-mm)*-1); margin-bottom:8mm; border-bottom:none;
-    }
-    body.tpl-creative .cv-name,
-    body.tpl-creative .cv-hl,
-    body.tpl-creative .cv-deg,
-    body.tpl-creative .cv-contact,
-    body.tpl-creative .cv-contact a { color:#fff; }
-
-    .page2Grid { display:grid; grid-template-columns:1fr 1fr; gap:var(--gap-mm); margin-top:6mm; }
-    .page2Grid .span2 { grid-column:1/-1; }
+  /* ============================================================
+     PRINT — this is how PDF export works:
+     We open a print window with ONLY the CV pages, perfectly A4
+  ============================================================ */
+  @media print {
+    * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+  }
   </style>
 </head>
-
 <body class="tpl-classic">
 
-  <div class="loading-overlay" id="loadingOverlay">
-    <div class="loading-box">
-      <div class="spinner"></div>
-      <p id="loadingText">Procesando...</p>
-    </div>
-  </div>
+  <!-- Hidden print container — only used during PDF export -->
+  <div id="printContainer" style="display:none"></div>
 
   <div class="shell">
 
-    <!-- ════ MOBILE TOP NAV ════ -->
+    <!-- MOBILE NAV -->
     <nav class="top-nav">
       <div class="brand">📄 CV Builder</div>
       <div class="nav-acts">
@@ -497,7 +225,7 @@
       </div>
     </nav>
 
-    <!-- ════ MOBILE TAB BAR ════ -->
+    <!-- MOBILE TABS -->
     <div class="tab-bar">
       <button class="tab-btn active" data-tab="m-edit"><span>✏️</span>Editar</button>
       <button class="tab-btn" data-tab="m-style"><span>🎨</span>Estilo</button>
@@ -505,9 +233,8 @@
       <button class="tab-btn" data-tab="m-preview"><span>👁</span>Vista</button>
     </div>
 
-    <!-- ════ MOBILE PANELS ════ -->
+    <!-- MOBILE PANELS -->
     <div class="mobile-panels">
-
       <!-- EDITAR -->
       <div class="m-panel active" id="m-edit">
         <div class="panel-card">
@@ -523,15 +250,13 @@
           </div>
           <div class="field"><label>LinkedIn (URL)</label><input id="inLinkedIn" value="https://www.linkedin.com/in/cegui"/></div>
           <div class="field"><label>Ubicación</label><input id="inLocation" value="Buenos Aires, Argentina"/></div>
-          <div class="field">
-            <label id="tProfileLbl">Perfil profesional</label>
+          <div class="field"><label id="tProfileLbl">Perfil profesional</label>
             <textarea id="inProfile">Licenciado en Recursos Humanos con experiencia en entornos corporativos y trayectoria sólida en gestión administrativa y coordinación. Actualmente HRBP Contractor en Oracle, con foco en employee experience, comunicación interna, ejecución de iniciativas de RR.HH. y trabajo cross-functional.</textarea>
           </div>
         </div>
         <div class="panel-card">
           <h3>Áreas y Formación</h3>
-          <div class="field">
-            <label id="tAreasLbl">Áreas HR (una por línea)</label>
+          <div class="field"><label id="tAreasLbl">Áreas HR (una por línea)</label>
             <textarea id="inAreas">HRBP Support
 Employee Experience
 HR Operations
@@ -540,13 +265,11 @@ Internal Communications
 Stakeholder Management
 HR Reporting</textarea>
           </div>
-          <div class="field">
-            <label id="tEduLbl">Educación (Título — Institución | Detalle)</label>
+          <div class="field"><label id="tEduLbl">Educación (Título — Institución | Detalle)</label>
             <textarea id="inEdu">Lic. en Recursos Humanos — UADE | Finalizado
 Lic. en Psicología — UADE | En curso</textarea>
           </div>
-          <div class="field">
-            <label id="tCoursesLbl">Formación complementaria (Curso | Institución)</label>
+          <div class="field"><label id="tCoursesLbl">Formación complementaria (Curso | Institución)</label>
             <textarea id="inCourses">Planificación y gestión de RR.HH. para PyMEs | CAME / UTN
 Técnicas de selección de RR.HH. | CAME / UTN
 Conducción de equipos | CAME / UTN
@@ -574,7 +297,7 @@ Comunicación y organizaciones | CAME / UTN</textarea>
               <select id="inCompact"><option value="off">Normal</option><option value="on">Compacto</option></select>
             </div>
           </div>
-          <div class="field"><label>Tema de Color</label>
+          <div class="field"><label>Color</label>
             <select id="inTheme">
               <option value="">Por defecto</option>
               <option value="theme-blue">Azul</option>
@@ -598,7 +321,7 @@ Comunicación y organizaciones | CAME / UTN</textarea>
             <button class="tool-btn" id="btnAutoFormat"><span class="ti">✨</span>Auto-formato</button>
             <button class="tool-btn" id="btnSpellCheck"><span class="ti">📊</span>Estadísticas</button>
             <button class="tool-btn" id="btnCountWords"><span class="ti">🔢</span>Palabras</button>
-            <button class="tool-btn" id="btnDuplicateJob"><span class="ti">📋</span>Duplicar trabajo</button>
+            <button class="tool-btn" id="btnDuplicateJob"><span class="ti">📋</span>Duplicar</button>
           </div>
           <div style="display:flex;flex-direction:column;gap:8px;">
             <button class="btn sec full" id="btnTranslateEN">🌐 Traducir a inglés</button>
@@ -615,16 +338,14 @@ Comunicación y organizaciones | CAME / UTN</textarea>
             <button class="btn sm sec" id="btnAddJob">+ Agregar</button>
           </div>
           <div id="jobsEditorList"></div>
-          <div class="hint">💡 Arrastrá para reordenar. El contenido pasa a página 2 automáticamente.</div>
+          <div class="hint">💡 Arrastrá para reordenar. Pagina automáticamente.</div>
         </div>
       </div>
 
-      <!-- VISTA (placeholder, stage lives outside) -->
       <div class="m-panel" id="m-preview"></div>
+    </div>
 
-    </div><!-- /mobile-panels -->
-
-    <!-- ════ DESKTOP SIDEBAR ════ -->
+    <!-- DESKTOP SIDEBAR -->
     <aside class="desktop-sidebar">
       <div class="ds-head">
         <div class="ds-brand">📄 CV Builder</div>
@@ -636,8 +357,6 @@ Comunicación y organizaciones | CAME / UTN</textarea>
         </div>
       </div>
       <div class="ds-body">
-
-        <!-- D-EDIT -->
         <div class="ds-panel active" id="d-edit">
           <div class="grid2">
             <div class="field"><label>Nombre completo</label><input id="dInName" value="Camilo Eguiazabal"/></div>
@@ -650,13 +369,11 @@ Comunicación y organizaciones | CAME / UTN</textarea>
           </div>
           <div class="field"><label>LinkedIn (URL)</label><input id="dInLinkedIn" value="https://www.linkedin.com/in/cegui"/></div>
           <div class="field"><label>Ubicación</label><input id="dInLocation" value="Buenos Aires, Argentina"/></div>
-          <div class="field">
-            <label id="dTProfileLbl">Perfil profesional</label>
+          <div class="field"><label id="dTProfileLbl">Perfil profesional</label>
             <textarea id="dInProfile">Licenciado en Recursos Humanos con experiencia en entornos corporativos y trayectoria sólida en gestión administrativa y coordinación. Actualmente HRBP Contractor en Oracle, con foco en employee experience, comunicación interna, ejecución de iniciativas de RR.HH. y trabajo cross-functional.</textarea>
           </div>
           <div class="sec-label">Áreas y Formación</div>
-          <div class="field">
-            <label id="dTAreasLbl">Áreas HR (una por línea)</label>
+          <div class="field"><label id="dTAreasLbl">Áreas HR (una por línea)</label>
             <textarea id="dInAreas">HRBP Support
 Employee Experience
 HR Operations
@@ -665,21 +382,17 @@ Internal Communications
 Stakeholder Management
 HR Reporting</textarea>
           </div>
-          <div class="field">
-            <label id="dTEduLbl">Educación (Título — Institución | Detalle)</label>
+          <div class="field"><label id="dTEduLbl">Educación (Título — Institución | Detalle)</label>
             <textarea id="dInEdu">Lic. en Recursos Humanos — UADE | Finalizado
 Lic. en Psicología — UADE | En curso</textarea>
           </div>
-          <div class="field">
-            <label id="dTCoursesLbl">Formación complementaria (Curso | Institución)</label>
+          <div class="field"><label id="dTCoursesLbl">Formación complementaria</label>
             <textarea id="dInCourses">Planificación y gestión de RR.HH. para PyMEs | CAME / UTN
 Técnicas de selección de RR.HH. | CAME / UTN
 Conducción de equipos | CAME / UTN
 Comunicación y organizaciones | CAME / UTN</textarea>
           </div>
         </div>
-
-        <!-- D-STYLE -->
         <div class="ds-panel" id="d-style">
           <div class="field"><label>Plantilla</label>
             <select id="dInTemplate">
@@ -694,7 +407,7 @@ Comunicación y organizaciones | CAME / UTN</textarea>
           <div class="field"><label>Densidad</label>
             <select id="dInCompact"><option value="off">Normal</option><option value="on">Compacto</option></select>
           </div>
-          <div class="field"><label>Tema de Color</label>
+          <div class="field"><label>Color</label>
             <select id="dInTheme">
               <option value="">Por defecto</option>
               <option value="theme-blue">Azul</option>
@@ -710,8 +423,6 @@ Comunicación y organizaciones | CAME / UTN</textarea>
           </div>
           <div class="field"><label>Subir foto</label><input id="dInPhoto" type="file" accept="image/*"/></div>
         </div>
-
-        <!-- D-JOBS -->
         <div class="ds-panel" id="d-jobs">
           <div class="jobs-hd">
             <h3 id="dTExpEdit">Experiencia laboral</h3>
@@ -720,52 +431,48 @@ Comunicación y organizaciones | CAME / UTN</textarea>
           <div id="dJobsEditorList"></div>
           <div class="hint">💡 Arrastrá para reordenar.</div>
         </div>
-
-        <!-- D-TOOLS -->
         <div class="ds-panel" id="d-tools">
           <div class="tools-grid">
             <button class="tool-btn" id="dBtnAutoFormat"><span class="ti">✨</span>Auto-formato</button>
             <button class="tool-btn" id="dBtnSpellCheck"><span class="ti">📊</span>Estadísticas</button>
             <button class="tool-btn" id="dBtnCountWords"><span class="ti">🔢</span>Palabras</button>
-            <button class="tool-btn" id="dBtnDuplicateJob"><span class="ti">📋</span>Duplicar trabajo</button>
+            <button class="tool-btn" id="dBtnDuplicateJob"><span class="ti">📋</span>Duplicar</button>
           </div>
           <div style="display:flex;flex-direction:column;gap:8px;">
             <button class="btn sec full" id="dBtnTranslate">🌐 Traducir a inglés</button>
             <button class="btn ghost full" id="dBtnReset">🔄 Reiniciar todo</button>
           </div>
         </div>
-
-      </div><!-- /ds-body -->
+      </div>
       <div class="ds-foot">
         <button class="btn full" id="dBtnPDF">📄 Descargar PDF</button>
       </div>
     </aside>
 
-    <!-- ════ CV STAGE ════ -->
+    <!-- CV STAGE -->
     <div class="cv-stage-wrap" id="cvStageWrap">
       <div class="zoom-bar">
         <span>Vista previa</span>
         <div class="zoom-ctrls">
           <button class="zoom-btn" id="zoomOut">−</button>
-          <span id="zoomLevel">55%</span>
+          <span id="zoomLevel">65%</span>
           <button class="zoom-btn" id="zoomIn">+</button>
         </div>
       </div>
       <div class="stage">
         <div class="paperStack" id="paperStack">
-
           <!-- PAGE 1 -->
-          <div class="paper" data-page="1">
-            <div class="page" id="cvPage1">
+          <div class="paper" id="paper1">
+            <div class="cv-page" id="cvPage1">
               <div class="cv-header">
                 <div>
                   <h1 class="cv-name" id="cvName">Camilo Eguiazabal</h1>
-                  <div class="cv-hl"  id="cvHeadline">HRBP · People Analytics · Employee Experience</div>
+                  <div class="cv-hl" id="cvHeadline">HRBP · People Analytics · Employee Experience</div>
                   <div class="cv-deg" id="cvDegree">Lic. en Recursos Humanos</div>
                   <div class="cv-contact">
                     <span id="cvLocation">Buenos Aires, Argentina</span> ·
-                    <a id="cvEmail" href="/cdn-cgi/l/email-protection#6a090f0d1f030b100b080b062a0d070b030644090507"><span class="__cf_email__" data-cfemail="e3808684968a82998281828fa3848e828a8fcd808c8e">[email&#160;protected]</span></a> ·
-                    <a id="cvPhone"    href="tel:+541123962046">+54 11 2396-2046</a> ·
+                    <a id="cvEmail" href="mailto:ceguiazabal@gmail.com">ceguiazabal@gmail.com</a> ·
+                    <a id="cvPhone" href="tel:+541123962046">+54 11 2396-2046</a> ·
                     <a id="cvLinkedIn" href="https://www.linkedin.com/in/cegui" target="_blank">linkedin.com/in/cegui</a>
                   </div>
                 </div>
@@ -774,8 +481,7 @@ Comunicación y organizaciones | CAME / UTN</textarea>
                   <img id="cvPhotoImg" alt="Foto" style="display:none"/>
                 </div>
               </div>
-
-              <div class="cv-layout" id="cvLayout">
+              <div class="cv-layout">
                 <div id="cvMain">
                   <div class="cv-section cv-card">
                     <h2 class="cv-title" id="tProfile">Perfil</h2>
@@ -795,7 +501,7 @@ Comunicación y organizaciones | CAME / UTN</textarea>
                     <h2 class="cv-title" id="tEdu">Educación</h2>
                     <div id="cvEdu"></div>
                   </div>
-                  <div class="cv-card" style="margin-bottom:0">
+                  <div class="cv-card">
                     <h2 class="cv-title" id="tCourses">Formación complementaria</h2>
                     <div class="cv-rows" id="cvCourses"></div>
                   </div>
@@ -803,504 +509,289 @@ Comunicación y organizaciones | CAME / UTN</textarea>
               </div>
             </div>
           </div>
-
           <!-- PAGE 2 -->
-          <div class="paper" data-page="2" id="paper2" style="display:none">
-            <div class="page" id="cvPage2">
-              <div class="cv-section cv-card" style="margin-bottom:0">
+          <div class="paper" id="paper2" style="display:none">
+            <div class="cv-page" id="cvPage2">
+              <div class="cv-section cv-card">
                 <h2 class="cv-title" id="tExperience2">Experiencia</h2>
                 <div id="cvJobsPage2"></div>
-                <div id="cvPage2Extras"></div>
               </div>
             </div>
           </div>
-
         </div>
       </div>
-    </div><!-- /cv-stage-wrap -->
+    </div>
+  </div>
 
-  </div><!-- /shell -->
+  <button class="fab" id="fabPDF">📄</button>
 
-  <button class="fab" id="fabPDF" title="Descargar PDF">📄</button>
-
-  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
-  /* =====================================================
-     CONSTANTS & STATE
-  ===================================================== */
-  const STORAGE_KEY = "cv_builder_v5";
-  const DEFAULT_JOBS = [
-    {
-      role:"HRBP Contractor — Oracle", meta:"Buenos Aires, Argentina", dates:"2023 – Present",
-      bullets:[
-        "Partner with leaders and teams on employee lifecycle matters, driving engagement across 50+ employees",
-        "Coordinate cross-functionally with HR, Facilities, and Finance to execute strategic initiatives",
-        "Manage employee experience programs, benefits administration, and engagement activities",
-        "Build and maintain HR reports and operational documentation"
-      ]
-    },
-    {
-      role:"HR Analyst — Grupo Suessa", meta:"CABA, Argentina", dates:"Dec 2022 – 2023",
-      bullets:[
-        "Organized end-to-end recruitment processes, onboarding, and administrative follow-up",
-        "Coordinated with candidates and provided operational support to HR team"
-      ]
-    },
-    {
-      role:"Academic & Administrative Management — CFP Nº26", meta:"CABA, Argentina", dates:"2015 – 2022",
-      bullets:[
-        "Progressive career: Administrative Assistant / Preceptor → Pedagogical Team → Head of Student Department",
-        "Managed documentation, student services, and institutional coordination"
-      ]
-    }
+  <script>
+  /* ==========================================================  STATE  ========================================================== */
+  const STORAGE_KEY="cv_builder_v7";
+  const DEFAULT_JOBS=[
+    {role:"HRBP Contractor — Oracle",meta:"Buenos Aires, Argentina",dates:"2023 – Present",
+     bullets:["Partner with leaders and teams on employee lifecycle matters, driving engagement across 50+ employees","Coordinate cross-functionally with HR, Facilities, and Finance to execute strategic initiatives","Manage employee experience programs, benefits administration, and engagement activities","Build and maintain HR reports and operational documentation"]},
+    {role:"HR Analyst — Grupo Suessa",meta:"CABA, Argentina",dates:"Dec 2022 – 2023",
+     bullets:["Organized end-to-end recruitment processes, onboarding, and administrative follow-up","Coordinated with candidates and provided operational support to HR team"]},
+    {role:"Academic & Administrative Management — CFP Nº26",meta:"CABA, Argentina",dates:"2015 – 2022",
+     bullets:["Progressive career: Administrative Assistant / Preceptor → Pedagogical Team → Head of Student Department","Managed documentation, student services, and institutional coordination"]}
   ];
+  let jobs=JSON.parse(JSON.stringify(DEFAULT_JOBS));
+  let zoomScale=0.65, draggedIdx=null;
 
-  let jobs = JSON.parse(JSON.stringify(DEFAULT_JOBS));
-  let zoomScale = 0.6;
-  let draggedIdx = null;
+  /* HELPERS */
+  const $=id=>document.getElementById(id);
+  const esc=s=>(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"}[c]));
+  const toTelHref=p=>{const c=(p||"").trim().replace(/[^\d+]/g,"");return c.startsWith("+")?c:"+"+c;};
+  const liLabel=url=>{try{const u=new URL(url);return(u.hostname.replace(/^www\./,"")+u.pathname).replace(/\/$/,"");}catch{return(url||"").replace(/^https?:\/\//,"").replace(/\/$/,"");}};
 
-  /* =====================================================
-     HELPERS
-  ===================================================== */
-  const $ = id => document.getElementById(id);
-  const esc = s => (s??"").replace(/[&<>"']/g, c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"}[c]));
-  const toTelHref = p => { const c=(p||"").trim().replace(/[^\d+]/g,""); return c.startsWith("+") ? c : "+"+c; };
-  const linkedinLabel = url => { try{ const u=new URL(url); return(u.hostname.replace(/^www\./,"")+u.pathname).replace(/\/$/,""); }catch{ return(url||"").replace(/^https?:\/\//,"").replace(/\/$/,""); }};
-  const showLoading = (t="Procesando...") => { $("loadingText").textContent=t; $("loadingOverlay").classList.add("active"); };
-  const hideLoading = () => $("loadingOverlay").classList.remove("active");
-
-  /* =====================================================
-     MOBILE TABS
-  ===================================================== */
-  function activateTab(id) {
-    document.querySelectorAll(".tab-btn").forEach(b => b.classList.toggle("active", b.dataset.tab===id));
-    document.querySelectorAll(".m-panel").forEach(p => p.classList.toggle("active", p.id===id));
-    const isPreview = id==="m-preview";
-    document.body.classList.toggle("show-stage", isPreview);
+  /* TABS MOBILE */
+  function activateTab(id){
+    document.querySelectorAll(".tab-btn").forEach(b=>b.classList.toggle("active",b.dataset.tab===id));
+    document.querySelectorAll(".m-panel").forEach(p=>p.classList.toggle("active",p.id===id));
+    document.body.classList.toggle("show-stage",id==="m-preview");
   }
-  document.querySelectorAll(".tab-btn[data-tab]").forEach(btn =>
-    btn.addEventListener("click", () => activateTab(btn.dataset.tab))
-  );
+  document.querySelectorAll(".tab-btn[data-tab]").forEach(b=>b.addEventListener("click",()=>activateTab(b.dataset.tab)));
 
-  /* =====================================================
-     DESKTOP SIDEBAR TABS
-  ===================================================== */
-  function activateDTab(id) {
-    document.querySelectorAll(".ds-tab").forEach(b => b.classList.toggle("active", b.dataset.dtab===id));
-    document.querySelectorAll(".ds-panel").forEach(p => p.classList.toggle("active", p.id===id));
+  /* TABS DESKTOP */
+  function activateDTab(id){
+    document.querySelectorAll(".ds-tab").forEach(b=>b.classList.toggle("active",b.dataset.dtab===id));
+    document.querySelectorAll(".ds-panel").forEach(p=>p.classList.toggle("active",p.id===id));
   }
-  document.querySelectorAll(".ds-tab[data-dtab]").forEach(btn =>
-    btn.addEventListener("click", () => activateDTab(btn.dataset.dtab))
-  );
+  document.querySelectorAll(".ds-tab[data-dtab]").forEach(b=>b.addEventListener("click",()=>activateDTab(b.dataset.dtab)));
 
-  /* =====================================================
-     ZOOM
-  ===================================================== */
-  function applyZoom() {
-    $("paperStack").style.transform = `scale(${zoomScale})`;
-    $("zoomLevel").textContent = Math.round(zoomScale*100)+"%";
-  }
-  function setDefaultZoom() {
-    zoomScale = window.innerWidth < 500 ? 0.38 : window.innerWidth < 960 ? 0.52 : 0.85;
+  /* ZOOM */
+  function applyZoom(){$("paperStack").style.transform=`scale(${zoomScale})`;$("zoomLevel").textContent=Math.round(zoomScale*100)+"%";}
+  function setDefaultZoom(){
+    const vw=window.innerWidth;
+    zoomScale=vw<960?Math.min(0.9,(vw-28)/794):Math.min(1.0,(vw-360-56)/794);
     applyZoom();
   }
-  $("zoomIn").addEventListener("click",  () => { zoomScale=Math.min(1.3, zoomScale+0.1); applyZoom(); });
-  $("zoomOut").addEventListener("click", () => { zoomScale=Math.max(0.25,zoomScale-0.1); applyZoom(); });
+  $("zoomIn").addEventListener("click",()=>{zoomScale=Math.min(1.4,zoomScale+0.05);applyZoom();});
+  $("zoomOut").addEventListener("click",()=>{zoomScale=Math.max(0.2,zoomScale-0.05);applyZoom();});
 
-  /* =====================================================
-     PHOTO MODE
-  ===================================================== */
-  function setPhotoMode(mode) {
-    const on = mode==="with";
-    ["inPhoto","dInPhoto"].forEach(id => { const e=$(id); if(e) e.disabled=!on; });
-    document.body.classList.toggle("no-photo", !on);
-    if(!on) {
-      ["inPhoto","dInPhoto"].forEach(id => { const e=$(id); if(e) e.value=""; });
-      $("cvPhotoImg").style.display="none";
-      $("cvPhotoLabel").style.display="block";
-    }
+  /* PHOTO */
+  function setPhotoMode(mode){
+    const on=mode==="with";
+    ["inPhoto","dInPhoto"].forEach(id=>{const e=$(id);if(e)e.disabled=!on;});
+    document.body.classList.toggle("no-photo",!on);
+    if(!on){$("cvPhotoImg").style.display="none";$("cvPhotoLabel").style.display="block";}
   }
-  function setupPhotoUpload(id) {
-    $(id)?.addEventListener("change", e => {
+  function setupPhotoUpload(id){
+    $(id)?.addEventListener("change",e=>{
       if($("inPhotoMode").value!=="with") return;
-      const file = e.target.files?.[0]; if(!file) return;
-      const reader = new FileReader();
-      reader.onload = () => {
-        $("cvPhotoImg").src=reader.result;
-        $("cvPhotoImg").style.display="block";
-        $("cvPhotoLabel").style.display="none";
-        autoSave();
-      };
-      reader.readAsDataURL(file);
+      const f=e.target.files?.[0];if(!f) return;
+      const r=new FileReader();
+      r.onload=()=>{$("cvPhotoImg").src=r.result;$("cvPhotoImg").style.display="block";$("cvPhotoLabel").style.display="none";autoSave();};
+      r.readAsDataURL(f);
     });
   }
-  setupPhotoUpload("inPhoto");
-  setupPhotoUpload("dInPhoto");
+  setupPhotoUpload("inPhoto");setupPhotoUpload("dInPhoto");
 
-  /* =====================================================
-     RENDER CV SECTIONS
-  ===================================================== */
-  function renderAreas() {
-    $("cvAreas").innerHTML = $("inAreas").value.split("\n").map(s=>s.trim()).filter(Boolean)
-      .map(l=>`<li>${esc(l)}</li>`).join("");
-  }
-  function renderEdu() {
-    $("cvEdu").innerHTML = $("inEdu").value.split("\n").map(s=>s.trim()).filter(Boolean)
-      .map(l=>{ const p=l.split("|").map(s=>s.trim());
-        return p.length===2
-          ? `<p style="margin:0 0 3mm 0"><strong>${esc(p[0])}</strong><br><span style="color:var(--muted)">${esc(p[1])}</span></p>`
-          : `<p style="margin:0 0 3mm 0"><strong>${esc(l)}</strong></p>`; }).join("");
-  }
-  function renderCourses() {
-    $("cvCourses").innerHTML = $("inCourses").value.split("\n").map(s=>s.trim()).filter(Boolean)
-      .map(l=>{ const p=l.split("|").map(s=>s.trim());
-        return `<div class="cv-row2"><div class="l">${esc(p[0]||"")}</div><div class="r">${esc(p[1]||"")}</div></div>`; }).join("");
-  }
-  function makeJobNode(j) {
-    const d = document.createElement("div");
-    d.className="cv-job";
-    d.innerHTML=`
-      <div class="cv-jobhead">
-        <p class="cv-jobrole">${esc(j.role)}</p>
-        <div class="cv-jobdate">${esc(j.dates)}</div>
-      </div>
-      <div class="cv-jobmeta">${esc(j.meta)}</div>
-      <ul class="cv-bullets">${(j.bullets||[]).map(b=>`<li>${esc(b)}</li>`).join("")}</ul>`;
-    return d;
-  }
-  function getHighlights(max=4) {
-    const out=[];
-    for(const j of jobs.slice(0,2)) for(const b of j.bullets||[]) { if(b.trim()){ out.push(b.trim()); if(out.length>=max) return out; } }
-    return out;
-  }
-  function renderPage2Extras() {
-    const extras=$("cvPage2Extras"); extras.innerHTML="";
-    if($("paper2").style.display==="none") return;
-    const p2=$("cvJobsPage2");
-    if(p2.children.length>=2 && $("cvPage2").scrollHeight/$("cvPage2").clientHeight>0.75) return;
-    const highlights=getHighlights(4);
-    const areas=$("inAreas").value.split("\n").map(s=>s.trim()).filter(Boolean);
-    const w=document.createElement("div"); w.className="page2Grid";
-    w.innerHTML=`
-      <div class="cv-card span2"><h2 class="cv-title">Highlights</h2>
-        <ul class="cv-bullets">${highlights.map(h=>`<li>${esc(h)}</li>`).join("")}</ul></div>
-      <div class="cv-card"><h2 class="cv-title">${esc($("tAreas").textContent||"Áreas HR")}</h2>
-        <ul class="cv-list">${areas.slice(0,10).map(a=>`<li>${esc(a)}</li>`).join("")}</ul></div>
-      <div class="cv-card"><h2 class="cv-title">${esc($("tEdu").textContent||"Educación")}</h2>
-        <div>${$("cvEdu").innerHTML}</div></div>
-      <div class="cv-card span2"><h2 class="cv-title">${esc($("tCourses").textContent||"Formación complementaria")}</h2>
-        <div class="cv-rows">${$("cvCourses").innerHTML}</div></div>`;
-    extras.appendChild(w);
-  }
-  function paginateJobs() {
-    const p1=$("cvJobsPage1"), p2=$("cvJobsPage2");
-    p1.innerHTML=""; p2.innerHTML=""; $("cvPage2Extras").innerHTML=""; $("paper2").style.display="none";
+  /* RENDER CV */
+  function renderAreas(){$("cvAreas").innerHTML=$("inAreas").value.split("\n").map(s=>s.trim()).filter(Boolean).map(l=>`<li>${esc(l)}</li>`).join("");}
+  function renderEdu(){$("cvEdu").innerHTML=$("inEdu").value.split("\n").map(s=>s.trim()).filter(Boolean).map(l=>{const p=l.split("|").map(s=>s.trim());return`<div class="cv-edu-item"><strong>${esc(p[0]||"")}</strong>${p[1]?`<span>${esc(p[1])}</span>`:""}</div>`;}).join("");}
+  function renderCourses(){$("cvCourses").innerHTML=$("inCourses").value.split("\n").map(s=>s.trim()).filter(Boolean).map(l=>{const p=l.split("|").map(s=>s.trim());return`<div class="cv-row2"><div class="l">${esc(p[0]||"")}</div><div class="r">${esc(p[1]||"")}</div></div>`;}).join("");}
+  function makeJobNode(j){const d=document.createElement("div");d.className="cv-job";d.innerHTML=`<div class="cv-jobhead"><p class="cv-jobrole">${esc(j.role)}</p><div class="cv-jobdate">${esc(j.dates)}</div></div><div class="cv-jobmeta">${esc(j.meta)}</div><ul class="cv-bullets">${(j.bullets||[]).map(b=>`<li>${esc(b)}</li>`).join("")}</ul>`;return d;}
+  function paginateJobs(){
+    const p1=$("cvJobsPage1"),p2=$("cvJobsPage2");
+    p1.innerHTML="";p2.innerHTML="";$("paper2").style.display="none";
     jobs.forEach(j=>p1.appendChild(makeJobNode(j)));
-    const page1=$("cvPage1"), ov=()=>page1.scrollHeight-page1.clientHeight;
-    if(ov()<=2) return;
+    const pg1=$("cvPage1");
+    if(pg1.scrollHeight<=pg1.clientHeight+2) return;
     $("paper2").style.display="block";
-    for(let i=0;i<260;i++){ if(ov()<=2) break; const l=p1.lastElementChild; if(!l) break; p2.insertBefore(l,p2.firstChild); }
-    renderPage2Extras();
+    for(let i=0;i<300;i++){if(pg1.scrollHeight<=pg1.clientHeight+2)break;const l=p1.lastElementChild;if(!l)break;p2.insertBefore(l,p2.firstChild);}
+  }
+  function syncText(){
+    $("cvName").textContent=$("inName").value||"";
+    $("cvHeadline").textContent=$("inHeadline").value||"";
+    $("cvDegree").textContent=$("inDegree").value||"";
+    $("cvProfile").textContent=$("inProfile").value||"";
+    $("cvLocation").textContent=$("inLocation").value||"";
+    const email=$("inEmail").value||"",phone=$("inPhone").value||"",li=$("inLinkedIn").value||"";
+    $("cvEmail").textContent=email;$("cvEmail").href=email?`mailto:${email}`:"#";
+    $("cvPhone").textContent=phone;$("cvPhone").href=phone?`tel:${toTelHref(phone)}`:"#";
+    $("cvLinkedIn").textContent=liLabel(li);$("cvLinkedIn").href=li||"#";
+    renderAreas();renderEdu();renderCourses();paginateJobs();
   }
 
-  /* =====================================================
-     SYNC TEXT → CV
-  ===================================================== */
-  function syncText() {
-    $("cvName").textContent     = $("inName").value     ||"";
-    $("cvHeadline").textContent = $("inHeadline").value ||"";
-    $("cvDegree").textContent   = $("inDegree").value   ||"";
-    $("cvProfile").textContent  = $("inProfile").value  ||"";
-    $("cvLocation").textContent = $("inLocation").value ||"";
-    const email=$("inEmail").value||"", phone=$("inPhone").value||"", li=$("inLinkedIn").value||"";
-    $("cvEmail").textContent=$("cvEmail").href=email ? (($("cvEmail").textContent=email)&&`mailto:${email}`) : "#";
-    $("cvEmail").textContent=email; $("cvEmail").href=email?`mailto:${email}`:"#";
-    $("cvPhone").textContent=phone; $("cvPhone").href=phone?`tel:${toTelHref(phone)}`:"#";
-    $("cvLinkedIn").textContent=linkedinLabel(li); $("cvLinkedIn").href=li||"#";
-    renderAreas(); renderEdu(); renderCourses(); paginateJobs();
+  /* MIRROR */
+  const PAIRS=[["inName","dInName"],["inDegree","dInDegree"],["inHeadline","dInHeadline"],["inEmail","dInEmail"],["inPhone","dInPhone"],["inLinkedIn","dInLinkedIn"],["inLocation","dInLocation"],["inProfile","dInProfile"],["inAreas","dInAreas"],["inEdu","dInEdu"],["inCourses","dInCourses"],["inTemplate","dInTemplate"],["inCompact","dInCompact"],["inTheme","dInTheme"],["inPhotoMode","dInPhotoMode"]];
+  const mirrorToDesktop=()=>PAIRS.forEach(([m,d])=>{const a=$(m),b=$(d);if(a&&b)b.value=a.value;});
+  const mirrorToMobile =()=>PAIRS.forEach(([m,d])=>{const a=$(m),b=$(d);if(a&&b)a.value=b.value;});
+  ["inName","inDegree","inHeadline","inEmail","inPhone","inLinkedIn","inLocation","inProfile","inAreas","inEdu","inCourses"].forEach(id=>$(id)?.addEventListener("input",()=>{mirrorToDesktop();syncText();autoSave();}));
+  ["dInName","dInDegree","dInHeadline","dInEmail","dInPhone","dInLinkedIn","dInLocation","dInProfile","dInAreas","dInEdu","dInCourses"].forEach(id=>$(id)?.addEventListener("input",()=>{mirrorToMobile();syncText();autoSave();}));
+
+  /* SELECTS */
+  function applyTemplate(v){document.body.classList.remove("tpl-classic","tpl-modern","tpl-sidebar","tpl-minimal","tpl-executive","tpl-creative");document.body.classList.add(v);syncText();}
+  function applyCompact(v){document.body.classList.toggle("compact",v==="on");}
+  function applyTheme(v){document.body.classList.remove("theme-blue","theme-purple","theme-green","theme-red","theme-orange");if(v)document.body.classList.add(v);}
+  function wireSelect(mId,dId,fn){
+    $(mId)?.addEventListener("change",()=>{if($(dId))$(dId).value=$(mId).value;fn($(mId).value);autoSave();});
+    $(dId)?.addEventListener("change",()=>{if($(mId))$(mId).value=$(dId).value;fn($(dId).value);autoSave();});
   }
+  wireSelect("inTemplate","dInTemplate",applyTemplate);
+  wireSelect("inCompact","dInCompact",applyCompact);
+  wireSelect("inTheme","dInTheme",applyTheme);
+  wireSelect("inPhotoMode","dInPhotoMode",v=>{setPhotoMode(v);syncText();});
 
-  /* =====================================================
-     MIRROR MOBILE ↔ DESKTOP
-  ===================================================== */
-  const PAIRS=[
-    ["inName","dInName"],["inDegree","dInDegree"],["inHeadline","dInHeadline"],
-    ["inEmail","dInEmail"],["inPhone","dInPhone"],["inLinkedIn","dInLinkedIn"],
-    ["inLocation","dInLocation"],["inProfile","dInProfile"],
-    ["inAreas","dInAreas"],["inEdu","dInEdu"],["inCourses","dInCourses"],
-    ["inTemplate","dInTemplate"],["inCompact","dInCompact"],["inTheme","dInTheme"],["inPhotoMode","dInPhotoMode"]
-  ];
-  const mirrorToDesktop = () => PAIRS.forEach(([m,d])=>{ const a=$(m),b=$(d); if(a&&b) b.value=a.value; });
-  const mirrorToMobile  = () => PAIRS.forEach(([m,d])=>{ const a=$(m),b=$(d); if(a&&b) a.value=b.value; });
-
-  ["inName","inDegree","inHeadline","inEmail","inPhone","inLinkedIn","inLocation","inProfile","inAreas","inEdu","inCourses"]
-    .forEach(id => $(id)?.addEventListener("input", ()=>{ mirrorToDesktop(); syncText(); autoSave(); }));
-  ["dInName","dInDegree","dInHeadline","dInEmail","dInPhone","dInLinkedIn","dInLocation","dInProfile","dInAreas","dInEdu","dInCourses"]
-    .forEach(id => $(id)?.addEventListener("input", ()=>{ mirrorToMobile(); syncText(); autoSave(); }));
-
-  /* =====================================================
-     SELECTS: TEMPLATE / COMPACT / THEME / PHOTO
-  ===================================================== */
-  function applyTemplate(v) {
-    document.body.classList.remove("tpl-classic","tpl-modern","tpl-sidebar","tpl-minimal","tpl-executive","tpl-creative");
-    document.body.classList.add(v); syncText();
-  }
-  function applyCompact(v)  { document.body.classList.toggle("compact",v==="on"); }
-  function applyTheme(v)    {
-    document.body.classList.remove("theme-blue","theme-purple","theme-green","theme-red","theme-orange");
-    if(v) document.body.classList.add(v);
-  }
-
-  function wireSelect(mId, dId, fn) {
-    $(mId)?.addEventListener("change", ()=>{ if($(dId)) $(dId).value=$(mId).value; fn($(mId).value); autoSave(); });
-    $(dId)?.addEventListener("change", ()=>{ if($(mId)) $(mId).value=$(dId).value; fn($(dId).value); autoSave(); });
-  }
-  wireSelect("inTemplate","dInTemplate", applyTemplate);
-  wireSelect("inCompact","dInCompact",   applyCompact);
-  wireSelect("inTheme","dInTheme",       applyTheme);
-  wireSelect("inPhotoMode","dInPhotoMode", v=>{ setPhotoMode(v); syncText(); });
-
-  /* =====================================================
-     JOBS EDITOR
-  ===================================================== */
-  function renderJobsEditor() {
+  /* JOBS EDITOR */
+  function renderJobsEditor(){
     ["jobsEditorList","dJobsEditorList"].forEach(listId=>{
-      const list=$(listId); if(!list) return;
-      list.innerHTML="";
+      const list=$(listId);if(!list)return;list.innerHTML="";
       jobs.forEach((j,idx)=>{
-        const card=document.createElement("div");
-        card.className="job-card"; card.draggable=true; card.dataset.idx=idx;
-        card.innerHTML=`
-          <div class="job-card-hd">
-            <span class="num">💼 Trabajo #${idx+1}</span>
-            <div class="acts">
-              <button class="btn sm sec" data-act="up"   data-idx="${idx}">↑</button>
-              <button class="btn sm sec" data-act="down" data-idx="${idx}">↓</button>
-              <button class="btn sm danger" data-act="del" data-idx="${idx}">✕</button>
-            </div>
-          </div>
-          <div class="grid2" style="margin-bottom:8px">
-            <div class="field" style="margin:0"><label>Rol — Empresa</label><input data-k="role" data-idx="${idx}" value="${esc(j.role)}"/></div>
-            <div class="field" style="margin:0"><label>Fechas</label><input data-k="dates" data-idx="${idx}" value="${esc(j.dates)}"/></div>
-          </div>
-          <div class="field" style="margin-bottom:8px"><label>Ubicación</label><input data-k="meta" data-idx="${idx}" value="${esc(j.meta)}"/></div>
-          <div class="field" style="margin:0"><label>Logros (uno por línea)</label><textarea data-k="bullets" data-idx="${idx}">${esc((j.bullets||[]).join("\n"))}</textarea></div>`;
-        card.addEventListener("dragstart",()=>{ draggedIdx=idx; card.classList.add("dragging"); });
-        card.addEventListener("dragend",  ()=>{ card.classList.remove("dragging"); draggedIdx=null; });
-        card.addEventListener("dragover", e=>e.preventDefault());
-        card.addEventListener("drop", e=>{
-          e.preventDefault();
-          if(draggedIdx===null||draggedIdx===idx) return;
-          const item=jobs.splice(draggedIdx,1)[0]; jobs.splice(idx,0,item);
-          renderJobsEditor(); syncText(); autoSave();
-        });
+        const card=document.createElement("div");card.className="job-card";card.draggable=true;
+        card.innerHTML=`<div class="job-card-hd"><span class="num">💼 Trabajo #${idx+1}</span><div class="acts"><button class="btn sm sec" data-act="up" data-idx="${idx}">↑</button><button class="btn sm sec" data-act="down" data-idx="${idx}">↓</button><button class="btn sm danger" data-act="del" data-idx="${idx}">✕</button></div></div><div class="grid2" style="margin-bottom:8px"><div class="field" style="margin:0"><label>Rol — Empresa</label><input data-k="role" data-idx="${idx}" value="${esc(j.role)}"/></div><div class="field" style="margin:0"><label>Fechas</label><input data-k="dates" data-idx="${idx}" value="${esc(j.dates)}"/></div></div><div class="field" style="margin-bottom:8px"><label>Ubicación</label><input data-k="meta" data-idx="${idx}" value="${esc(j.meta)}"/></div><div class="field" style="margin:0"><label>Logros (uno por línea)</label><textarea data-k="bullets" data-idx="${idx}">${esc((j.bullets||[]).join("\n"))}</textarea></div>`;
+        card.addEventListener("dragstart",()=>{draggedIdx=idx;card.classList.add("dragging");});
+        card.addEventListener("dragend",()=>{card.classList.remove("dragging");draggedIdx=null;});
+        card.addEventListener("dragover",e=>e.preventDefault());
+        card.addEventListener("drop",e=>{e.preventDefault();if(draggedIdx===null||draggedIdx===idx)return;const item=jobs.splice(draggedIdx,1)[0];jobs.splice(idx,0,item);renderJobsEditor();syncText();autoSave();});
         list.appendChild(card);
       });
     });
   }
+  function onJobClick(e){const btn=e.target.closest("button[data-act]");if(!btn)return;const act=btn.dataset.act,idx=+btn.dataset.idx;if(act==="up"&&idx>0)[jobs[idx],jobs[idx-1]]=[jobs[idx-1],jobs[idx]];else if(act==="down"&&idx<jobs.length-1)[jobs[idx],jobs[idx+1]]=[jobs[idx+1],jobs[idx]];else if(act==="del"){if(!confirm("¿Eliminar?"))return;jobs.splice(idx,1);}renderJobsEditor();syncText();autoSave();}
+  function onJobInput(e){const el=e.target,idx=+el.dataset.idx,k=el.dataset.k;if(isNaN(idx)||!k)return;if(k==="bullets")jobs[idx].bullets=el.value.split("\n");else jobs[idx][k]=el.value;["jobsEditorList","dJobsEditorList"].forEach(lid=>document.querySelectorAll(`#${lid} [data-idx="${idx}"][data-k="${k}"]`).forEach(inp=>{if(inp!==el)inp.value=el.value;}));syncText();autoSave();}
+  ["jobsEditorList","dJobsEditorList"].forEach(id=>{$(id)?.addEventListener("click",onJobClick);$(id)?.addEventListener("input",onJobInput);});
+  const addJob=()=>{jobs.unshift({role:"Nuevo Rol — Empresa",meta:"Ubicación",dates:"Año – Año",bullets:["Logro 1","Logro 2"]});renderJobsEditor();syncText();autoSave();};
+  ["btnAddJob","dBtnAddJob"].forEach(id=>$(id)?.addEventListener("click",addJob));
 
-  function handleJobClick(e) {
-    const btn=e.target.closest("button[data-act]"); if(!btn) return;
-    const act=btn.dataset.act, idx=Number(btn.dataset.idx); if(isNaN(idx)) return;
-    if(act==="up"   && idx>0)             { [jobs[idx],jobs[idx-1]]=[jobs[idx-1],jobs[idx]]; }
-    if(act==="down" && idx<jobs.length-1) { [jobs[idx],jobs[idx+1]]=[jobs[idx+1],jobs[idx]]; }
-    if(act==="del") { if(!confirm("¿Eliminar este trabajo?")) return; jobs.splice(idx,1); }
-    renderJobsEditor(); syncText(); autoSave();
-  }
+  /* TOOLS */
+  function autoFormat(){jobs=jobs.map(j=>({...j,bullets:(j.bullets||[]).map(b=>{let t=b.trim();if(!t)return t;return t[0].toUpperCase()+t.slice(1).replace(/\.$/,"");})}));const p=$("inProfile").value.trim();if(p){const v=p[0].toUpperCase()+p.slice(1);$("inProfile").value=v;if($("dInProfile"))$("dInProfile").value=v;}renderJobsEditor();syncText();autoSave();alert("✨ Formato aplicado!");}
+  function spellCheck(){const all=[$("inProfile").value,...jobs.flatMap(j=>[j.role,j.meta,...(j.bullets||[])])].join(" ");const wc=all.split(/\s+/).filter(w=>w).length;alert(`📊 Estadísticas:\n\n✓ Palabras: ${wc}\n✓ Trabajos: ${jobs.length}\n✓ Bullets: ${jobs.reduce((s,j)=>s+(j.bullets?.length||0),0)}\n\n💡 Ideal: 400-600 palabras.`);}
+  function countWords(){const p=$("inProfile").value.split(/\s+/).filter(w=>w).length;const jw=jobs.reduce((s,j)=>s+(j.bullets||[]).join(" ").split(/\s+/).filter(w=>w).length,0);alert(`📊 Palabras:\n✓ Perfil: ${p}\n✓ Experiencia: ${jw}\n✓ Total: ${p+jw}`);}
+  function duplicateJob(){if(!jobs.length){alert("No hay trabajos.");return;}const l=jobs[0];jobs.unshift({...l,role:l.role+" (copia)",bullets:[...l.bullets]});renderJobsEditor();syncText();autoSave();alert("✅ Duplicado!");}
+  [["btnAutoFormat","dBtnAutoFormat",autoFormat],["btnSpellCheck","dBtnSpellCheck",spellCheck],["btnCountWords","dBtnCountWords",countWords],["btnDuplicateJob","dBtnDuplicateJob",duplicateJob]].forEach(([m,d,fn])=>{$(m)?.addEventListener("click",fn);$(d)?.addEventListener("click",fn);});
 
-  function handleJobInput(e) {
-    const el=e.target, idx=Number(el.dataset.idx), k=el.dataset.k;
-    if(isNaN(idx)||!k) return;
-    if(k==="bullets") {
-      jobs[idx].bullets=el.value.split("\n").map(s=>s.trim()).filter(Boolean);
-      if(!jobs[idx].bullets.length) jobs[idx].bullets=[""];
-    } else { jobs[idx][k]=el.value; }
-    // Mirror to other list
-    ["jobsEditorList","dJobsEditorList"].forEach(lid=>{
-      document.querySelectorAll(`#${lid} [data-idx="${idx}"][data-k="${k}"]`)
-        .forEach(inp=>{ if(inp!==el) inp.value=el.value; });
-    });
-    syncText(); autoSave();
-  }
-
-  ["jobsEditorList","dJobsEditorList"].forEach(id=>{
-    $(id)?.addEventListener("click", handleJobClick);
-    $(id)?.addEventListener("input", handleJobInput);
-  });
-
-  const addJob = () => {
-    jobs.unshift({role:"Nuevo Rol — Empresa",meta:"Ubicación",dates:"Año – Año",bullets:["Logro 1","Logro 2"]});
-    renderJobsEditor(); syncText(); autoSave();
-  };
-  ["btnAddJob","dBtnAddJob"].forEach(id=>$(id)?.addEventListener("click", addJob));
-
-  /* =====================================================
-     SMART TOOLS
-  ===================================================== */
-  function autoFormat() {
-    jobs=jobs.map(j=>({...j,bullets:(j.bullets||[]).map(b=>{ let t=b.trim(); if(!t) return t;
-      t=t[0].toUpperCase()+t.slice(1); if(t.endsWith(".")) t=t.slice(0,-1); return t; })}));
-    const p=$("inProfile").value.trim();
-    if(p){ $("inProfile").value=p[0].toUpperCase()+p.slice(1); if($("dInProfile")) $("dInProfile").value=$("inProfile").value; }
-    renderJobsEditor(); syncText(); autoSave(); alert("✨ Formato aplicado!");
-  }
-  function spellCheck() {
-    const all=[$("inProfile").value,...jobs.flatMap(j=>[j.role,j.meta,...(j.bullets||[])])].join(" ");
-    const wc=all.split(/\s+/).filter(w=>w.length>0).length;
-    alert(`📊 Estadísticas del CV:\n\n✓ Palabras: ${wc}\n✓ Caracteres: ${all.length}\n✓ Bullets: ${jobs.reduce((s,j)=>s+(j.bullets?.length||0),0)}\n✓ Trabajos: ${jobs.length}\n\n💡 Ideal: 400-600 palabras.`);
-  }
-  function countWords() {
-    const p=$("inProfile").value.split(/\s+/).filter(w=>w.length>0).length;
-    const jw=jobs.reduce((s,j)=>s+(j.bullets||[]).join(" ").split(/\s+/).filter(w=>w.length>0).length,0);
-    alert(`📊 Palabras:\n\n✓ Perfil: ${p}\n✓ Experiencia: ${jw}\n✓ Total: ${p+jw}\n\n💡 Ideal: 300-500 palabras`);
-  }
-  function duplicateLastJob() {
-    if(!jobs.length){ alert("❌ No hay trabajos para duplicar."); return; }
-    const l=jobs[0];
-    jobs.unshift({role:l.role+" (copia)",meta:l.meta,dates:l.dates,bullets:[...l.bullets]});
-    renderJobsEditor(); syncText(); autoSave(); alert("✅ Duplicado! Editá los detalles.");
-  }
-
-  [["btnAutoFormat","dBtnAutoFormat",autoFormat],
-   ["btnSpellCheck","dBtnSpellCheck",spellCheck],
-   ["btnCountWords","dBtnCountWords",countWords],
-   ["btnDuplicateJob","dBtnDuplicateJob",duplicateLastJob]
-  ].forEach(([m,d,fn])=>{ $(m)?.addEventListener("click",fn); $(d)?.addEventListener("click",fn); });
-
-  /* =====================================================
-     TRANSLATION ES → EN
-  ===================================================== */
-  const GLOSSARY=[
-    [/\bRecursos Humanos\b/gi,"Human Resources"],[/\bRR\.?HH\.?\b/gi,"HR"],
-    [/\bActualidad\b/gi,"Present"],[/\bExperiencia\b/gi,"Experience"],
-    [/\bPerfil\b/gi,"Profile"],[/\bEducación\b/gi,"Education"],
-    [/\bFormación complementaria\b/gi,"Additional Training"],[/\bÁreas HR\b/gi,"HR Areas"],
-    [/\bComunicaci[oó]n interna\b/gi,"Internal Communications"],[/\bGestión\b/gi,"Management"],
-    [/\bCoordinaci[oó]n\b/gi,"Coordination"],[/\bSoporte\b/gi,"Support"],[/\bDic\b/gi,"Dec"]
-  ];
-  const tH = t => { let o=t||""; for(const[r,s] of GLOSSARY) o=o.replace(r,s); return o; };
-
-  function translateToEN() {
-    document.documentElement.lang="en";
-    [["tProfileLbl","dTProfileLbl","Profile"],["tAreasLbl","dTAreasLbl","HR Areas (one per line)"],
-     ["tEduLbl","dTEduLbl","Education (Degree — Institution | Detail)"],
-     ["tCoursesLbl","dTCoursesLbl","Additional Training (Course | Institution)"],
-     ["tExpEdit","dTExpEdit","Experience"]
-    ].forEach(([m,d,v])=>{ $(m)&&($(m).textContent=v); $(d)&&($(d).textContent=v); });
-    $("tProfile").textContent="Profile"; $("tExperience").textContent="Experience";
-    $("tExperience2").textContent="Experience"; $("tAreas").textContent="HR Areas";
-    $("tEdu").textContent="Education"; $("tCourses").textContent="Additional Training";
-    $("inDegree").value=tH($("inDegree").value); $("inProfile").value=tH($("inProfile").value);
-    $("inAreas").value=$("inAreas").value.split("\n").map(s=>tH(s.trim())).filter(Boolean).join("\n");
-    ["inEdu","inCourses"].forEach(id=>{ $(id).value=$(id).value.split("\n").map(s=>{ const p=s.trim().split("|").map(x=>x.trim()); return p.length===2?`${tH(p[0])} | ${tH(p[1])}`:tH(s.trim()); }).filter(Boolean).join("\n"); });
-    jobs=jobs.map(j=>({role:tH(j.role),meta:tH(j.meta),dates:tH(j.dates),bullets:(j.bullets||[]).map(b=>tH(b))}));
-    mirrorToDesktop(); renderJobsEditor();
-  }
-  const doTranslate=()=>{ if(!confirm("¿Traducir todo al inglés?")) return; translateToEN(); syncText(); autoSave(); alert("✅ Traducido!"); };
+  /* TRANSLATE */
+  const GLOSSARY=[[/\bRecursos Humanos\b/gi,"Human Resources"],[/\bRR\.?HH\.?\b/gi,"HR"],[/\bActualidad\b/gi,"Present"],[/\bExperiencia\b/gi,"Experience"],[/\bPerfil\b/gi,"Profile"],[/\bEducación\b/gi,"Education"],[/\bFormación complementaria\b/gi,"Additional Training"],[/\bÁreas HR\b/gi,"HR Areas"],[/\bGestión\b/gi,"Management"],[/\bCoordinaci[oó]n\b/gi,"Coordination"],[/\bDic\b/gi,"Dec"]];
+  const tH=t=>{let o=t||"";GLOSSARY.forEach(([r,s])=>o=o.replace(r,s));return o;};
+  function doTranslate(){if(!confirm("¿Traducir todo al inglés?"))return;[["tProfileLbl","dTProfileLbl","Profile"],["tAreasLbl","dTAreasLbl","HR Areas (one per line)"],["tEduLbl","dTEduLbl","Education"],["tCoursesLbl","dTCoursesLbl","Additional Training"],["tExpEdit","dTExpEdit","Experience"]].forEach(([m,d,v])=>{$(m)&&($(m).textContent=v);$(d)&&($(d).textContent=v);});$("tProfile").textContent="Profile";$("tExperience").textContent="Experience";$("tExperience2").textContent="Experience";$("tAreas").textContent="HR Areas";$("tEdu").textContent="Education";$("tCourses").textContent="Additional Training";$("inDegree").value=tH($("inDegree").value);$("inProfile").value=tH($("inProfile").value);$("inAreas").value=$("inAreas").value.split("\n").map(s=>tH(s.trim())).filter(Boolean).join("\n");["inEdu","inCourses"].forEach(id=>{$(id).value=$(id).value.split("\n").map(s=>{const p=s.split("|").map(x=>x.trim());return p.length===2?`${tH(p[0])} | ${tH(p[1])}`:tH(s.trim());}).filter(Boolean).join("\n");});jobs=jobs.map(j=>({role:tH(j.role),meta:tH(j.meta),dates:tH(j.dates),bullets:(j.bullets||[]).map(b=>tH(b))}));mirrorToDesktop();renderJobsEditor();syncText();autoSave();alert("✅ Traducido!");}
   ["btnTranslateEN","dBtnTranslate","mBtnTranslate"].forEach(id=>$(id)?.addEventListener("click",doTranslate));
-
-  /* =====================================================
-     RESET
-  ===================================================== */
-  const doReset=()=>{ if(!confirm("¿Reiniciar a valores por defecto?")) return; localStorage.removeItem(STORAGE_KEY); location.reload(); };
+  const doReset=()=>{if(!confirm("¿Reiniciar?"))return;localStorage.removeItem(STORAGE_KEY);location.reload();};
   ["btnReset","dBtnReset"].forEach(id=>$(id)?.addEventListener("click",doReset));
 
-  /* =====================================================
+  /* ==========================================================
      PDF EXPORT
-  ===================================================== */
-  function getVisiblePapers() { return Array.from(document.querySelectorAll(".paper")).filter(p=>p.style.display!=="none"); }
-  const pxToMm=(px,pw)=>(px*210)/pw;
-  function getRect(el,pageEl) {
-    const r=el.getBoundingClientRect(),pr=pageEl.getBoundingClientRect(),w=pr.width;
-    return{x:pxToMm(r.left-pr.left,w),y:pxToMm(r.top-pr.top,w),w:pxToMm(r.width,w),h:pxToMm(r.height,w)};
-  }
-  async function exportPDF() {
-    if(!window.html2canvas||!window.jspdf?.jsPDF) throw new Error("libs");
-    const{jsPDF}=window.jspdf;
-    const pdf=new jsPDF({unit:"mm",format:"a4",orientation:"portrait"});
-    const pages=getVisiblePapers();
-    const fn=`CV_${($("inName").value||"CV").replace(/\s+/g,"_")}.pdf`;
+     Strategy: open a dedicated print window with ONLY the CV
+     pages at exact A4 size. The browser's print engine renders
+     it perfectly — no html2canvas, no canvas distortion.
+  ========================================================== */
+  function doPDF() {
+    syncText();
 
-    // Reset zoom transform so html2canvas captures at 1:1
-    const stack=$("paperStack");
-    const savedTransform=stack.style.transform;
-    stack.style.transform="none";
-    // Force layout recalc
-    void stack.offsetHeight;
+    // Gather the CSS needed for the CV to render correctly
+    const styleSheets = Array.from(document.styleSheets).map(ss => {
+      try { return Array.from(ss.cssRules).map(r=>r.cssText).join("\n"); } catch(e) { return ""; }
+    }).join("\n");
 
-    for(let i=0;i<pages.length;i++){
-      const canvas=await window.html2canvas(pages[i],{
-        scale:2, useCORS:true, backgroundColor:"#fff",
-        scrollX:0, scrollY:0,
-        windowWidth:pages[i].offsetWidth,
-        windowHeight:pages[i].offsetHeight
-      });
-      if(i>0) pdf.addPage("a4","portrait");
-      pdf.addImage(canvas.toDataURL("image/jpeg",0.98),"JPEG",0,0,210,297);
-      const pe=pages[i].querySelector(".page");
-      if(pe){
-        const pad=0.6, addLink=(el,url)=>{ const r=getRect(el,pe); pdf.link(r.x-pad,r.y-pad,r.w+pad*2,r.h+pad*2,{url}); };
-        if(pe.contains($("cvEmail"))    && $("cvEmail").href   !="#") addLink($("cvEmail"),   $("cvEmail").href);
-        if(pe.contains($("cvPhone"))    && $("cvPhone").href   !="#") addLink($("cvPhone"),   $("cvPhone").href);
-        if(pe.contains($("cvLinkedIn")) && $("cvLinkedIn").href!="#") addLink($("cvLinkedIn"),$("cvLinkedIn").href);
-      }
-    }
+    // Get current body classes (template, theme, compact, no-photo)
+    const bodyClass = document.body.className;
 
-    // Restore zoom
-    stack.style.transform=savedTransform;
-    pdf.save(fn);
-  }
-  async function exportPDFFallback() {
-    const stack=$("paperStack");
-    const saved=stack.style.transform;
-    stack.style.transform="none";
-    void stack.offsetHeight;
-    try {
-      await html2pdf().set({margin:0,filename:`CV_${($("inName").value||"CV").replace(/\s+/g,"_")}.pdf`,
-        image:{type:"jpeg",quality:0.98},html2canvas:{scale:2,useCORS:true,backgroundColor:"#fff",scrollX:0,scrollY:0},
-        jsPDF:{unit:"mm",format:"a4",orientation:"portrait"},pagebreak:{mode:["css","legacy"]}
-      }).from(stack).save();
-    } finally {
-      stack.style.transform=saved;
-    }
-  }
-  async function doPDF() {
-    syncText(); showLoading("📄 Generando PDF...");
-    try{ await exportPDF(); hideLoading(); }
-    catch(e){ console.warn("fallback",e); try{ await exportPDFFallback(); hideLoading(); }catch(e2){ hideLoading(); alert("❌ Error al generar PDF."); } }
-  }
-  ["dBtnPDF","mBtnPDF","fabPDF"].forEach(id=>$(id)?.addEventListener("click",doPDF));
+    // Get visible pages HTML
+    const pages = Array.from(document.querySelectorAll(".paper"))
+      .filter(p => p.style.display !== "none")
+      .map(p => p.outerHTML)
+      .join("\n");
 
-  /* =====================================================
-     SAVE / LOAD
-  ===================================================== */
-  function getDraft() {
-    return {
-      meta:{template:$("inTemplate").value,compact:$("inCompact").value,theme:$("inTheme").value,
-            photoMode:$("inPhotoMode").value,
-            photoUrl:($("inPhotoMode").value==="with"&&$("cvPhotoImg").style.display!=="none")?$("cvPhotoImg").src:""},
-      fields:{inName:$("inName").value,inDegree:$("inDegree").value,inHeadline:$("inHeadline").value,
-              inEmail:$("inEmail").value,inPhone:$("inPhone").value,inLinkedIn:$("inLinkedIn").value,
-              inLocation:$("inLocation").value,inProfile:$("inProfile").value,
-              inAreas:$("inAreas").value,inEdu:$("inEdu").value,inCourses:$("inCourses").value},
-      jobs
+    // Get the photo src if present
+    const photoSrc = $("cvPhotoImg").style.display !== "none" ? $("cvPhotoImg").src : "";
+
+    const printHTML = `<!doctype html>
+<html><head>
+<meta charset="utf-8"/>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+${styleSheets}
+
+/* Print-specific overrides */
+* { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+html, body { margin: 0; padding: 0; background: white; }
+body { font-family: Inter, system-ui, sans-serif; }
+
+/* Show only the CV papers, one per page */
+.paper {
+  width: 210mm !important;
+  height: 297mm !important;
+  min-width: unset !important;
+  max-width: unset !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+  overflow: hidden;
+  page-break-after: always;
+  break-after: page;
+}
+.paper:last-child { page-break-after: auto; break-after: auto; }
+.cv-page {
+  width: 210mm !important;
+  height: 297mm !important;
+}
+
+@page {
+  size: A4 portrait;
+  margin: 0;
+}
+
+@media print {
+  * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+  html, body { margin: 0 !important; padding: 0 !important; }
+}
+</style>
+</head>
+<body class="${bodyClass}">
+${pages}
+<script>
+// Fix photo src if it was a data URL
+${photoSrc ? `document.querySelectorAll('#cvPhotoImg').forEach(img => { img.src = ${JSON.stringify(photoSrc)}; img.style.display='block'; img.previousElementSibling.style.display='none'; });` : ""}
+// Auto-print when loaded
+window.addEventListener('load', function() {
+  setTimeout(function() {
+    window.print();
+    setTimeout(function() { window.close(); }, 1000);
+  }, 800);
+});
+<\/script>
+</body></html>`;
+
+    // Hidden iframe — never blocked by browsers, no popup needed
+    let iframe = document.getElementById("_printFrame");
+    if (iframe) iframe.remove();
+    iframe = document.createElement("iframe");
+    iframe.id = "_printFrame";
+    iframe.style.cssText = "position:fixed;left:-9999px;top:0;width:0;height:0;border:none;";
+    document.body.appendChild(iframe);
+
+    const iframeDoc = iframe.contentDocument || iframe.contentWindow.document;
+    iframeDoc.open();
+    iframeDoc.write(printHTML);
+    iframeDoc.close();
+
+    iframe.onload = function() {
+      setTimeout(function() {
+        iframe.contentWindow.focus();
+        iframe.contentWindow.print();
+        setTimeout(function() { iframe.remove(); }, 3000);
+      }, 700);
     };
   }
-  function applyDraft(d) {
-    if(!d||typeof d!=="object") return;
-    const m=d.meta||{};
-    if(m.template){ $("inTemplate").value=m.template; applyTemplate(m.template); }
-    if(m.compact) { $("inCompact").value=m.compact;   applyCompact(m.compact); }
-    if(m.theme!==undefined){ $("inTheme").value=m.theme||""; applyTheme(m.theme||""); }
-    if(m.photoMode){ $("inPhotoMode").value=m.photoMode; setPhotoMode(m.photoMode); }
-    const f=d.fields||{}; Object.keys(f).forEach(k=>{ if($(k)) $(k).value=f[k]??""; });
-    if(Array.isArray(d.jobs)) jobs=d.jobs;
-    if(m.photoMode==="with"&&m.photoUrl){ $("cvPhotoImg").src=m.photoUrl; $("cvPhotoImg").style.display="block"; $("cvPhotoLabel").style.display="none"; }
-    mirrorToDesktop(); renderJobsEditor(); syncText();
-  }
-  let saveTimer=null;
-  const autoSave=()=>{ clearTimeout(saveTimer); saveTimer=setTimeout(()=>{ try{localStorage.setItem(STORAGE_KEY,JSON.stringify(getDraft()));}catch{} },500); };
-  function loadDraft() { try{ const r=localStorage.getItem(STORAGE_KEY); if(r){ applyDraft(JSON.parse(r)); return true; } }catch{} return false; }
 
-  /* =====================================================
-     INIT
-  ==============================
+  ["dBtnPDF","mBtnPDF","fabPDF"].forEach(id=>$(id)?.addEventListener("click",doPDF));
+
+  /* SAVE / LOAD */
+  function getDraft(){return{meta:{template:$("inTemplate").value,compact:$("inCompact").value,theme:$("inTheme").value,photoMode:$("inPhotoMode").value,photoUrl:($("inPhotoMode").value==="with"&&$("cvPhotoImg").style.display!=="none")?$("cvPhotoImg").src:""},fields:{inName:$("inName").value,inDegree:$("inDegree").value,inHeadline:$("inHeadline").value,inEmail:$("inEmail").value,inPhone:$("inPhone").value,inLinkedIn:$("inLinkedIn").value,inLocation:$("inLocation").value,inProfile:$("inProfile").value,inAreas:$("inAreas").value,inEdu:$("inEdu").value,inCourses:$("inCourses").value},jobs};}
+  function applyDraft(d){if(!d)return;const m=d.meta||{};if(m.template){$("inTemplate").value=m.template;applyTemplate(m.template);}if(m.compact){$("inCompact").value=m.compact;applyCompact(m.compact);}if(m.theme!==undefined){$("inTheme").value=m.theme||"";applyTheme(m.theme||"");}if(m.photoMode){$("inPhotoMode").value=m.photoMode;setPhotoMode(m.photoMode);}const f=d.fields||{};Object.keys(f).forEach(k=>{if($(k))$(k).value=f[k]??"";});if(Array.isArray(d.jobs)&&d.jobs.length)jobs=d.jobs;if(m.photoMode==="with"&&m.photoUrl){$("cvPhotoImg").src=m.photoUrl;$("cvPhotoImg").style.display="block";$("cvPhotoLabel").style.display="none";}mirrorToDesktop();renderJobsEditor();syncText();}
+  let saveTimer=null;
+  const autoSave=()=>{clearTimeout(saveTimer);saveTimer=setTimeout(()=>{try{localStorage.setItem(STORAGE_KEY,JSON.stringify(getDraft()));}catch{}},600);};
+  function loadDraft(){try{const r=localStorage.getItem(STORAGE_KEY);if(r){applyDraft(JSON.parse(r));return true;}}catch{}return false;}
+
+  /* INIT */
+  setPhotoMode($("inPhotoMode").value);
+  renderJobsEditor();
+  if(!loadDraft()){mirrorToDesktop();syncText();}
+  setDefaultZoom();
+  window.addEventListener("resize",setDefaultZoom);
+  </script>
+</body>
+</html>
