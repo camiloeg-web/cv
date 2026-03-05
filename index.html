@@ -128,8 +128,8 @@ body.show-stage .fab{display:flex;}
 /* ===================== CV PAPER ===================== */
 .stage{display:flex;justify-content:center;padding-bottom:40px;}
 .paperStack{display:flex;flex-direction:column;gap:20px;transform-origin:top center;}
-.paper{width:794px;min-height:1123px;background:#fff;box-shadow:0 8px 32px rgba(0,0,0,.12);border-radius:4px;overflow:hidden;flex-shrink:0;}
-.cv-page{width:794px;min-height:1123px;padding:var(--cv-pad);box-sizing:border-box;background:#fff;position:relative;}
+.paper{width:794px;height:1123px;background:#fff;box-shadow:0 8px 32px rgba(0,0,0,.12);border-radius:4px;overflow:hidden;flex-shrink:0;}
+.cv-page{width:794px;height:1123px;padding:var(--cv-pad);box-sizing:border-box;background:#fff;position:relative;overflow:hidden;}
 
 /* ── Header base ── */
 .cv-header{display:grid;grid-template-columns:var(--hdr-cols);gap:20px;align-items:start;padding-bottom:16px;border-bottom:2px solid var(--line);margin-bottom:20px;}
@@ -244,7 +244,7 @@ body.tpl-executive .cv-page{padding-top:0;}
 body.tpl-executive .cv-header{
   background:var(--accent);
   padding:28px var(--cv-pad) 22px;
-  margin:-0px calc(var(--cv-pad)*-1) 20px;
+  margin:0 calc(var(--cv-pad)*-1) 20px;
   border-bottom:none;
   border-radius:0;
 }
