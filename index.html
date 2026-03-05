@@ -150,7 +150,6 @@
        DESKTOP: SIDEBAR / LIVE PANEL hidden on mobile
     =================================================== */
     .desktop-sidebar { display: none; }
-    .live-panel { display: none; }
 
     /* ===================================================
        CV STAGE
@@ -231,68 +230,6 @@
         display: flex;
         gap: 8px;
       }
-
-      /* Live panel */
-      .live-panel {
-        display: flex;
-        flex-direction: column;
-        width: 220px;
-        flex-shrink: 0;
-        background: #FAFAFA;
-        border-right: 1px solid var(--line);
-        height: 100vh;
-        overflow: hidden;
-      }
-      .lp-head {
-        padding: 13px 13px 9px;
-        border-bottom: 1px solid var(--line);
-        flex-shrink: 0;
-      }
-      .lp-head h4 {
-        font: 700 10px Inter, sans-serif;
-        letter-spacing: .12em;
-        text-transform: uppercase;
-        color: var(--muted);
-        margin-bottom: 1px;
-      }
-      .lp-head p { font: 400 10px Inter, sans-serif; color: #9CA3AF; }
-      .lp-body { flex: 1; overflow-y: auto; padding: 11px; }
-      .lp-sec { margin-bottom: 13px; }
-      .lp-label {
-        font: 700 9px Inter, sans-serif;
-        letter-spacing: .12em;
-        text-transform: uppercase;
-        color: #9CA3AF;
-        margin-bottom: 5px;
-        display: flex;
-        align-items: center;
-        gap: 5px;
-      }
-      .lp-label::after { content:''; flex:1; height:1px; background:var(--line); }
-      .lp-name { font: 800 13px Inter, sans-serif; color: var(--ink); line-height: 1.2; word-break: break-word; }
-      .lp-hl   { font: 500 10px Inter, sans-serif; color: var(--muted); margin-top: 2px; }
-      .lp-deg  { font: 700 10px Inter, sans-serif; color: var(--accent); margin-top: 1px; }
-      .lp-ci   { display:flex; align-items:flex-start; gap:4px; margin-bottom:3px; font: 400 10px Inter,sans-serif; color:var(--muted); line-height:1.3; word-break:break-all; }
-      .lp-ci-ic { flex-shrink:0; }
-      .lp-text { font: 400 10px Inter, sans-serif; color: #374151; line-height: 1.55; }
-      .lp-job {
-        padding: 6px 8px 6px 10px;
-        border: 1px solid var(--line);
-        border-radius: 7px;
-        margin-bottom: 5px;
-        background: #fff;
-        position: relative;
-        overflow: hidden;
-      }
-      .lp-job::before { content:''; position:absolute; left:0; top:0; bottom:0; width:3px; background:var(--accent); }
-      .lp-job-role { font: 700 10px Inter, sans-serif; color: var(--ink); line-height: 1.3; }
-      .lp-job-meta { font: 400 9px Inter, sans-serif; color: var(--muted); margin-bottom: 3px; }
-      .lp-bullet { font: 400 9px Inter, sans-serif; color: #4B5563; line-height: 1.4; padding-left: 8px; position: relative; margin-bottom: 1px; }
-      .lp-bullet::before { content:'·'; position:absolute; left:1px; color:var(--accent); font-weight:900; }
-      .lp-tag { display:inline-block; padding:2px 7px; border-radius:20px; background:var(--bg); border:1px solid var(--line); font: 500 9px Inter,sans-serif; color:var(--muted); margin:2px 2px 0 0; }
-      .lp-edu-t { font: 600 10px Inter, sans-serif; color: var(--ink); line-height: 1.3; }
-      .lp-edu-s { font: 400 9px Inter, sans-serif; color: var(--muted); }
-      .lp-empty { font: 400 10px Inter, sans-serif; color: #D1D5DB; font-style: italic; }
 
       /* CV stage always visible on desktop */
       .cv-stage-wrap {
@@ -804,45 +741,6 @@ Comunicación y organizaciones | CAME / UTN</textarea>
       </div>
     </aside>
 
-    <!-- ════ LIVE PANEL ════ -->
-    <div class="live-panel">
-      <div class="lp-head">
-        <h4>Vista en tiempo real</h4>
-        <p>Se actualiza al escribir</p>
-      </div>
-      <div class="lp-body">
-        <div class="lp-sec">
-          <div class="lp-label">Identidad</div>
-          <div class="lp-name" id="lpName">—</div>
-          <div class="lp-hl"   id="lpHeadline"></div>
-          <div class="lp-deg"  id="lpDegree"></div>
-        </div>
-        <div class="lp-sec">
-          <div class="lp-label">Contacto</div>
-          <div class="lp-ci"><span class="lp-ci-ic">📍</span><span id="lpLocation">—</span></div>
-          <div class="lp-ci"><span class="lp-ci-ic">✉️</span><span id="lpEmail">—</span></div>
-          <div class="lp-ci"><span class="lp-ci-ic">📱</span><span id="lpPhone">—</span></div>
-          <div class="lp-ci"><span class="lp-ci-ic">🔗</span><span id="lpLinkedIn">—</span></div>
-        </div>
-        <div class="lp-sec">
-          <div class="lp-label">Perfil</div>
-          <div id="lpProfile"><span class="lp-empty">Sin texto aún</span></div>
-        </div>
-        <div class="lp-sec">
-          <div class="lp-label">Experiencia</div>
-          <div id="lpJobs"><span class="lp-empty">Sin trabajos aún</span></div>
-        </div>
-        <div class="lp-sec">
-          <div class="lp-label">Áreas HR</div>
-          <div id="lpAreas"><span class="lp-empty">—</span></div>
-        </div>
-        <div class="lp-sec">
-          <div class="lp-label">Educación</div>
-          <div id="lpEdu"><span class="lp-empty">—</span></div>
-        </div>
-      </div>
-    </div>
-
     <!-- ════ CV STAGE ════ -->
     <div class="cv-stage-wrap" id="cvStageWrap">
       <div class="zoom-bar">
@@ -866,7 +764,7 @@ Comunicación y organizaciones | CAME / UTN</textarea>
                   <div class="cv-deg" id="cvDegree">Lic. en Recursos Humanos</div>
                   <div class="cv-contact">
                     <span id="cvLocation">Buenos Aires, Argentina</span> ·
-                    <a id="cvEmail"    href="mailto:ceguiazabal@gmail.com">ceguiazabal@gmail.com</a> ·
+                    <a id="cvEmail" href="/cdn-cgi/l/email-protection#6a090f0d1f030b100b080b062a0d070b030644090507"><span class="__cf_email__" data-cfemail="e3808684968a82998281828fa3848e828a8fcd808c8e">[email&#160;protected]</span></a> ·
                     <a id="cvPhone"    href="tel:+541123962046">+54 11 2396-2046</a> ·
                     <a id="cvLinkedIn" href="https://www.linkedin.com/in/cegui" target="_blank">linkedin.com/in/cegui</a>
                   </div>
@@ -925,7 +823,7 @@ Comunicación y organizaciones | CAME / UTN</textarea>
 
   <button class="fab" id="fabPDF" title="Descargar PDF">📄</button>
 
-  <script>
+  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
   /* =====================================================
      CONSTANTS & STATE
   ===================================================== */
@@ -1105,35 +1003,6 @@ Comunicación y organizaciones | CAME / UTN</textarea>
   }
 
   /* =====================================================
-     LIVE PANEL
-  ===================================================== */
-  function updateLivePanel() {
-    const t=(id,v)=>{ const e=$(id); if(e) e.textContent=v||""; };
-    const h=(id,v)=>{ const e=$(id); if(e) e.innerHTML=v; };
-    t("lpName",     $("inName").value    ||"—");
-    t("lpHeadline", $("inHeadline").value||"");
-    t("lpDegree",   $("inDegree").value  ||"");
-    t("lpLocation", $("inLocation").value||"—");
-    t("lpEmail",    $("inEmail").value   ||"—");
-    t("lpPhone",    $("inPhone").value   ||"—");
-    t("lpLinkedIn", linkedinLabel($("inLinkedIn").value)||"—");
-    const prof=($("inProfile").value||"").trim();
-    h("lpProfile", prof ? `<div class="lp-text">${esc(prof.slice(0,180))}${prof.length>180?"…":""}</div>` : `<span class="lp-empty">Sin texto aún</span>`);
-    h("lpJobs", jobs.length ? jobs.map(j=>`
-      <div class="lp-job">
-        <div class="lp-job-role">${esc(j.role)}</div>
-        <div class="lp-job-meta">${esc(j.dates)}${j.meta?" · "+esc(j.meta):""}</div>
-        ${(j.bullets||[]).slice(0,2).map(b=>`<div class="lp-bullet">${esc(b.slice(0,70))}${b.length>70?"…":""}</div>`).join("")}
-      </div>`).join("") : `<span class="lp-empty">Sin trabajos aún</span>`);
-    const areas=($("inAreas").value||"").split("\n").map(s=>s.trim()).filter(Boolean);
-    h("lpAreas", areas.length ? areas.map(a=>`<span class="lp-tag">${esc(a)}</span>`).join("") : `<span class="lp-empty">—</span>`);
-    const eduLines=($("inEdu").value||"").split("\n").map(s=>s.trim()).filter(Boolean);
-    h("lpEdu", eduLines.length ? eduLines.map(l=>{ const p=l.split("|").map(s=>s.trim());
-      return `<div style="margin-bottom:4px"><div class="lp-edu-t">${esc(p[0]||"")}</div>${p[1]?`<div class="lp-edu-s">${esc(p[1])}</div>`:""}</div>`;
-    }).join("") : `<span class="lp-empty">—</span>`);
-  }
-
-  /* =====================================================
      SYNC TEXT → CV
   ===================================================== */
   function syncText() {
@@ -1147,7 +1016,7 @@ Comunicación y organizaciones | CAME / UTN</textarea>
     $("cvEmail").textContent=email; $("cvEmail").href=email?`mailto:${email}`:"#";
     $("cvPhone").textContent=phone; $("cvPhone").href=phone?`tel:${toTelHref(phone)}`:"#";
     $("cvLinkedIn").textContent=linkedinLabel(li); $("cvLinkedIn").href=li||"#";
-    renderAreas(); renderEdu(); renderCourses(); paginateJobs(); updateLivePanel();
+    renderAreas(); renderEdu(); renderCourses(); paginateJobs();
   }
 
   /* =====================================================
@@ -1350,8 +1219,21 @@ Comunicación y organizaciones | CAME / UTN</textarea>
     const pdf=new jsPDF({unit:"mm",format:"a4",orientation:"portrait"});
     const pages=getVisiblePapers();
     const fn=`CV_${($("inName").value||"CV").replace(/\s+/g,"_")}.pdf`;
+
+    // Reset zoom transform so html2canvas captures at 1:1
+    const stack=$("paperStack");
+    const savedTransform=stack.style.transform;
+    stack.style.transform="none";
+    // Force layout recalc
+    void stack.offsetHeight;
+
     for(let i=0;i<pages.length;i++){
-      const canvas=await window.html2canvas(pages[i],{scale:2,useCORS:true,backgroundColor:"#fff",scrollX:0,scrollY:0});
+      const canvas=await window.html2canvas(pages[i],{
+        scale:2, useCORS:true, backgroundColor:"#fff",
+        scrollX:0, scrollY:0,
+        windowWidth:pages[i].offsetWidth,
+        windowHeight:pages[i].offsetHeight
+      });
       if(i>0) pdf.addPage("a4","portrait");
       pdf.addImage(canvas.toDataURL("image/jpeg",0.98),"JPEG",0,0,210,297);
       const pe=pages[i].querySelector(".page");
@@ -1362,13 +1244,24 @@ Comunicación y organizaciones | CAME / UTN</textarea>
         if(pe.contains($("cvLinkedIn")) && $("cvLinkedIn").href!="#") addLink($("cvLinkedIn"),$("cvLinkedIn").href);
       }
     }
+
+    // Restore zoom
+    stack.style.transform=savedTransform;
     pdf.save(fn);
   }
   async function exportPDFFallback() {
-    await html2pdf().set({margin:0,filename:`CV_${($("inName").value||"CV").replace(/\s+/g,"_")}.pdf`,
-      image:{type:"jpeg",quality:0.98},html2canvas:{scale:2,useCORS:true,backgroundColor:"#fff",scrollX:0,scrollY:0},
-      jsPDF:{unit:"mm",format:"a4",orientation:"portrait"},pagebreak:{mode:["css","legacy"]}
-    }).from($("paperStack")).save();
+    const stack=$("paperStack");
+    const saved=stack.style.transform;
+    stack.style.transform="none";
+    void stack.offsetHeight;
+    try {
+      await html2pdf().set({margin:0,filename:`CV_${($("inName").value||"CV").replace(/\s+/g,"_")}.pdf`,
+        image:{type:"jpeg",quality:0.98},html2canvas:{scale:2,useCORS:true,backgroundColor:"#fff",scrollX:0,scrollY:0},
+        jsPDF:{unit:"mm",format:"a4",orientation:"portrait"},pagebreak:{mode:["css","legacy"]}
+      }).from(stack).save();
+    } finally {
+      stack.style.transform=saved;
+    }
   }
   async function doPDF() {
     syncText(); showLoading("📄 Generando PDF...");
@@ -1410,12 +1303,4 @@ Comunicación y organizaciones | CAME / UTN</textarea>
 
   /* =====================================================
      INIT
-  ===================================================== */
-  setPhotoMode($("inPhotoMode").value);
-  renderJobsEditor();
-  if(!loadDraft()) { mirrorToDesktop(); syncText(); }
-  setDefaultZoom();
-  window.addEventListener("resize", setDefaultZoom);
-  </script>
-</body>
-</html>
+  ==============================
