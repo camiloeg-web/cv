@@ -8,9 +8,6 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
   <style>
-  /* ============================================================
-     TOKENS
-  ============================================================ */
   :root {
     --ink:#111827; --muted:#4B5563; --line:#E5E7EB;
     --accent:#0B1F3A; --bg:#F3F4F6; --paper:#fff;
@@ -39,52 +36,27 @@
     --p-sz:10.5px;--jobrole-sz:11.5px;--bullet-sz:10px;
     --cv-pad:30px;--cv-gap:20px;
   }
-
-  /* ============================================================
-     RESET
-  ============================================================ */
   *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
   html{scroll-behavior:smooth;}
   body{font-family:Inter,system-ui,sans-serif;background:var(--bg);color:var(--ink);min-height:100vh;line-height:1.5;}
-
-  /* ============================================================
-     SHELL
-  ============================================================ */
   .shell{display:flex;flex-direction:column;min-height:100vh;}
-
-  /* ============================================================
-     MOBILE NAV
-  ============================================================ */
   .top-nav{display:flex;align-items:center;justify-content:space-between;background:var(--accent);color:#fff;height:52px;padding:0 14px;position:sticky;top:0;z-index:300;box-shadow:0 2px 8px rgba(0,0,0,.18);}
   .top-nav .brand{font-size:16px;font-weight:800;letter-spacing:-.02em;}
   .top-nav .nav-acts{display:flex;gap:8px;}
   .nav-btn{padding:6px 12px;border-radius:8px;border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.12);color:#fff;font:700 12px Inter,sans-serif;cursor:pointer;}
   .nav-btn.solid{background:#fff;color:var(--accent);border-color:#fff;}
-
-  /* ============================================================
-     MOBILE TABS
-  ============================================================ */
   .tab-bar{display:flex;background:#fff;border-bottom:1px solid var(--line);position:sticky;top:52px;z-index:299;}
   .tab-btn{flex:1;padding:8px 4px 9px;font:600 11px Inter,sans-serif;color:var(--muted);text-align:center;cursor:pointer;border:none;background:none;border-bottom:2px solid transparent;transition:color .15s,border-color .15s;}
   .tab-btn span{display:block;font-size:15px;margin-bottom:2px;}
   .tab-btn.active{color:var(--accent);border-bottom-color:var(--accent);font-weight:700;}
-
-  /* ============================================================
-     MOBILE PANELS
-  ============================================================ */
   .mobile-panels{flex:1;}
   .m-panel{display:none;padding:14px;}
   .m-panel.active{display:block;}
   .desktop-sidebar{display:none;}
-
-  /* CV STAGE */
   .cv-stage-wrap{display:none;padding:14px;background:var(--bg);overflow:auto;}
   body.show-stage .cv-stage-wrap{display:block;}
   body.show-stage .mobile-panels{display:none;}
 
-  /* ============================================================
-     DESKTOP (≥960px)
-  ============================================================ */
   @media(min-width:960px){
     .top-nav,.tab-bar{display:none;}
     .mobile-panels{display:none!important;}
@@ -103,9 +75,6 @@
     .zoom-bar{display:none;}
   }
 
-  /* ============================================================
-     FORM
-  ============================================================ */
   .panel-card{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:12px;box-shadow:0 1px 3px rgba(0,0,0,.05);}
   .panel-card h3{font:700 11px Inter,sans-serif;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);margin-bottom:14px;}
   .field{margin-bottom:11px;}
@@ -151,9 +120,7 @@
   ::-webkit-scrollbar-track{background:transparent;}
   ::-webkit-scrollbar-thumb{background:#D1D5DB;border-radius:3px;}
 
-  /* ============================================================
-     CV PAPER — px units so html2canvas is pixel-perfect
-  ============================================================ */
+  /* CV PAPER */
   .stage{display:flex;justify-content:center;padding-bottom:24px;}
   .paperStack{display:flex;flex-direction:column;gap:16px;transform-origin:top center;transition:transform .2s;}
   .paper{width:794px;height:1123px;background:#fff;box-shadow:0 16px 40px rgba(0,0,0,.14);border-radius:4px;overflow:hidden;flex-shrink:0;position:relative;}
@@ -199,11 +166,6 @@
   body.tpl-creative .cv-contact,body.tpl-creative .cv-contact a{color:#fff;}
   .page2Grid{display:grid;grid-template-columns:1fr 1fr;gap:var(--cv-gap);margin-top:16px;}
   .page2Grid .span2{grid-column:1/-1;}
-
-  /* ============================================================
-     PRINT — this is how PDF export works:
-     We open a print window with ONLY the CV pages, perfectly A4
-  ============================================================ */
   @media print {
     * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
   }
@@ -211,7 +173,6 @@
 </head>
 <body class="tpl-classic">
 
-  <!-- Hidden print container — only used during PDF export -->
   <div id="printContainer" style="display:none"></div>
 
   <div class="shell">
@@ -235,7 +196,6 @@
 
     <!-- MOBILE PANELS -->
     <div class="mobile-panels">
-      <!-- EDITAR -->
       <div class="m-panel active" id="m-edit">
         <div class="panel-card">
           <h3>Información Personal</h3>
@@ -250,13 +210,15 @@
           </div>
           <div class="field"><label>LinkedIn (URL)</label><input id="inLinkedIn" value="https://www.linkedin.com/in/cegui"/></div>
           <div class="field"><label>Ubicación</label><input id="inLocation" value="Buenos Aires, Argentina"/></div>
-          <div class="field"><label id="tProfileLbl">Perfil profesional</label>
+          <div class="field">
+            <label id="tProfileLbl">Perfil profesional</label>
             <textarea id="inProfile">Licenciado en Recursos Humanos con experiencia en entornos corporativos y trayectoria sólida en gestión administrativa y coordinación. Actualmente HRBP Contractor en Oracle, con foco en employee experience, comunicación interna, ejecución de iniciativas de RR.HH. y trabajo cross-functional.</textarea>
           </div>
         </div>
         <div class="panel-card">
           <h3>Áreas y Formación</h3>
-          <div class="field"><label id="tAreasLbl">Áreas HR (una por línea)</label>
+          <div class="field">
+            <label id="tAreasLbl">Áreas HR (una por línea)</label>
             <textarea id="inAreas">HRBP Support
 Employee Experience
 HR Operations
@@ -265,11 +227,13 @@ Internal Communications
 Stakeholder Management
 HR Reporting</textarea>
           </div>
-          <div class="field"><label id="tEduLbl">Educación (Título — Institución | Detalle)</label>
+          <div class="field">
+            <label id="tEduLbl">Educación (Título — Institución | Detalle)</label>
             <textarea id="inEdu">Lic. en Recursos Humanos — UADE | Finalizado
 Lic. en Psicología — UADE | En curso</textarea>
           </div>
-          <div class="field"><label id="tCoursesLbl">Formación complementaria (Curso | Institución)</label>
+          <div class="field">
+            <label id="tCoursesLbl">Formación complementaria (Curso | Institución)</label>
             <textarea id="inCourses">Planificación y gestión de RR.HH. para PyMEs | CAME / UTN
 Técnicas de selección de RR.HH. | CAME / UTN
 Conducción de equipos | CAME / UTN
@@ -278,7 +242,6 @@ Comunicación y organizaciones | CAME / UTN</textarea>
         </div>
       </div>
 
-      <!-- ESTILO -->
       <div class="m-panel" id="m-style">
         <div class="panel-card">
           <h3>Plantilla y Estilo</h3>
@@ -330,7 +293,6 @@ Comunicación y organizaciones | CAME / UTN</textarea>
         </div>
       </div>
 
-      <!-- TRABAJOS -->
       <div class="m-panel" id="m-jobs">
         <div class="panel-card">
           <div class="jobs-hd">
@@ -369,11 +331,13 @@ Comunicación y organizaciones | CAME / UTN</textarea>
           </div>
           <div class="field"><label>LinkedIn (URL)</label><input id="dInLinkedIn" value="https://www.linkedin.com/in/cegui"/></div>
           <div class="field"><label>Ubicación</label><input id="dInLocation" value="Buenos Aires, Argentina"/></div>
-          <div class="field"><label id="dTProfileLbl">Perfil profesional</label>
+          <div class="field">
+            <label id="dTProfileLbl">Perfil profesional</label>
             <textarea id="dInProfile">Licenciado en Recursos Humanos con experiencia en entornos corporativos y trayectoria sólida en gestión administrativa y coordinación. Actualmente HRBP Contractor en Oracle, con foco en employee experience, comunicación interna, ejecución de iniciativas de RR.HH. y trabajo cross-functional.</textarea>
           </div>
           <div class="sec-label">Áreas y Formación</div>
-          <div class="field"><label id="dTAreasLbl">Áreas HR (una por línea)</label>
+          <div class="field">
+            <label id="dTAreasLbl">Áreas HR (una por línea)</label>
             <textarea id="dInAreas">HRBP Support
 Employee Experience
 HR Operations
@@ -382,11 +346,13 @@ Internal Communications
 Stakeholder Management
 HR Reporting</textarea>
           </div>
-          <div class="field"><label id="dTEduLbl">Educación (Título — Institución | Detalle)</label>
+          <div class="field">
+            <label id="dTEduLbl">Educación (Título — Institución | Detalle)</label>
             <textarea id="dInEdu">Lic. en Recursos Humanos — UADE | Finalizado
 Lic. en Psicología — UADE | En curso</textarea>
           </div>
-          <div class="field"><label id="dTCoursesLbl">Formación complementaria</label>
+          <div class="field">
+            <label id="dTCoursesLbl">Formación complementaria</label>
             <textarea id="dInCourses">Planificación y gestión de RR.HH. para PyMEs | CAME / UTN
 Técnicas de selección de RR.HH. | CAME / UTN
 Conducción de equipos | CAME / UTN
@@ -513,7 +479,7 @@ Comunicación y organizaciones | CAME / UTN</textarea>
           <div class="paper" id="paper2" style="display:none">
             <div class="cv-page" id="cvPage2">
               <div class="cv-section cv-card">
-                <h2 class="cv-title" id="tExperience2">Experiencia</h2>
+                <h2 class="cv-title" id="tExperience2">Experiencia (continuación)</h2>
                 <div id="cvJobsPage2"></div>
               </div>
             </div>
@@ -526,175 +492,505 @@ Comunicación y organizaciones | CAME / UTN</textarea>
   <button class="fab" id="fabPDF">📄</button>
 
   <script>
-  /* ==========================================================  STATE  ========================================================== */
-  const STORAGE_KEY="cv_builder_v7";
-  const DEFAULT_JOBS=[
-    {role:"HRBP Contractor — Oracle",meta:"Buenos Aires, Argentina",dates:"2023 – Present",
-     bullets:["Partner with leaders and teams on employee lifecycle matters, driving engagement across 50+ employees","Coordinate cross-functionally with HR, Facilities, and Finance to execute strategic initiatives","Manage employee experience programs, benefits administration, and engagement activities","Build and maintain HR reports and operational documentation"]},
-    {role:"HR Analyst — Grupo Suessa",meta:"CABA, Argentina",dates:"Dec 2022 – 2023",
-     bullets:["Organized end-to-end recruitment processes, onboarding, and administrative follow-up","Coordinated with candidates and provided operational support to HR team"]},
-    {role:"Academic & Administrative Management — CFP Nº26",meta:"CABA, Argentina",dates:"2015 – 2022",
-     bullets:["Progressive career: Administrative Assistant / Preceptor → Pedagogical Team → Head of Student Department","Managed documentation, student services, and institutional coordination"]}
+  /* ============================================================
+     STATE
+  ============================================================ */
+  const STORAGE_KEY = "cv_builder_v7";
+
+  const DEFAULT_JOBS = [
+    {
+      role: "HRBP Contractor — Oracle",
+      meta: "Buenos Aires, Argentina",
+      dates: "2023 – Present",
+      bullets: [
+        "Partner with leaders and teams on employee lifecycle matters, driving engagement across 50+ employees",
+        "Coordinate cross-functionally with HR, Facilities, and Finance to execute strategic initiatives",
+        "Manage employee experience programs, benefits administration, and engagement activities",
+        "Build and maintain HR reports and operational documentation"
+      ]
+    },
+    {
+      role: "HR Analyst — Grupo Suessa",
+      meta: "CABA, Argentina",
+      dates: "Dec 2022 – 2023",
+      bullets: [
+        "Organized end-to-end recruitment processes, onboarding, and administrative follow-up",
+        "Coordinated with candidates and provided operational support to HR team"
+      ]
+    },
+    {
+      role: "Academic & Administrative Management — CFP Nº26",
+      meta: "CABA, Argentina",
+      dates: "2015 – 2022",
+      bullets: [
+        "Progressive career: Administrative Assistant / Preceptor → Pedagogical Team → Head of Student Department",
+        "Managed documentation, student services, and institutional coordination"
+      ]
+    }
   ];
-  let jobs=JSON.parse(JSON.stringify(DEFAULT_JOBS));
-  let zoomScale=0.65, draggedIdx=null;
 
-  /* HELPERS */
-  const $=id=>document.getElementById(id);
-  const esc=s=>(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"}[c]));
-  const toTelHref=p=>{const c=(p||"").trim().replace(/[^\d+]/g,"");return c.startsWith("+")?c:"+"+c;};
-  const liLabel=url=>{try{const u=new URL(url);return(u.hostname.replace(/^www\./,"")+u.pathname).replace(/\/$/,"");}catch{return(url||"").replace(/^https?:\/\//,"").replace(/\/$/,"");}};
+  let jobs = JSON.parse(JSON.stringify(DEFAULT_JOBS));
+  let zoomScale = 0.65;
+  let draggedIdx = null;
 
-  /* TABS MOBILE */
-  function activateTab(id){
-    document.querySelectorAll(".tab-btn").forEach(b=>b.classList.toggle("active",b.dataset.tab===id));
-    document.querySelectorAll(".m-panel").forEach(p=>p.classList.toggle("active",p.id===id));
-    document.body.classList.toggle("show-stage",id==="m-preview");
+  /* ============================================================
+     HELPERS
+  ============================================================ */
+  const $ = id => document.getElementById(id);
+  const esc = s => (s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"}[c]));
+  const toTelHref = p => { const c = (p || "").trim().replace(/[^\d+]/g, ""); return c.startsWith("+") ? c : "+" + c; };
+  const liLabel = url => { try { const u = new URL(url); return (u.hostname.replace(/^www\./, "") + u.pathname).replace(/\/$/, ""); } catch { return (url || "").replace(/^https?:\/\//, "").replace(/\/$/, ""); } };
+
+  /* ============================================================
+     FIX: Single source of truth — always read from desktop fields
+     when on desktop, mobile fields when on mobile.
+     We use a unified getter so renderFunctions always get the
+     correct current value regardless of which panel is active.
+  ============================================================ */
+  function getVal(baseId) {
+    // Prefer desktop (d-prefix) value if it exists and is not empty,
+    // otherwise fall back to mobile field
+    const desktop = $("dIn" + baseId.replace(/^in/, "").replace(/^dIn/, ""));
+    const mobile  = $(baseId.startsWith("in") ? baseId : "in" + baseId.replace(/^dIn/, ""));
+    // Use whichever is populated; desktop takes priority on desktop viewport
+    if (window.innerWidth >= 960 && desktop) return desktop.value;
+    if (mobile) return mobile.value;
+    if (desktop) return desktop.value;
+    return "";
   }
-  document.querySelectorAll(".tab-btn[data-tab]").forEach(b=>b.addEventListener("click",()=>activateTab(b.dataset.tab)));
 
-  /* TABS DESKTOP */
-  function activateDTab(id){
-    document.querySelectorAll(".ds-tab").forEach(b=>b.classList.toggle("active",b.dataset.dtab===id));
-    document.querySelectorAll(".ds-panel").forEach(p=>p.classList.toggle("active",p.id===id));
+  /* ============================================================
+     TABS MOBILE
+  ============================================================ */
+  function activateTab(id) {
+    document.querySelectorAll(".tab-btn").forEach(b => b.classList.toggle("active", b.dataset.tab === id));
+    document.querySelectorAll(".m-panel").forEach(p => p.classList.toggle("active", p.id === id));
+    document.body.classList.toggle("show-stage", id === "m-preview");
   }
-  document.querySelectorAll(".ds-tab[data-dtab]").forEach(b=>b.addEventListener("click",()=>activateDTab(b.dataset.dtab)));
+  document.querySelectorAll(".tab-btn[data-tab]").forEach(b => b.addEventListener("click", () => activateTab(b.dataset.tab)));
 
-  /* ZOOM */
-  function applyZoom(){$("paperStack").style.transform=`scale(${zoomScale})`;$("zoomLevel").textContent=Math.round(zoomScale*100)+"%";}
-  function setDefaultZoom(){
-    const vw=window.innerWidth;
-    zoomScale=vw<960?Math.min(0.9,(vw-28)/794):Math.min(1.0,(vw-360-56)/794);
+  /* ============================================================
+     TABS DESKTOP
+  ============================================================ */
+  function activateDTab(id) {
+    document.querySelectorAll(".ds-tab").forEach(b => b.classList.toggle("active", b.dataset.dtab === id));
+    document.querySelectorAll(".ds-panel").forEach(p => p.classList.toggle("active", p.id === id));
+  }
+  document.querySelectorAll(".ds-tab[data-dtab]").forEach(b => b.addEventListener("click", () => activateDTab(b.dataset.dtab)));
+
+  /* ============================================================
+     ZOOM
+  ============================================================ */
+  function applyZoom() {
+    $("paperStack").style.transform = `scale(${zoomScale})`;
+    $("zoomLevel").textContent = Math.round(zoomScale * 100) + "%";
+  }
+  function setDefaultZoom() {
+    const vw = window.innerWidth;
+    zoomScale = vw < 960
+      ? Math.min(0.9, (vw - 28) / 794)
+      : Math.min(1.0, (vw - 360 - 56) / 794);
     applyZoom();
   }
-  $("zoomIn").addEventListener("click",()=>{zoomScale=Math.min(1.4,zoomScale+0.05);applyZoom();});
-  $("zoomOut").addEventListener("click",()=>{zoomScale=Math.max(0.2,zoomScale-0.05);applyZoom();});
+  $("zoomIn").addEventListener("click",  () => { zoomScale = Math.min(1.4, zoomScale + 0.05); applyZoom(); });
+  $("zoomOut").addEventListener("click", () => { zoomScale = Math.max(0.2, zoomScale - 0.05); applyZoom(); });
 
-  /* PHOTO */
-  function setPhotoMode(mode){
-    const on=mode==="with";
-    ["inPhoto","dInPhoto"].forEach(id=>{const e=$(id);if(e)e.disabled=!on;});
-    document.body.classList.toggle("no-photo",!on);
-    if(!on){$("cvPhotoImg").style.display="none";$("cvPhotoLabel").style.display="block";}
+  /* ============================================================
+     PHOTO
+  ============================================================ */
+  function setPhotoMode(mode) {
+    const on = mode === "with";
+    ["inPhoto", "dInPhoto"].forEach(id => { const e = $(id); if (e) e.disabled = !on; });
+    document.body.classList.toggle("no-photo", !on);
+    if (!on) { $("cvPhotoImg").style.display = "none"; $("cvPhotoLabel").style.display = "block"; }
   }
-  function setupPhotoUpload(id){
-    $(id)?.addEventListener("change",e=>{
-      if($("inPhotoMode").value!=="with") return;
-      const f=e.target.files?.[0];if(!f) return;
-      const r=new FileReader();
-      r.onload=()=>{$("cvPhotoImg").src=r.result;$("cvPhotoImg").style.display="block";$("cvPhotoLabel").style.display="none";autoSave();};
+  function setupPhotoUpload(id) {
+    $(id)?.addEventListener("change", e => {
+      if ($("inPhotoMode").value !== "with") return;
+      const f = e.target.files?.[0]; if (!f) return;
+      const r = new FileReader();
+      r.onload = () => {
+        $("cvPhotoImg").src = r.result;
+        $("cvPhotoImg").style.display = "block";
+        $("cvPhotoLabel").style.display = "none";
+        autoSave();
+      };
       r.readAsDataURL(f);
     });
   }
-  setupPhotoUpload("inPhoto");setupPhotoUpload("dInPhoto");
+  setupPhotoUpload("inPhoto");
+  setupPhotoUpload("dInPhoto");
 
-  /* RENDER CV */
-  function renderAreas(){$("cvAreas").innerHTML=$("inAreas").value.split("\n").map(s=>s.trim()).filter(Boolean).map(l=>`<li>${esc(l)}</li>`).join("");}
-  function renderEdu(){$("cvEdu").innerHTML=$("inEdu").value.split("\n").map(s=>s.trim()).filter(Boolean).map(l=>{const p=l.split("|").map(s=>s.trim());return`<div class="cv-edu-item"><strong>${esc(p[0]||"")}</strong>${p[1]?`<span>${esc(p[1])}</span>`:""}</div>`;}).join("");}
-  function renderCourses(){$("cvCourses").innerHTML=$("inCourses").value.split("\n").map(s=>s.trim()).filter(Boolean).map(l=>{const p=l.split("|").map(s=>s.trim());return`<div class="cv-row2"><div class="l">${esc(p[0]||"")}</div><div class="r">${esc(p[1]||"")}</div></div>`;}).join("");}
-  function makeJobNode(j){const d=document.createElement("div");d.className="cv-job";d.innerHTML=`<div class="cv-jobhead"><p class="cv-jobrole">${esc(j.role)}</p><div class="cv-jobdate">${esc(j.dates)}</div></div><div class="cv-jobmeta">${esc(j.meta)}</div><ul class="cv-bullets">${(j.bullets||[]).map(b=>`<li>${esc(b)}</li>`).join("")}</ul>`;return d;}
-  function paginateJobs(){
-    const p1=$("cvJobsPage1"),p2=$("cvJobsPage2");
-    p1.innerHTML="";p2.innerHTML="";$("paper2").style.display="none";
-    jobs.forEach(j=>p1.appendChild(makeJobNode(j)));
-    const pg1=$("cvPage1");
-    if(pg1.scrollHeight<=pg1.clientHeight+2) return;
-    $("paper2").style.display="block";
-    for(let i=0;i<300;i++){if(pg1.scrollHeight<=pg1.clientHeight+2)break;const l=p1.lastElementChild;if(!l)break;p2.insertBefore(l,p2.firstChild);}
-  }
-  function syncText(){
-    $("cvName").textContent=$("inName").value||"";
-    $("cvHeadline").textContent=$("inHeadline").value||"";
-    $("cvDegree").textContent=$("inDegree").value||"";
-    $("cvProfile").textContent=$("inProfile").value||"";
-    $("cvLocation").textContent=$("inLocation").value||"";
-    const email=$("inEmail").value||"",phone=$("inPhone").value||"",li=$("inLinkedIn").value||"";
-    $("cvEmail").textContent=email;$("cvEmail").href=email?`mailto:${email}`:"#";
-    $("cvPhone").textContent=phone;$("cvPhone").href=phone?`tel:${toTelHref(phone)}`:"#";
-    $("cvLinkedIn").textContent=liLabel(li);$("cvLinkedIn").href=li||"#";
-    renderAreas();renderEdu();renderCourses();paginateJobs();
+  /* ============================================================
+     RENDER FUNCTIONS — BUG FIX: each reads from its own source
+     field directly (both mobile + desktop IDs checked)
+  ============================================================ */
+
+  function getFieldValue(mobileId, desktopId) {
+    // Returns the non-empty value; prefer desktop on wide screens
+    const d = $(desktopId);
+    const m = $(mobileId);
+    if (window.innerWidth >= 960) {
+      return (d && d.value !== undefined) ? d.value : (m ? m.value : "");
+    }
+    return (m && m.value !== undefined) ? m.value : (d ? d.value : "");
   }
 
-  /* MIRROR */
-  const PAIRS=[["inName","dInName"],["inDegree","dInDegree"],["inHeadline","dInHeadline"],["inEmail","dInEmail"],["inPhone","dInPhone"],["inLinkedIn","dInLinkedIn"],["inLocation","dInLocation"],["inProfile","dInProfile"],["inAreas","dInAreas"],["inEdu","dInEdu"],["inCourses","dInCourses"],["inTemplate","dInTemplate"],["inCompact","dInCompact"],["inTheme","dInTheme"],["inPhotoMode","dInPhotoMode"]];
-  const mirrorToDesktop=()=>PAIRS.forEach(([m,d])=>{const a=$(m),b=$(d);if(a&&b)b.value=a.value;});
-  const mirrorToMobile =()=>PAIRS.forEach(([m,d])=>{const a=$(m),b=$(d);if(a&&b)a.value=b.value;});
-  ["inName","inDegree","inHeadline","inEmail","inPhone","inLinkedIn","inLocation","inProfile","inAreas","inEdu","inCourses"].forEach(id=>$(id)?.addEventListener("input",()=>{mirrorToDesktop();syncText();autoSave();}));
-  ["dInName","dInDegree","dInHeadline","dInEmail","dInPhone","dInLinkedIn","dInLocation","dInProfile","dInAreas","dInEdu","dInCourses"].forEach(id=>$(id)?.addEventListener("input",()=>{mirrorToMobile();syncText();autoSave();}));
-
-  /* SELECTS */
-  function applyTemplate(v){document.body.classList.remove("tpl-classic","tpl-modern","tpl-sidebar","tpl-minimal","tpl-executive","tpl-creative");document.body.classList.add(v);syncText();}
-  function applyCompact(v){document.body.classList.toggle("compact",v==="on");}
-  function applyTheme(v){document.body.classList.remove("theme-blue","theme-purple","theme-green","theme-red","theme-orange");if(v)document.body.classList.add(v);}
-  function wireSelect(mId,dId,fn){
-    $(mId)?.addEventListener("change",()=>{if($(dId))$(dId).value=$(mId).value;fn($(mId).value);autoSave();});
-    $(dId)?.addEventListener("change",()=>{if($(mId))$(mId).value=$(dId).value;fn($(dId).value);autoSave();});
+  function renderAreas() {
+    const val = getFieldValue("inAreas", "dInAreas");
+    $("cvAreas").innerHTML = val.split("\n")
+      .map(s => s.trim()).filter(Boolean)
+      .map(l => `<li>${esc(l)}</li>`).join("");
   }
-  wireSelect("inTemplate","dInTemplate",applyTemplate);
-  wireSelect("inCompact","dInCompact",applyCompact);
-  wireSelect("inTheme","dInTheme",applyTheme);
-  wireSelect("inPhotoMode","dInPhotoMode",v=>{setPhotoMode(v);syncText();});
 
-  /* JOBS EDITOR */
-  function renderJobsEditor(){
-    ["jobsEditorList","dJobsEditorList"].forEach(listId=>{
-      const list=$(listId);if(!list)return;list.innerHTML="";
-      jobs.forEach((j,idx)=>{
-        const card=document.createElement("div");card.className="job-card";card.draggable=true;
-        card.innerHTML=`<div class="job-card-hd"><span class="num">💼 Trabajo #${idx+1}</span><div class="acts"><button class="btn sm sec" data-act="up" data-idx="${idx}">↑</button><button class="btn sm sec" data-act="down" data-idx="${idx}">↓</button><button class="btn sm danger" data-act="del" data-idx="${idx}">✕</button></div></div><div class="grid2" style="margin-bottom:8px"><div class="field" style="margin:0"><label>Rol — Empresa</label><input data-k="role" data-idx="${idx}" value="${esc(j.role)}"/></div><div class="field" style="margin:0"><label>Fechas</label><input data-k="dates" data-idx="${idx}" value="${esc(j.dates)}"/></div></div><div class="field" style="margin-bottom:8px"><label>Ubicación</label><input data-k="meta" data-idx="${idx}" value="${esc(j.meta)}"/></div><div class="field" style="margin:0"><label>Logros (uno por línea)</label><textarea data-k="bullets" data-idx="${idx}">${esc((j.bullets||[]).join("\n"))}</textarea></div>`;
-        card.addEventListener("dragstart",()=>{draggedIdx=idx;card.classList.add("dragging");});
-        card.addEventListener("dragend",()=>{card.classList.remove("dragging");draggedIdx=null;});
-        card.addEventListener("dragover",e=>e.preventDefault());
-        card.addEventListener("drop",e=>{e.preventDefault();if(draggedIdx===null||draggedIdx===idx)return;const item=jobs.splice(draggedIdx,1)[0];jobs.splice(idx,0,item);renderJobsEditor();syncText();autoSave();});
+  function renderEdu() {
+    const val = getFieldValue("inEdu", "dInEdu");
+    $("cvEdu").innerHTML = val.split("\n")
+      .map(s => s.trim()).filter(Boolean)
+      .map(l => {
+        const p = l.split("|").map(s => s.trim());
+        return `<div class="cv-edu-item"><strong>${esc(p[0] || "")}</strong>${p[1] ? `<span>${esc(p[1])}</span>` : ""}</div>`;
+      }).join("");
+  }
+
+  // BUG FIX: renderCourses was rendering the wrong content because
+  // it was reading from inCourses (mobile) but on desktop the active
+  // field is dInCourses. Now explicitly reads from both and uses
+  // the correct non-empty one.
+  function renderCourses() {
+    const val = getFieldValue("inCourses", "dInCourses");
+    $("cvCourses").innerHTML = val.split("\n")
+      .map(s => s.trim()).filter(Boolean)
+      .map(l => {
+        const p = l.split("|").map(s => s.trim());
+        return `<div class="cv-row2"><div class="l">${esc(p[0] || "")}</div><div class="r">${esc(p[1] || "")}</div></div>`;
+      }).join("");
+  }
+
+  function makeJobNode(j) {
+    const d = document.createElement("div");
+    d.className = "cv-job";
+    d.innerHTML = `
+      <div class="cv-jobhead">
+        <p class="cv-jobrole">${esc(j.role)}</p>
+        <div class="cv-jobdate">${esc(j.dates)}</div>
+      </div>
+      <div class="cv-jobmeta">${esc(j.meta)}</div>
+      <ul class="cv-bullets">${(j.bullets || []).map(b => `<li>${esc(b)}</li>`).join("")}</ul>
+    `;
+    return d;
+  }
+
+  // BUG FIX: paginateJobs — reset both containers first, then fill p1,
+  // then check overflow and move nodes to p2 if needed.
+  // Previously the overflow check could fail if called before layout paint.
+  function paginateJobs() {
+    const p1 = $("cvJobsPage1");
+    const p2 = $("cvJobsPage2");
+    const pg1 = $("cvPage1");
+
+    // Clear both pages
+    p1.innerHTML = "";
+    p2.innerHTML = "";
+    $("paper2").style.display = "none";
+
+    // Add all jobs to page 1
+    jobs.forEach(j => p1.appendChild(makeJobNode(j)));
+
+    // Use requestAnimationFrame to ensure layout is computed before checking overflow
+    requestAnimationFrame(() => {
+      if (pg1.scrollHeight <= pg1.clientHeight + 4) return;
+
+      $("paper2").style.display = "block";
+
+      // Move jobs from the end of p1 to the start of p2 until p1 fits
+      let iterations = 0;
+      while (pg1.scrollHeight > pg1.clientHeight + 4 && p1.lastElementChild && iterations < 50) {
+        const last = p1.lastElementChild;
+        p2.insertBefore(last, p2.firstChild);
+        iterations++;
+      }
+    });
+  }
+
+  // BUG FIX: syncText now reads both mobile and desktop field values
+  // using getFieldValue() so the correct value is always used
+  function syncText() {
+    $("cvName").textContent     = getFieldValue("inName",     "dInName");
+    $("cvHeadline").textContent = getFieldValue("inHeadline", "dInHeadline");
+    $("cvDegree").textContent   = getFieldValue("inDegree",   "dInDegree");
+    $("cvProfile").textContent  = getFieldValue("inProfile",  "dInProfile");
+    $("cvLocation").textContent = getFieldValue("inLocation", "dInLocation");
+
+    const email = getFieldValue("inEmail", "dInEmail");
+    const phone = getFieldValue("inPhone", "dInPhone");
+    const li    = getFieldValue("inLinkedIn", "dInLinkedIn");
+
+    $("cvEmail").textContent = email;
+    $("cvEmail").href = email ? `mailto:${email}` : "#";
+    $("cvPhone").textContent = phone;
+    $("cvPhone").href = phone ? `tel:${toTelHref(phone)}` : "#";
+    $("cvLinkedIn").textContent = liLabel(li);
+    $("cvLinkedIn").href = li || "#";
+
+    renderAreas();
+    renderEdu();
+    renderCourses();
+    paginateJobs();
+  }
+
+  /* ============================================================
+     MIRROR — keep mobile ↔ desktop inputs in sync
+  ============================================================ */
+  const PAIRS = [
+    ["inName","dInName"],["inDegree","dInDegree"],["inHeadline","dInHeadline"],
+    ["inEmail","dInEmail"],["inPhone","dInPhone"],["inLinkedIn","dInLinkedIn"],
+    ["inLocation","dInLocation"],["inProfile","dInProfile"],
+    ["inAreas","dInAreas"],["inEdu","dInEdu"],["inCourses","dInCourses"],
+    ["inTemplate","dInTemplate"],["inCompact","dInCompact"],
+    ["inTheme","dInTheme"],["inPhotoMode","dInPhotoMode"]
+  ];
+  const mirrorToDesktop = () => PAIRS.forEach(([m, d]) => { const a = $(m), b = $(d); if (a && b) b.value = a.value; });
+  const mirrorToMobile  = () => PAIRS.forEach(([m, d]) => { const a = $(m), b = $(d); if (a && b) a.value = b.value; });
+
+  // Mobile inputs
+  ["inName","inDegree","inHeadline","inEmail","inPhone","inLinkedIn","inLocation","inProfile","inAreas","inEdu","inCourses"]
+    .forEach(id => $(id)?.addEventListener("input", () => { mirrorToDesktop(); syncText(); autoSave(); }));
+
+  // Desktop inputs
+  ["dInName","dInDegree","dInHeadline","dInEmail","dInPhone","dInLinkedIn","dInLocation","dInProfile","dInAreas","dInEdu","dInCourses"]
+    .forEach(id => $(id)?.addEventListener("input", () => { mirrorToMobile(); syncText(); autoSave(); }));
+
+  /* ============================================================
+     SELECTS
+  ============================================================ */
+  function applyTemplate(v) {
+    document.body.classList.remove("tpl-classic","tpl-modern","tpl-sidebar","tpl-minimal","tpl-executive","tpl-creative");
+    document.body.classList.add(v);
+    syncText();
+  }
+  function applyCompact(v) { document.body.classList.toggle("compact", v === "on"); }
+  function applyTheme(v) {
+    document.body.classList.remove("theme-blue","theme-purple","theme-green","theme-red","theme-orange");
+    if (v) document.body.classList.add(v);
+  }
+  function wireSelect(mId, dId, fn) {
+    $(mId)?.addEventListener("change", () => { if ($(dId)) $(dId).value = $(mId).value; fn($(mId).value); autoSave(); });
+    $(dId)?.addEventListener("change", () => { if ($(mId)) $(mId).value = $(dId).value; fn($(dId).value); autoSave(); });
+  }
+  wireSelect("inTemplate",  "dInTemplate",  applyTemplate);
+  wireSelect("inCompact",   "dInCompact",   applyCompact);
+  wireSelect("inTheme",     "dInTheme",     applyTheme);
+  wireSelect("inPhotoMode", "dInPhotoMode", v => { setPhotoMode(v); syncText(); });
+
+  /* ============================================================
+     JOBS EDITOR
+  ============================================================ */
+  function renderJobsEditor() {
+    ["jobsEditorList", "dJobsEditorList"].forEach(listId => {
+      const list = $(listId); if (!list) return;
+      list.innerHTML = "";
+      jobs.forEach((j, idx) => {
+        const card = document.createElement("div");
+        card.className = "job-card";
+        card.draggable = true;
+        card.innerHTML = `
+          <div class="job-card-hd">
+            <span class="num">💼 Trabajo #${idx + 1}</span>
+            <div class="acts">
+              <button class="btn sm sec" data-act="up"   data-idx="${idx}">↑</button>
+              <button class="btn sm sec" data-act="down" data-idx="${idx}">↓</button>
+              <button class="btn sm danger" data-act="del" data-idx="${idx}">✕</button>
+            </div>
+          </div>
+          <div class="grid2" style="margin-bottom:8px">
+            <div class="field" style="margin:0"><label>Rol — Empresa</label><input data-k="role"  data-idx="${idx}" value="${esc(j.role)}"/></div>
+            <div class="field" style="margin:0"><label>Fechas</label><input data-k="dates" data-idx="${idx}" value="${esc(j.dates)}"/></div>
+          </div>
+          <div class="field" style="margin-bottom:8px">
+            <label>Ubicación</label><input data-k="meta" data-idx="${idx}" value="${esc(j.meta)}"/>
+          </div>
+          <div class="field" style="margin:0">
+            <label>Logros (uno por línea)</label>
+            <textarea data-k="bullets" data-idx="${idx}">${esc((j.bullets || []).join("\n"))}</textarea>
+          </div>`;
+        card.addEventListener("dragstart", () => { draggedIdx = idx; card.classList.add("dragging"); });
+        card.addEventListener("dragend",   () => { card.classList.remove("dragging"); draggedIdx = null; });
+        card.addEventListener("dragover",  e => e.preventDefault());
+        card.addEventListener("drop", e => {
+          e.preventDefault();
+          if (draggedIdx === null || draggedIdx === idx) return;
+          const item = jobs.splice(draggedIdx, 1)[0];
+          jobs.splice(idx, 0, item);
+          renderJobsEditor();
+          syncText();
+          autoSave();
+        });
         list.appendChild(card);
       });
     });
   }
-  function onJobClick(e){const btn=e.target.closest("button[data-act]");if(!btn)return;const act=btn.dataset.act,idx=+btn.dataset.idx;if(act==="up"&&idx>0)[jobs[idx],jobs[idx-1]]=[jobs[idx-1],jobs[idx]];else if(act==="down"&&idx<jobs.length-1)[jobs[idx],jobs[idx+1]]=[jobs[idx+1],jobs[idx]];else if(act==="del"){if(!confirm("¿Eliminar?"))return;jobs.splice(idx,1);}renderJobsEditor();syncText();autoSave();}
-  function onJobInput(e){const el=e.target,idx=+el.dataset.idx,k=el.dataset.k;if(isNaN(idx)||!k)return;if(k==="bullets")jobs[idx].bullets=el.value.split("\n");else jobs[idx][k]=el.value;["jobsEditorList","dJobsEditorList"].forEach(lid=>document.querySelectorAll(`#${lid} [data-idx="${idx}"][data-k="${k}"]`).forEach(inp=>{if(inp!==el)inp.value=el.value;}));syncText();autoSave();}
-  ["jobsEditorList","dJobsEditorList"].forEach(id=>{$(id)?.addEventListener("click",onJobClick);$(id)?.addEventListener("input",onJobInput);});
-  const addJob=()=>{jobs.unshift({role:"Nuevo Rol — Empresa",meta:"Ubicación",dates:"Año – Año",bullets:["Logro 1","Logro 2"]});renderJobsEditor();syncText();autoSave();};
-  ["btnAddJob","dBtnAddJob"].forEach(id=>$(id)?.addEventListener("click",addJob));
 
-  /* TOOLS */
-  function autoFormat(){jobs=jobs.map(j=>({...j,bullets:(j.bullets||[]).map(b=>{let t=b.trim();if(!t)return t;return t[0].toUpperCase()+t.slice(1).replace(/\.$/,"");})}));const p=$("inProfile").value.trim();if(p){const v=p[0].toUpperCase()+p.slice(1);$("inProfile").value=v;if($("dInProfile"))$("dInProfile").value=v;}renderJobsEditor();syncText();autoSave();alert("✨ Formato aplicado!");}
-  function spellCheck(){const all=[$("inProfile").value,...jobs.flatMap(j=>[j.role,j.meta,...(j.bullets||[])])].join(" ");const wc=all.split(/\s+/).filter(w=>w).length;alert(`📊 Estadísticas:\n\n✓ Palabras: ${wc}\n✓ Trabajos: ${jobs.length}\n✓ Bullets: ${jobs.reduce((s,j)=>s+(j.bullets?.length||0),0)}\n\n💡 Ideal: 400-600 palabras.`);}
-  function countWords(){const p=$("inProfile").value.split(/\s+/).filter(w=>w).length;const jw=jobs.reduce((s,j)=>s+(j.bullets||[]).join(" ").split(/\s+/).filter(w=>w).length,0);alert(`📊 Palabras:\n✓ Perfil: ${p}\n✓ Experiencia: ${jw}\n✓ Total: ${p+jw}`);}
-  function duplicateJob(){if(!jobs.length){alert("No hay trabajos.");return;}const l=jobs[0];jobs.unshift({...l,role:l.role+" (copia)",bullets:[...l.bullets]});renderJobsEditor();syncText();autoSave();alert("✅ Duplicado!");}
-  [["btnAutoFormat","dBtnAutoFormat",autoFormat],["btnSpellCheck","dBtnSpellCheck",spellCheck],["btnCountWords","dBtnCountWords",countWords],["btnDuplicateJob","dBtnDuplicateJob",duplicateJob]].forEach(([m,d,fn])=>{$(m)?.addEventListener("click",fn);$(d)?.addEventListener("click",fn);});
+  function onJobClick(e) {
+    const btn = e.target.closest("button[data-act]"); if (!btn) return;
+    const act = btn.dataset.act, idx = +btn.dataset.idx;
+    if      (act === "up"   && idx > 0)              [jobs[idx], jobs[idx-1]] = [jobs[idx-1], jobs[idx]];
+    else if (act === "down" && idx < jobs.length - 1) [jobs[idx], jobs[idx+1]] = [jobs[idx+1], jobs[idx]];
+    else if (act === "del") { if (!confirm("¿Eliminar?")) return; jobs.splice(idx, 1); }
+    renderJobsEditor(); syncText(); autoSave();
+  }
 
-  /* TRANSLATE */
-  const GLOSSARY=[[/\bRecursos Humanos\b/gi,"Human Resources"],[/\bRR\.?HH\.?\b/gi,"HR"],[/\bActualidad\b/gi,"Present"],[/\bExperiencia\b/gi,"Experience"],[/\bPerfil\b/gi,"Profile"],[/\bEducación\b/gi,"Education"],[/\bFormación complementaria\b/gi,"Additional Training"],[/\bÁreas HR\b/gi,"HR Areas"],[/\bGestión\b/gi,"Management"],[/\bCoordinaci[oó]n\b/gi,"Coordination"],[/\bDic\b/gi,"Dec"]];
-  const tH=t=>{let o=t||"";GLOSSARY.forEach(([r,s])=>o=o.replace(r,s));return o;};
-  function doTranslate(){if(!confirm("¿Traducir todo al inglés?"))return;[["tProfileLbl","dTProfileLbl","Profile"],["tAreasLbl","dTAreasLbl","HR Areas (one per line)"],["tEduLbl","dTEduLbl","Education"],["tCoursesLbl","dTCoursesLbl","Additional Training"],["tExpEdit","dTExpEdit","Experience"]].forEach(([m,d,v])=>{$(m)&&($(m).textContent=v);$(d)&&($(d).textContent=v);});$("tProfile").textContent="Profile";$("tExperience").textContent="Experience";$("tExperience2").textContent="Experience";$("tAreas").textContent="HR Areas";$("tEdu").textContent="Education";$("tCourses").textContent="Additional Training";$("inDegree").value=tH($("inDegree").value);$("inProfile").value=tH($("inProfile").value);$("inAreas").value=$("inAreas").value.split("\n").map(s=>tH(s.trim())).filter(Boolean).join("\n");["inEdu","inCourses"].forEach(id=>{$(id).value=$(id).value.split("\n").map(s=>{const p=s.split("|").map(x=>x.trim());return p.length===2?`${tH(p[0])} | ${tH(p[1])}`:tH(s.trim());}).filter(Boolean).join("\n");});jobs=jobs.map(j=>({role:tH(j.role),meta:tH(j.meta),dates:tH(j.dates),bullets:(j.bullets||[]).map(b=>tH(b))}));mirrorToDesktop();renderJobsEditor();syncText();autoSave();alert("✅ Traducido!");}
-  ["btnTranslateEN","dBtnTranslate","mBtnTranslate"].forEach(id=>$(id)?.addEventListener("click",doTranslate));
-  const doReset=()=>{if(!confirm("¿Reiniciar?"))return;localStorage.removeItem(STORAGE_KEY);location.reload();};
-  ["btnReset","dBtnReset"].forEach(id=>$(id)?.addEventListener("click",doReset));
+  function onJobInput(e) {
+    const el = e.target, idx = +el.dataset.idx, k = el.dataset.k;
+    if (isNaN(idx) || !k) return;
+    if (k === "bullets") jobs[idx].bullets = el.value.split("\n");
+    else jobs[idx][k] = el.value;
+    // Sync same field in the other panel
+    ["jobsEditorList","dJobsEditorList"].forEach(lid => {
+      document.querySelectorAll(`#${lid} [data-idx="${idx}"][data-k="${k}"]`).forEach(inp => {
+        if (inp !== el) inp.value = el.value;
+      });
+    });
+    syncText(); autoSave();
+  }
 
-  /* ==========================================================
+  ["jobsEditorList","dJobsEditorList"].forEach(id => {
+    $(id)?.addEventListener("click",  onJobClick);
+    $(id)?.addEventListener("input",  onJobInput);
+  });
+
+  const addJob = () => {
+    jobs.unshift({ role: "Nuevo Rol — Empresa", meta: "Ubicación", dates: "Año – Año", bullets: ["Logro 1","Logro 2"] });
+    renderJobsEditor(); syncText(); autoSave();
+  };
+  ["btnAddJob","dBtnAddJob"].forEach(id => $(id)?.addEventListener("click", addJob));
+
+  /* ============================================================
+     TOOLS
+  ============================================================ */
+  function autoFormat() {
+    jobs = jobs.map(j => ({
+      ...j,
+      bullets: (j.bullets || []).map(b => { let t = b.trim(); if (!t) return t; return t[0].toUpperCase() + t.slice(1).replace(/\.$/, ""); })
+    }));
+    ["inProfile","dInProfile"].forEach(id => {
+      const el = $(id); if (!el) return;
+      const p = el.value.trim();
+      if (p) el.value = p[0].toUpperCase() + p.slice(1);
+    });
+    renderJobsEditor(); syncText(); autoSave();
+    alert("✨ Formato aplicado!");
+  }
+
+  function spellCheck() {
+    const all = [$("inProfile").value, ...jobs.flatMap(j => [j.role, j.meta, ...(j.bullets || [])])].join(" ");
+    const wc = all.split(/\s+/).filter(w => w).length;
+    alert(`📊 Estadísticas:\n\n✓ Palabras: ${wc}\n✓ Trabajos: ${jobs.length}\n✓ Bullets: ${jobs.reduce((s,j) => s + (j.bullets?.length || 0), 0)}\n\n💡 Ideal: 400-600 palabras.`);
+  }
+
+  function countWords() {
+    const p = $("inProfile").value.split(/\s+/).filter(w => w).length;
+    const jw = jobs.reduce((s, j) => s + (j.bullets || []).join(" ").split(/\s+/).filter(w => w).length, 0);
+    alert(`📊 Palabras:\n✓ Perfil: ${p}\n✓ Experiencia: ${jw}\n✓ Total: ${p + jw}`);
+  }
+
+  function duplicateJob() {
+    if (!jobs.length) { alert("No hay trabajos."); return; }
+    const l = jobs[0];
+    jobs.unshift({ ...l, role: l.role + " (copia)", bullets: [...l.bullets] });
+    renderJobsEditor(); syncText(); autoSave();
+    alert("✅ Duplicado!");
+  }
+
+  [
+    ["btnAutoFormat","dBtnAutoFormat",autoFormat],
+    ["btnSpellCheck","dBtnSpellCheck",spellCheck],
+    ["btnCountWords","dBtnCountWords",countWords],
+    ["btnDuplicateJob","dBtnDuplicateJob",duplicateJob]
+  ].forEach(([m, d, fn]) => { $(m)?.addEventListener("click", fn); $(d)?.addEventListener("click", fn); });
+
+  /* ============================================================
+     TRANSLATE
+  ============================================================ */
+  const GLOSSARY = [
+    [/\bRecursos Humanos\b/gi, "Human Resources"],
+    [/\bRR\.?HH\.?\b/gi, "HR"],
+    [/\bActualidad\b/gi, "Present"],
+    [/\bExperiencia\b/gi, "Experience"],
+    [/\bPerfil\b/gi, "Profile"],
+    [/\bEducación\b/gi, "Education"],
+    [/\bFormación complementaria\b/gi, "Additional Training"],
+    [/\bÁreas HR\b/gi, "HR Areas"],
+    [/\bGestión\b/gi, "Management"],
+    [/\bCoordinaci[oó]n\b/gi, "Coordination"],
+    [/\bDic\b/gi, "Dec"]
+  ];
+  const tH = t => { let o = t || ""; GLOSSARY.forEach(([r, s]) => o = o.replace(r, s)); return o; };
+
+  function doTranslate() {
+    if (!confirm("¿Traducir todo al inglés?")) return;
+    [
+      ["tProfileLbl","dTProfileLbl","Profile"],
+      ["tAreasLbl","dTAreasLbl","HR Areas (one per line)"],
+      ["tEduLbl","dTEduLbl","Education"],
+      ["tCoursesLbl","dTCoursesLbl","Additional Training"],
+      ["tExpEdit","dTExpEdit","Experience"]
+    ].forEach(([m, d, v]) => { $(m) && ($(m).textContent = v); $(d) && ($(d).textContent = v); });
+
+    $("tProfile").textContent     = "Profile";
+    $("tExperience").textContent  = "Experience";
+    $("tExperience2").textContent = "Experience (cont.)";
+    $("tAreas").textContent       = "HR Areas";
+    $("tEdu").textContent         = "Education";
+    $("tCourses").textContent     = "Additional Training";
+
+    PAIRS.slice(0, 11).forEach(([mId, dId]) => {
+      const m = $(mId), d = $(dId);
+      if (mId === "inAreas" || mId === "inEdu" || mId === "inCourses") {
+        const val = (m ? m.value : "").split("\n").map(s => {
+          const p = s.split("|").map(x => x.trim());
+          return p.length === 2 ? `${tH(p[0])} | ${tH(p[1])}` : tH(s.trim());
+        }).filter(Boolean).join("\n");
+        if (m) m.value = val;
+        if (d) d.value = val;
+      } else {
+        const val = tH(m ? m.value : "");
+        if (m) m.value = val;
+        if (d) d.value = val;
+      }
+    });
+
+    jobs = jobs.map(j => ({
+      role: tH(j.role), meta: tH(j.meta), dates: tH(j.dates),
+      bullets: (j.bullets || []).map(b => tH(b))
+    }));
+
+    renderJobsEditor(); syncText(); autoSave();
+    alert("✅ Traducido!");
+  }
+
+  ["btnTranslateEN","dBtnTranslate","mBtnTranslate"].forEach(id => $(id)?.addEventListener("click", doTranslate));
+
+  const doReset = () => { if (!confirm("¿Reiniciar?")) return; localStorage.removeItem(STORAGE_KEY); location.reload(); };
+  ["btnReset","dBtnReset"].forEach(id => $(id)?.addEventListener("click", doReset));
+
+  /* ============================================================
      PDF EXPORT
-     Strategy: open a dedicated print window with ONLY the CV
-     pages at exact A4 size. The browser's print engine renders
-     it perfectly — no html2canvas, no canvas distortion.
-  ========================================================== */
+  ============================================================ */
   function doPDF() {
     syncText();
 
-    // Gather the CSS needed for the CV to render correctly
     const styleSheets = Array.from(document.styleSheets).map(ss => {
-      try { return Array.from(ss.cssRules).map(r=>r.cssText).join("\n"); } catch(e) { return ""; }
+      try { return Array.from(ss.cssRules).map(r => r.cssText).join("\n"); } catch(e) { return ""; }
     }).join("\n");
 
-    // Get current body classes (template, theme, compact, no-photo)
     const bodyClass = document.body.className;
 
-    // Get visible pages HTML
     const pages = Array.from(document.querySelectorAll(".paper"))
       .filter(p => p.style.display !== "none")
       .map(p => p.outerHTML)
       .join("\n");
 
-    // Get the photo src if present
     const photoSrc = $("cvPhotoImg").style.display !== "none" ? $("cvPhotoImg").src : "";
 
     const printHTML = `<!doctype html>
@@ -705,35 +1001,18 @@ Comunicación y organizaciones | CAME / UTN</textarea>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 ${styleSheets}
-
-/* Print-specific overrides */
 * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
 html, body { margin: 0; padding: 0; background: white; }
 body { font-family: Inter, system-ui, sans-serif; }
-
-/* Show only the CV papers, one per page */
 .paper {
-  width: 210mm !important;
-  height: 297mm !important;
-  min-width: unset !important;
-  max-width: unset !important;
-  box-shadow: none !important;
-  border-radius: 0 !important;
-  overflow: hidden;
-  page-break-after: always;
-  break-after: page;
+  width: 210mm !important; height: 297mm !important;
+  min-width: unset !important; max-width: unset !important;
+  box-shadow: none !important; border-radius: 0 !important;
+  overflow: hidden; page-break-after: always; break-after: page;
 }
 .paper:last-child { page-break-after: auto; break-after: auto; }
-.cv-page {
-  width: 210mm !important;
-  height: 297mm !important;
-}
-
-@page {
-  size: A4 portrait;
-  margin: 0;
-}
-
+.cv-page { width: 210mm !important; height: 297mm !important; }
+@page { size: A4 portrait; margin: 0; }
 @media print {
   * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
   html, body { margin: 0 !important; padding: 0 !important; }
@@ -743,19 +1022,13 @@ body { font-family: Inter, system-ui, sans-serif; }
 <body class="${bodyClass}">
 ${pages}
 <script>
-// Fix photo src if it was a data URL
 ${photoSrc ? `document.querySelectorAll('#cvPhotoImg').forEach(img => { img.src = ${JSON.stringify(photoSrc)}; img.style.display='block'; img.previousElementSibling.style.display='none'; });` : ""}
-// Auto-print when loaded
 window.addEventListener('load', function() {
-  setTimeout(function() {
-    window.print();
-    setTimeout(function() { window.close(); }, 1000);
-  }, 800);
+  setTimeout(function() { window.print(); setTimeout(function() { window.close(); }, 1000); }, 800);
 });
 <\/script>
 </body></html>`;
 
-    // Hidden iframe — never blocked by browsers, no popup needed
     let iframe = document.getElementById("_printFrame");
     if (iframe) iframe.remove();
     iframe = document.createElement("iframe");
@@ -777,21 +1050,91 @@ window.addEventListener('load', function() {
     };
   }
 
-  ["dBtnPDF","mBtnPDF","fabPDF"].forEach(id=>$(id)?.addEventListener("click",doPDF));
+  ["dBtnPDF","mBtnPDF","fabPDF"].forEach(id => $(id)?.addEventListener("click", doPDF));
 
-  /* SAVE / LOAD */
-  function getDraft(){return{meta:{template:$("inTemplate").value,compact:$("inCompact").value,theme:$("inTheme").value,photoMode:$("inPhotoMode").value,photoUrl:($("inPhotoMode").value==="with"&&$("cvPhotoImg").style.display!=="none")?$("cvPhotoImg").src:""},fields:{inName:$("inName").value,inDegree:$("inDegree").value,inHeadline:$("inHeadline").value,inEmail:$("inEmail").value,inPhone:$("inPhone").value,inLinkedIn:$("inLinkedIn").value,inLocation:$("inLocation").value,inProfile:$("inProfile").value,inAreas:$("inAreas").value,inEdu:$("inEdu").value,inCourses:$("inCourses").value},jobs};}
-  function applyDraft(d){if(!d)return;const m=d.meta||{};if(m.template){$("inTemplate").value=m.template;applyTemplate(m.template);}if(m.compact){$("inCompact").value=m.compact;applyCompact(m.compact);}if(m.theme!==undefined){$("inTheme").value=m.theme||"";applyTheme(m.theme||"");}if(m.photoMode){$("inPhotoMode").value=m.photoMode;setPhotoMode(m.photoMode);}const f=d.fields||{};Object.keys(f).forEach(k=>{if($(k))$(k).value=f[k]??"";});if(Array.isArray(d.jobs)&&d.jobs.length)jobs=d.jobs;if(m.photoMode==="with"&&m.photoUrl){$("cvPhotoImg").src=m.photoUrl;$("cvPhotoImg").style.display="block";$("cvPhotoLabel").style.display="none";}mirrorToDesktop();renderJobsEditor();syncText();}
-  let saveTimer=null;
-  const autoSave=()=>{clearTimeout(saveTimer);saveTimer=setTimeout(()=>{try{localStorage.setItem(STORAGE_KEY,JSON.stringify(getDraft()));}catch{}},600);};
-  function loadDraft(){try{const r=localStorage.getItem(STORAGE_KEY);if(r){applyDraft(JSON.parse(r));return true;}}catch{}return false;}
+  /* ============================================================
+     SAVE / LOAD
+  ============================================================ */
+  function getDraft() {
+    return {
+      meta: {
+        template:  $("inTemplate").value,
+        compact:   $("inCompact").value,
+        theme:     $("inTheme").value,
+        photoMode: $("inPhotoMode").value,
+        photoUrl:  ($("inPhotoMode").value === "with" && $("cvPhotoImg").style.display !== "none") ? $("cvPhotoImg").src : ""
+      },
+      fields: {
+        inName:     $("inName").value,
+        inDegree:   $("inDegree").value,
+        inHeadline: $("inHeadline").value,
+        inEmail:    $("inEmail").value,
+        inPhone:    $("inPhone").value,
+        inLinkedIn: $("inLinkedIn").value,
+        inLocation: $("inLocation").value,
+        inProfile:  $("inProfile").value,
+        inAreas:    $("inAreas").value,
+        inEdu:      $("inEdu").value,
+        inCourses:  $("inCourses").value
+      },
+      jobs
+    };
+  }
 
-  /* INIT */
+  // BUG FIX: applyDraft now calls mirrorToDesktop() BEFORE syncText()
+  // so that desktop fields are populated when syncText reads them
+  function applyDraft(d) {
+    if (!d) return;
+    const m = d.meta || {};
+    if (m.template) { $("inTemplate").value = m.template; applyTemplate(m.template); }
+    if (m.compact)  { $("inCompact").value  = m.compact;  applyCompact(m.compact); }
+    if (m.theme !== undefined) { $("inTheme").value = m.theme || ""; applyTheme(m.theme || ""); }
+    if (m.photoMode) { $("inPhotoMode").value = m.photoMode; setPhotoMode(m.photoMode); }
+
+    const f = d.fields || {};
+    Object.keys(f).forEach(k => { if ($(k)) $(k).value = f[k] ?? ""; });
+
+    if (Array.isArray(d.jobs) && d.jobs.length) jobs = d.jobs;
+
+    if (m.photoMode === "with" && m.photoUrl) {
+      $("cvPhotoImg").src = m.photoUrl;
+      $("cvPhotoImg").style.display = "block";
+      $("cvPhotoLabel").style.display = "none";
+    }
+
+    // FIX: mirror to desktop FIRST, then sync so desktop fields are populated
+    mirrorToDesktop();
+    renderJobsEditor();
+    syncText();
+  }
+
+  let saveTimer = null;
+  const autoSave = () => {
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(() => { try { localStorage.setItem(STORAGE_KEY, JSON.stringify(getDraft())); } catch {} }, 600);
+  };
+
+  function loadDraft() {
+    try {
+      const r = localStorage.getItem(STORAGE_KEY);
+      if (r) { applyDraft(JSON.parse(r)); return true; }
+    } catch {}
+    return false;
+  }
+
+  /* ============================================================
+     INIT
+  ============================================================ */
   setPhotoMode($("inPhotoMode").value);
   renderJobsEditor();
-  if(!loadDraft()){mirrorToDesktop();syncText();}
+
+  if (!loadDraft()) {
+    mirrorToDesktop();
+    syncText();
+  }
+
   setDefaultZoom();
-  window.addEventListener("resize",setDefaultZoom);
+  window.addEventListener("resize", setDefaultZoom);
   </script>
 </body>
 </html>
