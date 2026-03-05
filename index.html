@@ -12,17 +12,17 @@
     --ink:#111827; --muted:#4B5563; --line:#E5E7EB;
     --accent:#0B1F3A; --bg:#F3F4F6; --paper:#fff;
     --radius:10px;
-    --cv-pad:38px; --cv-gap:26px;
+    --cv-pad:38px; --cv-gap:22px;
     --cv-cols:1fr 168px; --hdr-cols:1fr 100px;
     --name-sz:36px; --hl-sz:14px; --deg-sz:12.5px;
     --contact-sz:11px; --title-sz:10px; --p-sz:11.5px;
     --jobrole-sz:12.5px; --bullet-sz:11px; --small-sz:10.5px;
   }
-  body.tpl-classic   {--accent:#0B1F3A;--cv-cols:1fr 168px;--hdr-cols:1fr 100px;}
+  body.tpl-classic   {--accent:#0B1F3A;--cv-cols:1fr 195px;--hdr-cols:1fr 100px;}
   body.tpl-modern    {--accent:#111827;--line:#E6EAF0;--cv-cols:1fr;--hdr-cols:1fr 100px;}
-  body.tpl-sidebar   {--accent:#1E293B;--line:#E6EAF0;--cv-cols:160px 1fr;--hdr-cols:1fr 100px;}
-  body.tpl-minimal   {--accent:#111827;--line:#F3F4F6;--cv-cols:1fr 150px;--hdr-cols:1fr;}
-  body.tpl-executive {--accent:#1E40AF;--line:#DBEAFE;--cv-cols:1fr 175px;--hdr-cols:1fr 100px;}
+  body.tpl-sidebar   {--accent:#1E293B;--line:#E6EAF0;--cv-cols:210px 1fr;--hdr-cols:1fr 100px;}
+  body.tpl-minimal   {--accent:#111827;--line:#F3F4F6;--cv-cols:1fr 190px;--hdr-cols:1fr;}
+  body.tpl-executive {--accent:#1E40AF;--line:#DBEAFE;--cv-cols:1fr 200px;--hdr-cols:1fr 100px;}
   body.tpl-creative  {--accent:#7C3AED;--line:#EDE9FE;--cv-cols:1fr;--hdr-cols:1fr 100px;}
   body.theme-blue    {--accent:#1E40AF;--line:#DBEAFE;}
   body.theme-purple  {--accent:#7C3AED;--line:#EDE9FE;}
@@ -149,10 +149,10 @@
   .cv-card:last-child{margin-bottom:0;}
   .cv-list{margin:0;padding-left:14px;}
   .cv-list li{font-size:var(--small-sz);margin-bottom:5px;color:var(--ink);}
-  .cv-rows{display:flex;flex-direction:column;gap:5px;}
-  .cv-row2{display:flex;justify-content:space-between;align-items:baseline;gap:12px;}
-  .cv-row2 .l{font-size:var(--small-sz);line-height:1.4;color:var(--ink);}
-  .cv-row2 .r{font-size:var(--small-sz);color:var(--muted);font-weight:700;white-space:nowrap;flex-shrink:0;}
+  .cv-rows{display:flex;flex-direction:column;gap:7px;}
+  .cv-row2{display:flex;flex-direction:column;gap:1px;}
+  .cv-row2 .l{font-size:var(--small-sz);line-height:1.4;color:var(--ink);font-weight:600;}
+  .cv-row2 .r{font-size:9.5px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.04em;}
   .cv-edu-item{margin-bottom:8px;}
   .cv-edu-item:last-child{margin-bottom:0;}
   .cv-edu-item strong{font-size:var(--small-sz);display:block;color:var(--ink);}
@@ -160,7 +160,9 @@
   body.tpl-minimal .cv-card{border:0;padding:0;background:transparent;border-radius:0;}
   body.tpl-modern  .cv-layout{grid-template-columns:1fr;}
   body.tpl-modern  .cv-layout>aside{display:grid;grid-template-columns:1fr 1fr;gap:var(--cv-gap);align-content:start;}
-  body.tpl-sidebar .cv-layout>aside{order:-1;}
+  body.tpl-sidebar .cv-layout>aside{order:-1;background:#F8FAFC;border-radius:8px;padding:14px;border-right:2px solid var(--line);}
+  body.tpl-sidebar .cv-layout>aside .cv-card{border:none;background:transparent;padding:0 0 14px 0;margin-bottom:0;border-bottom:1px solid var(--line);border-radius:0;}
+  body.tpl-sidebar .cv-layout>aside .cv-card:last-child{border-bottom:none;padding-bottom:0;}
   body.tpl-creative .cv-header{background:linear-gradient(135deg,var(--accent) 0%,#374151 100%);color:#fff;padding:20px var(--cv-pad);margin:calc(var(--cv-pad)*-1) calc(var(--cv-pad)*-1) 0;border-bottom:none;}
   body.tpl-creative .cv-name,body.tpl-creative .cv-hl,body.tpl-creative .cv-deg,
   body.tpl-creative .cv-contact,body.tpl-creative .cv-contact a{color:#fff;}
@@ -437,7 +439,7 @@ Comunicación y organizaciones | CAME / UTN</textarea>
                   <div class="cv-deg" id="cvDegree">Lic. en Recursos Humanos</div>
                   <div class="cv-contact">
                     <span id="cvLocation">Buenos Aires, Argentina</span> ·
-                    <a id="cvEmail" href="mailto:ceguiazabal@gmail.com">ceguiazabal@gmail.com</a> ·
+                    <a id="cvEmail" href="/cdn-cgi/l/email-protection#2a494f4d5f434b504b484b466a4d474b434604494547"><span class="__cf_email__" data-cfemail="f99a9c9e8c909883989b9895b99e94989095d79a9694">[email&#160;protected]</span></a> ·
                     <a id="cvPhone" href="tel:+541123962046">+54 11 2396-2046</a> ·
                     <a id="cvLinkedIn" href="https://www.linkedin.com/in/cegui" target="_blank">linkedin.com/in/cegui</a>
                   </div>
@@ -491,7 +493,7 @@ Comunicación y organizaciones | CAME / UTN</textarea>
 
   <button class="fab" id="fabPDF">📄</button>
 
-  <script>
+  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
   /* ============================================================
      STATE
   ============================================================ */
@@ -1124,17 +1126,4 @@ window.addEventListener('load', function() {
 
   /* ============================================================
      INIT
-  ============================================================ */
-  setPhotoMode($("inPhotoMode").value);
-  renderJobsEditor();
-
-  if (!loadDraft()) {
-    mirrorToDesktop();
-    syncText();
-  }
-
-  setDefaultZoom();
-  window.addEventListener("resize", setDefaultZoom);
-  </script>
-</body>
-</html>
+  ===============================================
