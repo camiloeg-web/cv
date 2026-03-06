@@ -350,7 +350,7 @@ Comunicación y organizaciones | CAME / UTN</textarea>
         <h3>Plantilla y Estilo</h3>
         <div class="field"><label>Plantilla</label>
           <select id="inTemplate">
-            <option value="tpl-classic">Clásica</option>
+            <option value="tpl-classic">Clásica (ATS)</option>
             <option value="tpl-modern">Moderna</option>
             <option value="tpl-sidebar">Barra Lateral</option>
             <option value="tpl-minimal">Minimalista</option>
@@ -456,7 +456,7 @@ Comunicación y organizaciones | CAME / UTN</textarea>
       <div class="ds-panel" id="d-style">
         <div class="field"><label>Plantilla</label>
           <select id="dInTemplate">
-            <option value="tpl-classic">Clásica</option>
+            <option value="tpl-classic">Clásica (ATS)</option>
             <option value="tpl-modern">Moderna</option>
             <option value="tpl-sidebar">Barra Lateral</option>
             <option value="tpl-minimal">Minimalista</option>
@@ -522,7 +522,7 @@ Comunicación y organizaciones | CAME / UTN</textarea>
                 <div class="cv-deg" id="cvDegree">Lic. en Recursos Humanos</div>
                 <div class="cv-contact">
                   <span id="cvLocation">Buenos Aires, Argentina</span> ·
-                  <a id="cvEmail" href="#">ceguiazabal@gmail.com</a> ·
+                  <a id="cvEmail" href="#"><span class="__cf_email__" data-cfemail="44272123312d253e25262528042329252d286a272b29">[email&#160;protected]</span></a> ·
                   <a id="cvPhone" href="#">+54 11 2396-2046</a> ·
                   <a id="cvLinkedIn" href="#" target="_blank">linkedin.com/in/cegui</a>
                 </div>
@@ -576,7 +576,7 @@ Comunicación y organizaciones | CAME / UTN</textarea>
 
 <button class="fab" id="fabPDF">📄</button>
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 /* ============================================================
    STATE
 ============================================================ */
@@ -910,35 +910,49 @@ const doReset = () => { if(!confirm("¿Reiniciar todo?")) return; localStorage.r
 
 /* ============================================================
    PDF
+   - Uses window.open() so mobile doesn't print the whole page
+   - height:297mm (not min-height) prevents blank second page
 ============================================================ */
-function doPDF() {
-  syncCV();
-  const css = Array.from(document.styleSheets).map(ss => { try { return Array.from(ss.cssRules).map(r=>r.cssText).join("\n"); } catch { return ""; } }).join("\n");
-  const pages = [...document.querySelectorAll(".paper")].filter(p=>p.style.display!=="none").map(p=>p.outerHTML).join("\n");
-  const photoSrc = $("cvPhotoImg").style.display!=="none" ? $("cvPhotoImg").src : "";
-  const html = `<!doctype html><html><head><meta charset="utf-8"/>
+function buildPrintHTML() {
+  const css = Array.from(document.styleSheets).map(ss => {
+    try { return Array.from(ss.cssRules).map(r=>r.cssText).join("\n"); } catch { return ""; }
+  }).join("\n");
+  const pages = [...document.querySelectorAll(".paper")]
+    .filter(p => p.style.display !== "none")
+    .map(p => p.outerHTML).join("\n");
+  const photoSrc = $("cvPhotoImg").style.display !== "none" ? $("cvPhotoImg").src : "";
+  return `<!doctype html><html><head><meta charset="utf-8"/>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-<style>${css}
+<style>
+${css}
 *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;}
 html,body{margin:0;padding:0;background:#fff;font-family:Inter,sans-serif;}
-.paper{width:210mm!important;min-height:297mm!important;box-shadow:none!important;border-radius:0!important;page-break-after:always;break-after:page;}
+/* FIX: height not min-height — prevents blank extra page */
+.paper{width:210mm!important;height:297mm!important;box-shadow:none!important;border-radius:0!important;overflow:hidden;page-break-after:always;break-after:page;}
 .paper:last-child{page-break-after:auto;break-after:auto;}
-.cv-page{width:210mm!important;min-height:297mm!important;}
+.cv-page{width:210mm!important;height:297mm!important;overflow:hidden;}
 @page{size:A4 portrait;margin:0;}
-</style></head><body class="${document.body.className}">
+@media print{html,body{margin:0!important;padding:0!important;}}
+</style>
+</head><body class="${document.body.className}">
 ${pages}
 <script>
-${photoSrc?`document.querySelectorAll('#cvPhotoImg').forEach(i=>{i.src=${JSON.stringify(photoSrc)};i.style.display='block';i.previousElementSibling.style.display='none';});`:""}
-window.addEventListener('load',()=>setTimeout(()=>{window.print();setTimeout(()=>window.close(),800);},600));
+${photoSrc ? `document.querySelectorAll('#cvPhotoImg').forEach(i=>{i.src=${JSON.stringify(photoSrc)};i.style.display='block';if(i.previousElementSibling)i.previousElementSibling.style.display='none';});` : ""}
+window.addEventListener('load', function(){
+  setTimeout(function(){ window.print(); setTimeout(function(){ window.close(); }, 1000); }, 700);
+});
 <\/script></body></html>`;
-  let f = document.getElementById("_pf"); if(f) f.remove();
-  f = document.createElement("iframe");
-  f.id = "_pf";
-  f.style.cssText = "position:fixed;left:-9999px;top:0;width:1px;height:1px;border:none;";
-  document.body.appendChild(f);
-  const doc = f.contentDocument || f.contentWindow.document;
-  doc.open(); doc.write(html); doc.close();
-  f.onload = () => setTimeout(() => { f.contentWindow.focus(); f.contentWindow.print(); setTimeout(()=>f.remove(),3000); }, 600);
+}
+
+function doPDF() {
+  syncCV();
+  const html = buildPrintHTML();
+  // window.open works on both desktop and mobile — iframe on mobile prints the whole parent page
+  const w = window.open("", "_blank", "width=900,height=700");
+  if (!w) { alert("Permití las ventanas emergentes para descargar el PDF."); return; }
+  w.document.open();
+  w.document.write(html);
+  w.document.close();
 }
 ["dBtnPDF","mBtnPDF","fabPDF"].forEach(id => $(id)?.addEventListener("click",doPDF));
 
@@ -977,7 +991,6 @@ function loadDraft() {
   try { const r=localStorage.getItem(STORAGE_KEY); if(r){ applyDraft(JSON.parse(r)); return true; } } catch {}
   return false;
 }
-
 /* ============================================================
    INIT
 ============================================================ */
