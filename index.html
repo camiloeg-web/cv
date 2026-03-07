@@ -398,7 +398,6 @@ body.tpl-creative .cv-title{color:var(--accent);}
   <nav class="top-nav">
     <div class="brand"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-3px;margin-right:6px"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>CV Builder</div>
     <div class="nav-acts">
-      <button class="nav-btn" id="mBtnTranslate"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-2px;margin-right:4px"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>EN</button>
       <button class="nav-btn solid" id="mBtnPDF"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-2px;margin-right:4px"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>PDF</button>
     </div>
   </nav>
@@ -427,13 +426,13 @@ body.tpl-creative .cv-title{color:var(--accent);}
         </div>
         <div class="field"><label>LinkedIn (URL)</label><input id="inLinkedIn" value="https://www.linkedin.com/in/cegui"/></div>
         <div class="field"><label>Ubicación</label><input id="inLocation" value="Buenos Aires, Argentina"/></div>
-        <div class="field"><label id="tProfileLbl">Perfil profesional</label>
+        <div class="field"><label>Perfil profesional</label>
           <textarea id="inProfile">Licenciado en Recursos Humanos con experiencia en entornos corporativos y trayectoria sólida en gestión administrativa y coordinación. Actualmente HRBP Contractor en Oracle, con foco en employee experience, comunicación interna, ejecución de iniciativas de RR.HH. y trabajo cross-functional.</textarea>
         </div>
       </div>
       <div class="panel-card">
         <h3>Áreas y Formación</h3>
-        <div class="field"><label id="tAreasLbl">Áreas HR (una por línea)</label>
+        <div class="field"><label>Áreas HR (una por línea)</label>
           <textarea id="inAreas">HRBP Support
 Employee Experience
 HR Operations
@@ -442,11 +441,11 @@ Internal Communications
 Stakeholder Management
 HR Reporting</textarea>
         </div>
-        <div class="field"><label id="tEduLbl">Educación (Título — Institución | Detalle)</label>
+        <div class="field"><label>Educación (Título — Institución | Detalle)</label>
           <textarea id="inEdu">Lic. en Recursos Humanos — UADE | Finalizado
 Lic. en Psicología — UADE | En curso</textarea>
         </div>
-        <div class="field"><label id="tCoursesLbl">Formación complementaria (Curso | Institución)</label>
+        <div class="field"><label>Formación complementaria (Curso | Institución)</label>
           <textarea id="inCourses">Planificación y gestión de RR.HH. para PyMEs | CAME / UTN
 Técnicas de selección de RR.HH. | CAME / UTN
 Conducción de equipos | CAME / UTN
@@ -498,7 +497,6 @@ Comunicación y organizaciones | CAME / UTN</textarea>
           <button class="tool-btn" id="btnDuplicateJob"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto 3px"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Duplicar</button>
         </div>
         <div style="display:flex;flex-direction:column;gap:8px;">
-          <button class="btn sec full" id="btnTranslateEN"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-2px;margin-right:5px"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>Traducir a inglés</button>
           <button class="btn ghost full" id="btnReset"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-2px;margin-right:5px"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.6"/></svg>Reiniciar todo</button>
         </div>
       </div>
@@ -538,11 +536,11 @@ Comunicación y organizaciones | CAME / UTN</textarea>
         </div>
         <div class="field"><label>LinkedIn (URL)</label><input id="dInLinkedIn" value="https://www.linkedin.com/in/cegui"/></div>
         <div class="field"><label>Ubicación</label><input id="dInLocation" value="Buenos Aires, Argentina"/></div>
-        <div class="field"><label id="dTProfileLbl">Perfil profesional</label>
+        <div class="field"><label>Perfil profesional</label>
           <textarea id="dInProfile">Licenciado en Recursos Humanos con experiencia en entornos corporativos y trayectoria sólida en gestión administrativa y coordinación. Actualmente HRBP Contractor en Oracle, con foco en employee experience, comunicación interna, ejecución de iniciativas de RR.HH. y trabajo cross-functional.</textarea>
         </div>
         <div class="sec-label">Áreas y Formación</div>
-        <div class="field"><label id="dTAreasLbl">Áreas HR (una por línea)</label>
+        <div class="field"><label>Áreas HR (una por línea)</label>
           <textarea id="dInAreas">HRBP Support
 Employee Experience
 HR Operations
@@ -551,11 +549,11 @@ Internal Communications
 Stakeholder Management
 HR Reporting</textarea>
         </div>
-        <div class="field"><label id="dTEduLbl">Educación (Título — Institución | Detalle)</label>
+        <div class="field"><label>Educación (Título — Institución | Detalle)</label>
           <textarea id="dInEdu">Lic. en Recursos Humanos — UADE | Finalizado
 Lic. en Psicología — UADE | En curso</textarea>
         </div>
-        <div class="field"><label id="dTCoursesLbl">Formación complementaria (Curso | Institución)</label>
+        <div class="field"><label>Formación complementaria (Curso | Institución)</label>
           <textarea id="dInCourses">Planificación y gestión de RR.HH. para PyMEs | CAME / UTN
 Técnicas de selección de RR.HH. | CAME / UTN
 Conducción de equipos | CAME / UTN
@@ -608,7 +606,6 @@ Comunicación y organizaciones | CAME / UTN</textarea>
           <button class="tool-btn" id="dBtnDuplicateJob"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto 3px"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Duplicar</button>
         </div>
         <div style="display:flex;flex-direction:column;gap:8px;">
-          <button class="btn sec full" id="dBtnTranslate"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-2px;margin-right:5px"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>Traducir a inglés</button>
           <button class="btn ghost full" id="dBtnReset"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-2px;margin-right:5px"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.6"/></svg>Reiniciar todo</button>
         </div>
       </div>
@@ -1017,32 +1014,6 @@ function dupJob() {
  ["btnCountWords","dBtnCountWords",countW],["btnDuplicateJob","dBtnDuplicateJob",dupJob]]
   .forEach(([m,d,fn]) => { $(m)?.addEventListener("click",fn); $(d)?.addEventListener("click",fn); });
 
-/* ============================================================
-   TRANSLATE
-============================================================ */
-const G = [[/\bRecursos Humanos\b/gi,"Human Resources"],[/\bRR\.?HH\.?\b/gi,"HR"],
-  [/\bActualidad\b/gi,"Present"],[/\bGestión\b/gi,"Management"],[/\bCoordinaci[oó]n\b/gi,"Coordination"],
-  [/\bDic\b/gi,"Dec"],[/\bCarrera progresiva/gi,"Progressive career"],[/\bGestionó\b/gi,"Managed"]];
-const tH = t => G.reduce((s,[r,v])=>s.replace(r,v), t||"");
-
-function doTranslate() {
-  if (!confirm("¿Traducir todo al inglés?")) return;
-  [["tProfileLbl","dTProfileLbl","Profile"],["tAreasLbl","dTAreasLbl","HR Areas"],
-   ["tEduLbl","dTEduLbl","Education"],["tCoursesLbl","dTCoursesLbl","Training"],["tExpEdit","dTExpEdit","Experience"]]
-    .forEach(([m,d,v]) => { if($(m)) $(m).textContent=v; if($(d)) $(d).textContent=v; });
-  ["tProfile","tExperience","tExperience2"].forEach(id => { const el=$(id); if(el) el.textContent=id.includes("2")?"Experience (cont.)":"Experience"; });
-  $("tAreas").textContent="HR Areas"; $("tEdu").textContent="Education"; $("tCourses").textContent="Additional Training";
-  PAIRS.slice(0,11).forEach(([mId,dId]) => {
-    const val = fv(mId,dId);
-    const t = (mId==="inAreas"||mId==="inEdu"||mId==="inCourses")
-      ? val.split("\n").map(l=>{ const p=l.split("|").map(s=>s.trim()); return p.length===2?`${tH(p[0])} | ${tH(p[1])}`:tH(l); }).join("\n")
-      : tH(val);
-    if($(mId)) $(mId).value=t; if($(dId)) $(dId).value=t;
-  });
-  jobs = jobs.map(j=>({role:tH(j.role),meta:tH(j.meta),dates:tH(j.dates),bullets:(j.bullets||[]).map(tH)}));
-  renderJobsEditor(); syncCV(); autoSave(); alert("✅ Traducido!");
-}
-["btnTranslateEN","dBtnTranslate","mBtnTranslate"].forEach(id => $(id)?.addEventListener("click",doTranslate));
 
 const doReset = () => { if(!confirm("¿Reiniciar todo?")) return; localStorage.removeItem(STORAGE_KEY); location.reload(); };
 ["btnReset","dBtnReset"].forEach(id => $(id)?.addEventListener("click",doReset));
