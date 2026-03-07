@@ -1007,7 +1007,7 @@ Perfil: ${p}\nExperiencia: ${jw}\nTotal: ${p+jw}`);
 function dupJob() {
   if (!jobs.length) return alert("No hay trabajos.");
   jobs.unshift({...jobs[0],role:jobs[0].role+" (copia)",bullets:[...jobs[0].bullets]});
-  renderJobsEditor(); syncCV(); autoSave(); alert("✅ Duplicado!");
+  renderJobsEditor(); syncCV(); autoSave(); alert("Trabajo duplicado.");
 }
 
 [["btnAutoFormat","dBtnAutoFormat",autoFormat],["btnSpellCheck","dBtnSpellCheck",stats],
