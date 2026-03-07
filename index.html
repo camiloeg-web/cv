@@ -631,12 +631,6 @@ Comunicación y organizaciones | CAME / UTN</textarea>
             </div>
             <div class="cv-layout">
               <div class="cv-main" id="cvMain">
-                <!-- Sidebar template shows name here in the main column -->
-                <div id="sbNameMain" style="display:none;margin-bottom:18px;">
-                  <div class="cv-name-main" id="cvNameMain"></div>
-                  <div class="cv-hl-main" id="cvHlMain"></div>
-                  <div class="cv-deg-main" id="cvDegMain"></div>
-                </div>
                 <div class="cv-section cv-card">
                   <div class="cv-title" id="tProfile">Perfil</div>
                   <p class="cv-p" id="cvProfile"></p>
@@ -647,8 +641,6 @@ Comunicación y organizaciones | CAME / UTN</textarea>
                 </div>
               </div>
               <div class="cv-side" id="cvSide">
-                <!-- Sidebar header: injected by JS for tpl-sidebar -->
-                <div id="sbHeader"></div>
                 <div class="cv-card">
                   <div class="cv-title" id="tAreas">Áreas HR</div>
                   <ul class="cv-list" id="cvAreas"></ul>
@@ -821,7 +813,7 @@ function renderJobs() {
 }
 
 function syncCV() {
-  // Header
+  // Header visible (todos los templates excepto sidebar)
   $("cvName").textContent      = fv("inName","dInName");
   $("cvHeadline").textContent  = fv("inHeadline","dInHeadline");
   $("cvDegree").textContent    = fv("inDegree","dInDegree");
@@ -834,30 +826,31 @@ function syncCV() {
   $("cvPhone").textContent = phone; $("cvPhone").href = phone ? `tel:${toTel(phone)}` : "#";
   $("cvLinkedIn").textContent = liShort(li); $("cvLinkedIn").href = li || "#";
 
-  // Sidebar template: inject name/contact/headline into the dark sidebar
-  const isSidebar = document.body.classList.contains("tpl-sidebar");
-  const sbHdr = $("sbHeader");
-  const sbNameMain = $("sbNameMain");
-  if (sbHdr) {
-    if (isSidebar) {
-      const loc = fv("inLocation","dInLocation");
-      sbHdr.innerHTML = `
-        <div class="sb-name">${esc(fv("inName","dInName"))}</div>
-        <div class="sb-deg">${esc(fv("inDegree","dInDegree"))}</div>
-        <div class="sb-hl">${esc(fv("inHeadline","dInHeadline"))}</div>
-        <div class="sb-contact">
-          ${loc ? esc(loc)+'<br>' : ''}
-          ${email ? `<a href="mailto:${esc(email)}">${esc(email)}</a><br>` : ''}
-          ${phone ? esc(phone)+'<br>' : ''}
-          ${li ? `<a href="${esc(li)}" target="_blank">${esc(liShort(li))}</a>` : ''}
-        </div>`;
-    } else {
-      sbHdr.innerHTML = "";
-    }
-  }
-  if (sbNameMain) sbNameMain.style.display = "none";
-  // Side
+  // Side sections
   renderAreas(); renderEdu(); renderCourses();
+
+  // Sidebar: inyectar/limpiar bloque de datos personales al inicio del cv-side
+  const isSidebar = document.body.classList.contains("tpl-sidebar");
+  const cvSide = $("cvSide");
+  const existingSbHdr = $("sbHdrInjected");
+  if (existingSbHdr) existingSbHdr.remove();
+  if (isSidebar && cvSide) {
+    const loc = fv("inLocation","dInLocation");
+    const hdr = document.createElement("div");
+    hdr.id = "sbHdrInjected";
+    hdr.innerHTML = `
+      <div class="sb-name">${esc(fv("inName","dInName"))}</div>
+      <div class="sb-deg">${esc(fv("inDegree","dInDegree"))}</div>
+      <div class="sb-hl">${esc(fv("inHeadline","dInHeadline"))}</div>
+      <div class="sb-contact">
+        ${loc ? esc(loc)+'<br>' : ''}
+        ${email ? `<a href="mailto:${esc(email)}">${esc(email)}</a><br>` : ''}
+        ${phone ? esc(phone)+'<br>' : ''}
+        ${li ? `<a href="${esc(li)}" target="_blank">${esc(liShort(li))}</a>` : ''}
+      </div>`;
+    cvSide.insertBefore(hdr, cvSide.firstChild);
+  }
+
   // Jobs
   renderJobs();
 }
