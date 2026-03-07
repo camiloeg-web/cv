@@ -138,6 +138,7 @@ body.show-stage .fab{display:flex;}
 .cv-deg{margin-top:4px;font-size:var(--deg-sz);font-weight:800;color:var(--accent);}
 .cv-contact{margin-top:8px;font-size:var(--contact-sz);color:var(--muted);line-height:1.6;}
 .cv-contact a{color:var(--accent);text-decoration:none;font-weight:600;}
+.cv-sep{color:var(--muted);font-weight:400;margin:0 1px;}
 .cv-photo{width:100px;height:100px;border-radius:8px;border:2px solid var(--line);background:#F3F4F6;overflow:hidden;display:flex;align-items:center;justify-content:center;color:#9CA3AF;font-weight:800;font-size:10px;flex-shrink:0;justify-self:end;}
 .cv-photo img{width:100%;height:100%;object-fit:cover;display:block;}
 
@@ -166,15 +167,23 @@ ul.cv-bullets li{font-size:var(--bullet-sz);line-height:1.55;color:var(--ink);ma
 
 /* ── Side sections ── */
 .cv-list{margin:0;padding-left:14px;}
-.cv-list li{font-size:var(--small-sz);margin-bottom:5px;color:var(--ink);line-height:1.4;}
+.cv-list li{font-size:var(--small-sz);margin-bottom:5px;color:var(--ink);line-height:1.4;word-break:break-word;}
 .cv-edu-item{margin-bottom:10px;}
 .cv-edu-item:last-child{margin-bottom:0;}
-.cv-edu-item strong{font-size:var(--small-sz);display:block;color:var(--ink);font-weight:700;line-height:1.4;}
+.cv-edu-item strong{font-size:var(--small-sz);display:block;color:var(--ink);font-weight:700;line-height:1.4;word-break:break-word;}
 .cv-edu-item span{font-size:var(--small-sz);color:var(--muted);display:block;margin-top:1px;}
 .cv-courses{display:flex;flex-direction:column;gap:8px;}
 .cv-course{display:flex;flex-direction:column;gap:1px;}
-.cv-course .cn{font-size:var(--small-sz);color:var(--ink);font-weight:600;line-height:1.4;}
+.cv-course .cn{font-size:var(--small-sz);color:var(--ink);font-weight:600;line-height:1.4;word-break:break-word;}
 .cv-course .ci{font-size:9px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.04em;}
+/* Fix global: texto largo no rompe layout */
+.cv-name{overflow-wrap:break-word;word-break:break-word;}
+.cv-hl{overflow-wrap:break-word;}
+.cv-deg{overflow-wrap:break-word;}
+.cv-contact{overflow-wrap:break-word;word-break:break-all;}
+.cv-p{overflow-wrap:break-word;}
+ul.cv-bullets li{overflow-wrap:break-word;word-break:break-word;}
+.cv-jobrole{overflow-wrap:break-word;word-break:break-word;}
 
 /* ===================== TEMPLATE: CLÁSICA ===================== */
 body.tpl-classic .cv-header{border-bottom:2px solid var(--accent);}
@@ -621,12 +630,7 @@ Comunicación y organizaciones | CAME / UTN</textarea>
                 <h1 class="cv-name" id="cvName">Camilo Eguiazabal</h1>
                 <div class="cv-hl" id="cvHeadline">HRBP · People Analytics · Employee Experience</div>
                 <div class="cv-deg" id="cvDegree">Lic. en Recursos Humanos</div>
-                <div class="cv-contact">
-                  <span id="cvLocation">Buenos Aires, Argentina</span> ·
-                  <a id="cvEmail" href="#"><span class="__cf_email__" data-cfemail="44272123312d253e25262528042329252d286a272b29">[email&#160;protected]</span></a> ·
-                  <a id="cvPhone" href="#">+54 11 2396-2046</a> ·
-                  <a id="cvLinkedIn" href="#" target="_blank">linkedin.com/in/cegui</a>
-                </div>
+                <div class="cv-contact" id="cvContact"></div>
               </div>
               <div class="cv-photo" id="cvPhotoBox">
                 <span id="cvPhotoLabel">FOTO</span>
@@ -789,13 +793,14 @@ function renderCourses() {
 function makeJob(j) {
   const d = document.createElement("div");
   d.className = "cv-job";
+  const bullets = (j.bullets||[]).filter(b => b && b.trim());
   d.innerHTML = `
     <div class="cv-jobhead">
-      <span class="cv-jobrole">${esc(j.role)}</span>
-      <span class="cv-jobdate">${esc(j.dates)}</span>
+      <span class="cv-jobrole">${esc(j.role||"")}</span>
+      <span class="cv-jobdate">${esc(j.dates||"")}</span>
     </div>
-    <div class="cv-jobmeta">${esc(j.meta)}</div>
-    <ul class="cv-bullets">${(j.bullets||[]).map(b=>`<li>${esc(b)}</li>`).join("")}</ul>`;
+    ${j.meta ? `<div class="cv-jobmeta">${esc(j.meta)}</div>` : ""}
+    ${bullets.length ? `<ul class="cv-bullets">${bullets.map(b=>`<li>${esc(b)}</li>`).join("")}</ul>` : ""}`;
   return d;
 }
 
@@ -817,18 +822,27 @@ function renderJobs() {
 }
 
 function syncCV() {
-  // Header visible (todos los templates excepto sidebar)
-  $("cvName").textContent      = fv("inName","dInName");
-  $("cvHeadline").textContent  = fv("inHeadline","dInHeadline");
-  $("cvDegree").textContent    = fv("inDegree","dInDegree");
-  $("cvProfile").textContent   = fv("inProfile","dInProfile");
-  $("cvLocation").textContent  = fv("inLocation","dInLocation");
+  $("cvName").textContent     = fv("inName","dInName");
+  $("cvHeadline").textContent = fv("inHeadline","dInHeadline");
+  $("cvDegree").textContent   = fv("inDegree","dInDegree");
+  $("cvProfile").textContent  = fv("inProfile","dInProfile");
+
+  const loc   = fv("inLocation","dInLocation");
   const email = fv("inEmail","dInEmail");
   const phone = fv("inPhone","dInPhone");
   const li    = fv("inLinkedIn","dInLinkedIn");
-  $("cvEmail").textContent = email; $("cvEmail").href = email ? `mailto:${email}` : "#";
-  $("cvPhone").textContent = phone; $("cvPhone").href = phone ? `tel:${toTel(phone)}` : "#";
-  $("cvLinkedIn").textContent = liShort(li); $("cvLinkedIn").href = li || "#";
+
+  // Fix: construir contacto dinamicamente — sin separadores huerfanos
+  const contactParts = [];
+  if (loc)   contactParts.push(`<span>${esc(loc)}</span>`);
+  if (email) contactParts.push(`<a href="mailto:${esc(email)}">${esc(email)}</a>`);
+  if (phone) contactParts.push(`<a href="tel:${esc(toTel(phone))}">${esc(phone)}</a>`);
+  if (li) {
+    // Fix: agregar https:// si falta para que el href funcione
+    const liHref = /^https?:\/\//i.test(li) ? li : "https://" + li;
+    contactParts.push(`<a href="${esc(liHref)}" target="_blank">${esc(liShort(li))}</a>`);
+  }
+  $("cvContact").innerHTML = contactParts.join(' <span class="cv-sep">·</span> ');
 
   // Side sections
   renderAreas(); renderEdu(); renderCourses();
@@ -839,23 +853,21 @@ function syncCV() {
   const existingSbHdr = $("sbHdrInjected");
   if (existingSbHdr) existingSbHdr.remove();
   if (isSidebar && cvSide) {
-    const loc = fv("inLocation","dInLocation");
     const hdr = document.createElement("div");
     hdr.id = "sbHdrInjected";
+    const sbParts = [];
+    if (loc)   sbParts.push(esc(loc));
+    if (email) sbParts.push(`<a href="mailto:${esc(email)}">${esc(email)}</a>`);
+    if (phone) sbParts.push(esc(phone));
+    if (li)    sbParts.push(`<a href="${/^https?:\/\//i.test(li)?esc(li):"https://"+esc(li)}" target="_blank">${esc(liShort(li))}</a>`);
     hdr.innerHTML = `
       <div class="sb-name">${esc(fv("inName","dInName"))}</div>
       <div class="sb-deg">${esc(fv("inDegree","dInDegree"))}</div>
       <div class="sb-hl">${esc(fv("inHeadline","dInHeadline"))}</div>
-      <div class="sb-contact">
-        ${loc ? esc(loc)+'<br>' : ''}
-        ${email ? `<a href="mailto:${esc(email)}">${esc(email)}</a><br>` : ''}
-        ${phone ? esc(phone)+'<br>' : ''}
-        ${li ? `<a href="${esc(li)}" target="_blank">${esc(liShort(li))}</a>` : ''}
-      </div>`;
+      <div class="sb-contact">${sbParts.join("<br>")}</div>`;
     cvSide.insertBefore(hdr, cvSide.firstChild);
   }
 
-  // Jobs
   renderJobs();
 }
 
