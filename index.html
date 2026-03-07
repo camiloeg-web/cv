@@ -180,14 +180,39 @@ ul.cv-bullets li{font-size:var(--bullet-sz);line-height:1.55;color:var(--ink);ma
 body.tpl-classic .cv-header{border-bottom:2px solid var(--accent);}
 body.tpl-classic .cv-card{border:1px solid var(--line);border-radius:8px;padding:14px;}
 
-/* ===================== TEMPLATE: MODERNA ===================== */
-body.tpl-modern .cv-layout{grid-template-columns:1fr;}
-body.tpl-modern .cv-side{display:grid;grid-template-columns:1fr 1fr 1fr;gap:var(--cv-gap);}
+/* ===================== TEMPLATE: MODERNA =====================
+   Layout de una columna: todo apilado verticalmente
+   cv-main ocupa el espacio que necesita, cv-side va debajo en 3 cols
+   El cv-layout usa flex para distribuir el espacio sobrante
+================================================================ */
+body.tpl-modern .cv-layout{
+  display:flex;
+  flex-direction:column;
+  gap:0;
+}
+body.tpl-modern .cv-main{
+  /* main crece pero no infinito — permite que side aparezca */
+  flex:1 1 auto;
+  min-height:0;
+  overflow:hidden;
+}
+body.tpl-modern .cv-side{
+  flex:0 0 auto;
+  display:grid;
+  grid-template-columns:1fr 1fr 1fr;
+  gap:var(--cv-gap);
+  padding-top:14px;
+  border-top:1.5px solid var(--line);
+  margin-top:4px;
+}
 body.tpl-modern .cv-card{border:none;border-radius:0;padding:0;background:transparent;margin-bottom:0;}
-body.tpl-modern .cv-section{border-top:1.5px solid var(--line);padding-top:14px;margin-bottom:18px;}
+body.tpl-modern .cv-section{border-top:1.5px solid var(--line);padding-top:14px;margin-bottom:16px;}
+body.tpl-modern .cv-section:first-child{border-top:none;padding-top:0;}
 body.tpl-modern .cv-header{border-bottom:2px solid var(--ink);}
 body.tpl-modern .cv-title{letter-spacing:.2em;}
 body.tpl-modern .cv-job{border-bottom:1px solid var(--line);}
+/* En side de moderna no hay cards con borde */
+body.tpl-modern .cv-side .cv-card{border:none;padding:0;margin:0;}
 
 /* ===================== TEMPLATE: BARRA LATERAL =====================
    Estructura real de CV de dos columnas:
@@ -338,8 +363,13 @@ body.tpl-creative .cv-deg{color:rgba(255,255,255,.65);}
 body.tpl-creative .cv-contact{color:rgba(255,255,255,.75);}
 body.tpl-creative .cv-contact a{color:#fff;}
 body.tpl-creative .cv-photo{border-color:rgba(255,255,255,.3);}
-body.tpl-creative .cv-layout{grid-template-columns:1fr;}
-body.tpl-creative .cv-side{display:grid;grid-template-columns:1fr 1fr 1fr;gap:var(--cv-gap);}
+body.tpl-creative .cv-layout{display:flex;flex-direction:column;gap:0;}
+body.tpl-creative .cv-main{flex:1 1 auto;min-height:0;overflow:hidden;}
+body.tpl-creative .cv-side{
+  flex:0 0 auto;
+  display:grid;grid-template-columns:1fr 1fr 1fr;gap:var(--cv-gap);
+  padding-top:14px;border-top:1px solid var(--line);margin-top:4px;
+}
 body.tpl-creative .cv-card{border:1px solid var(--line);border-radius:10px;padding:14px;background:#FAFAFE;}
 body.tpl-creative .cv-title{color:var(--accent);}
 
