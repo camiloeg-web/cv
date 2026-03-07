@@ -1009,45 +1009,83 @@ const doReset = () => { if(!confirm("¿Reiniciar todo?")) return; localStorage.r
 ["btnReset","dBtnReset"].forEach(id => $(id)?.addEventListener("click",doReset));
 
 /* ============================================================
-   PDF
-   - Uses window.open() so mobile doesn't print the whole page
-   - height:297mm (not min-height) prevents blank second page
+   PDF — ventana separada, CSS propio en mm, sin herencia de px
 ============================================================ */
 function buildPrintHTML() {
-  const css = Array.from(document.styleSheets).map(ss => {
-    try { return Array.from(ss.cssRules).map(r=>r.cssText).join("\n"); } catch { return ""; }
+  // Recolectar solo las reglas de CV (no las del shell/app)
+  const allCSS = Array.from(document.styleSheets).map(ss => {
+    try { return Array.from(ss.cssRules).map(r => r.cssText).join("\n"); } catch { return ""; }
   }).join("\n");
+
   const pages = [...document.querySelectorAll(".paper")]
     .filter(p => p.style.display !== "none")
     .map(p => p.outerHTML).join("\n");
+
   const photoSrc = $("cvPhotoImg").style.display !== "none" ? $("cvPhotoImg").src : "";
-  return `<!doctype html><html><head><meta charset="utf-8"/>
+  const bodyClass = document.body.className;
+
+  // Extraer variables CSS actuales (tokens + tema + template)
+  const cs = getComputedStyle(document.documentElement);
+  const tokens = [
+    '--ink','--muted','--line','--accent','--cv-pad','--cv-gap',
+    '--cv-cols','--hdr-cols','--name-sz','--hl-sz','--deg-sz',
+    '--contact-sz','--title-sz','--p-sz','--jobrole-sz','--bullet-sz','--small-sz'
+  ].map(v => `${v}:${cs.getPropertyValue(v).trim()}`).join(';');
+
+  return `<!doctype html><html><head>
+<meta charset="utf-8"/>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
-${css}
-*{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;}
-html,body{margin:0;padding:0;background:#fff;font-family:Inter,sans-serif;}
-/* FIX: height not min-height — prevents blank extra page */
-.paper{width:210mm!important;height:297mm!important;box-shadow:none!important;border-radius:0!important;overflow:hidden;page-break-after:always;break-after:page;}
+/* ── Reset absoluto para impresión ── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;}
+@page{size:210mm 297mm;margin:0;}
+html,body{margin:0;padding:0;background:#fff;font-family:Inter,system-ui,sans-serif;}
+
+/* ── Tokens heredados del template activo ── */
+:root{${tokens}}
+
+/* ── Sobreescritura de dimensiones px → mm ── */
+.paper{
+  width:210mm!important;height:297mm!important;
+  box-shadow:none!important;border-radius:0!important;
+  overflow:hidden;background:#fff;
+  page-break-after:always;break-after:page;
+}
 .paper:last-child{page-break-after:auto;break-after:auto;}
-.cv-page{width:210mm!important;height:297mm!important;overflow:hidden;}
-@page{size:A4 portrait;margin:0;}
-@media print{html,body{margin:0!important;padding:0!important;}}
+.cv-page{
+  width:210mm!important;height:297mm!important;
+  overflow:hidden;background:#fff;
+}
+
+/* ── Pegar todo el CSS del app (templates, tipografía, layouts) ── */
+${allCSS}
+
+/* ── Resobreescribir px duros que el app CSS pone ── */
+.paper,.cv-page{width:210mm!important;height:297mm!important;}
+body.tpl-sidebar .cv-page{height:297mm!important;}
+
+/* ── Esconder chrome del app ── */
+.top-nav,.tab-bar,.mobile-panels,.desktop-sidebar,.fab,
+.zoom-bar,.ds-head,.ds-foot,.ds-body,.stage,.cv-stage-wrap{display:none!important;}
 </style>
-</head><body class="${document.body.className}">
+</head>
+<body class="${bodyClass}" style="background:#fff;">
 ${pages}
 <script>
-${photoSrc ? `document.querySelectorAll('#cvPhotoImg').forEach(i=>{i.src=${JSON.stringify(photoSrc)};i.style.display='block';if(i.previousElementSibling)i.previousElementSibling.style.display='none';});` : ""}
+${photoSrc ? `document.querySelectorAll('#cvPhotoImg').forEach(function(i){i.src=${JSON.stringify(photoSrc)};i.style.display='block';var prev=i.previousElementSibling;if(prev)prev.style.display='none';});` : ""}
 window.addEventListener('load', function(){
-  setTimeout(function(){ window.print(); setTimeout(function(){ window.close(); }, 1000); }, 700);
+  setTimeout(function(){
+    window.print();
+    setTimeout(function(){ window.close(); }, 1200);
+  }, 800);
 });
-<\/script></body></html>`;
+<\/script>
+</body></html>`;
 }
 
 function doPDF() {
   syncCV();
   const html = buildPrintHTML();
-  // window.open works on both desktop and mobile — iframe on mobile prints the whole parent page
   const w = window.open("", "_blank", "width=900,height=700");
   if (!w) { alert("Permití las ventanas emergentes para descargar el PDF."); return; }
   w.document.open();
