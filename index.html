@@ -105,7 +105,7 @@ textarea{min-height:80px;resize:vertical;line-height:1.55;}
 .btn.danger{background:#EF4444;color:#fff;}
 .btn.sm{padding:6px 10px;font-size:12px;border-radius:7px;}
 .btn.full{width:100%;}
-.tools-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px;}
+
 .tool-btn{display:flex;flex-direction:column;align-items:center;gap:4px;padding:11px 8px;border:1px solid var(--line);border-radius:11px;background:var(--bg);cursor:pointer;font:600 11px Inter,sans-serif;color:var(--muted);transition:all .15s;}
 .tool-btn .ti{font-size:18px;}
 .tool-btn:hover{border-color:var(--accent);color:var(--accent);background:#fff;transform:translateY(-1px);}
@@ -489,16 +489,7 @@ Comunicación y organizaciones | CAME / UTN</textarea>
         </div>
       </div>
       <div class="panel-card">
-        <h3>Herramientas</h3>
-        <div class="tools-grid">
-          <button class="tool-btn" id="btnAutoFormat"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto 3px"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>Auto-formato</button>
-          <button class="tool-btn" id="btnSpellCheck"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto 3px"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>Estadísticas</button>
-          <button class="tool-btn" id="btnCountWords"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto 3px"><path d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"/></svg>Palabras</button>
-          <button class="tool-btn" id="btnDuplicateJob"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto 3px"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Duplicar</button>
-        </div>
-        <div style="display:flex;flex-direction:column;gap:8px;">
-          <button class="btn ghost full" id="btnReset"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-2px;margin-right:5px"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.6"/></svg>Reiniciar todo</button>
-        </div>
+        <button class="btn ghost full" id="btnReset"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-2px;margin-right:5px"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.6"/></svg>Reiniciar todo</button>
       </div>
     </div>
 
@@ -520,7 +511,6 @@ Comunicación y organizaciones | CAME / UTN</textarea>
         <button class="ds-tab active" data-dtab="d-edit">Datos</button>
         <button class="ds-tab" data-dtab="d-style">Estilo</button>
         <button class="ds-tab" data-dtab="d-jobs">Trabajos</button>
-        <button class="ds-tab" data-dtab="d-tools">Tools</button>
       </div>
     </div>
     <div class="ds-body">
@@ -598,20 +588,9 @@ Comunicación y organizaciones | CAME / UTN</textarea>
         <div class="hint">Arrastrá para reordenar.</div>
       </div>
 
-      <div class="ds-panel" id="d-tools">
-        <div class="tools-grid">
-          <button class="tool-btn" id="dBtnAutoFormat"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto 3px"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>Auto-formato</button>
-          <button class="tool-btn" id="dBtnSpellCheck"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto 3px"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>Estadísticas</button>
-          <button class="tool-btn" id="dBtnCountWords"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto 3px"><path d="M4 9h1v1H4c-1.5 0-3-1.69-3-3.5S2.55 3 4 3h4c1.45 0 3 1.69 3 3.5 0 1.41-.91 2.72-2 3.25V8.59c.58-.45 1-1.27 1-2.09C10 5.22 8.98 4 8 4H4c-.98 0-2 1.22-2 2.5S3 9 4 9zm9-3h-1v1h1c1 0 2 1.22 2 2.5S13.98 12 13 12H9c-.98 0-2-1.22-2-2.5 0-.83.42-1.64 1-2.09V6.25c-1.09.53-2 1.84-2 3.25C6 11.31 7.55 13 9 13h4c1.45 0 3-1.69 3-3.5S14.5 6 13 6z"/></svg>Palabras</button>
-          <button class="tool-btn" id="dBtnDuplicateJob"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0 auto 3px"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>Duplicar</button>
-        </div>
-        <div style="display:flex;flex-direction:column;gap:8px;">
-          <button class="btn ghost full" id="dBtnReset"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-2px;margin-right:5px"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.6"/></svg>Reiniciar todo</button>
-        </div>
-      </div>
-    </div>
-    <div class="ds-foot">
+      <div class="ds-foot">
       <button class="btn full" id="dBtnPDF"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-2px;margin-right:6px"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>Descargar PDF</button>
+      <button class="btn ghost full" id="dBtnReset" style="margin-top:8px"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-2px;margin-right:5px"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.6"/></svg>Reiniciar todo</button>
     </div>
   </aside>
 
@@ -983,36 +962,15 @@ const addJob = () => {
 /* ============================================================
    TOOLS
 ============================================================ */
-function autoFormat() {
-  jobs = jobs.map(j => ({...j, bullets:(j.bullets||[]).map(b=>{const t=b.trim();return t?t[0].toUpperCase()+t.slice(1):"";}).filter(Boolean)}));
-  PAIRS.slice(0,2).forEach(([m,d]) => {
-    [m,d].forEach(id => { const el=$(id); if(el&&el.value) el.value=el.value.trim(); });
-  });
-  renderJobsEditor(); syncCV(); autoSave(); alert("Formato aplicado!");
-}
 
-function stats() {
-  const wc = [$("inProfile").value,...jobs.flatMap(j=>[j.role,...(j.bullets||[])])].join(" ").split(/\s+/).filter(w=>w).length;
-  alert(`Estadísticas
-\nPalabras: ${wc}\nTrabajos: ${jobs.length}\nBullets: ${jobs.reduce((s,j)=>s+(j.bullets?.length||0),0)}\n\nIdeal: 400-600 palabras.`);
-}
 
-function countW() {
-  const p=$("inProfile").value.split(/\s+/).filter(w=>w).length;
-  const jw=jobs.reduce((s,j)=>s+(j.bullets||[]).join(" ").split(/\s+/).filter(w=>w).length,0);
-  alert(`Palabras
-Perfil: ${p}\nExperiencia: ${jw}\nTotal: ${p+jw}`);
-}
 
-function dupJob() {
-  if (!jobs.length) return alert("No hay trabajos.");
-  jobs.unshift({...jobs[0],role:jobs[0].role+" (copia)",bullets:[...jobs[0].bullets]});
-  renderJobsEditor(); syncCV(); autoSave(); alert("Trabajo duplicado.");
-}
 
-[["btnAutoFormat","dBtnAutoFormat",autoFormat],["btnSpellCheck","dBtnSpellCheck",stats],
- ["btnCountWords","dBtnCountWords",countW],["btnDuplicateJob","dBtnDuplicateJob",dupJob]]
-  .forEach(([m,d,fn]) => { $(m)?.addEventListener("click",fn); $(d)?.addEventListener("click",fn); });
+
+
+
+
+
 
 
 const doReset = () => { if(!confirm("¿Reiniciar todo?")) return; localStorage.removeItem(STORAGE_KEY); location.reload(); };
