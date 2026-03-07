@@ -323,13 +323,17 @@ body.tpl-sidebar .cv-deg-main{font-size:11px;font-weight:700;color:#1E293B;margi
 
 
 /* ===================== TEMPLATE: MINIMALISTA ===================== */
-body.tpl-minimal .cv-header{border-bottom:1px solid var(--ink);padding-bottom:12px;}
+body.tpl-minimal {--hdr-cols:1fr 108px;}
+body.tpl-minimal .cv-header{border-bottom:1px solid var(--ink);padding-bottom:14px;}
 body.tpl-minimal .cv-name{font-size:30px;letter-spacing:-.04em;}
+body.tpl-minimal .cv-hl{color:var(--muted);}
 body.tpl-minimal .cv-deg{font-weight:500;color:var(--muted);}
 body.tpl-minimal .cv-card{border:none;border-radius:0;padding:0;background:transparent;margin-bottom:0;}
 body.tpl-minimal .cv-section{border-top:1px solid var(--line);padding-top:12px;margin-bottom:14px;}
+body.tpl-minimal .cv-section:first-child{border-top:none;padding-top:0;}
 body.tpl-minimal .cv-title{color:var(--ink);letter-spacing:.22em;font-size:9px;}
 body.tpl-minimal .cv-job{border-bottom:1px solid var(--line);}
+body.tpl-minimal .cv-photo{border-radius:4px;border-color:var(--line);}
 
 /* ===================== TEMPLATE: EJECUTIVA ===================== */
 body.tpl-executive .cv-page{padding-top:0;}
@@ -1032,10 +1036,9 @@ const doReset = () => { if(!confirm("¿Reiniciar todo?")) return; localStorage.r
 ["btnReset","dBtnReset"].forEach(id => $(id)?.addEventListener("click",doReset));
 
 /* ============================================================
-   PDF — ventana separada, CSS propio en mm, sin herencia de px
+   PDF — renderiza en px igual que pantalla, mapea a A4 exacto
 ============================================================ */
 function buildPrintHTML() {
-  // Recolectar solo las reglas de CV (no las del shell/app)
   const allCSS = Array.from(document.styleSheets).map(ss => {
     try { return Array.from(ss.cssRules).map(r => r.cssText).join("\n"); } catch { return ""; }
   }).join("\n");
@@ -1047,60 +1050,62 @@ function buildPrintHTML() {
   const photoSrc = $("cvPhotoImg").style.display !== "none" ? $("cvPhotoImg").src : "";
   const bodyClass = document.body.className;
 
-  // Extraer variables CSS actuales (tokens + tema + template)
-  const cs = getComputedStyle(document.documentElement);
-  const tokens = [
-    '--ink','--muted','--line','--accent','--cv-pad','--cv-gap',
-    '--cv-cols','--hdr-cols','--name-sz','--hl-sz','--deg-sz',
-    '--contact-sz','--title-sz','--p-sz','--jobrole-sz','--bullet-sz','--small-sz'
-  ].map(v => `${v}:${cs.getPropertyValue(v).trim()}`).join(';');
-
   return `<!doctype html><html><head>
 <meta charset="utf-8"/>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
-/* ── Reset absoluto para impresión ── */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;}
-@page{size:210mm 297mm;margin:0;}
-html,body{margin:0;padding:0;background:#fff;font-family:Inter,system-ui,sans-serif;}
 
-/* ── Tokens heredados del template activo ── */
-:root{${tokens}}
+/* A4 a 96dpi = 794x1123px exacto. Sin márgenes. */
+@page{size:794px 1123px;margin:0;}
 
-/* ── Sobreescritura de dimensiones px → mm ── */
+html,body{
+  margin:0;padding:0;
+  width:794px;
+  background:#fff;
+  font-family:Inter,system-ui,sans-serif;
+}
+
+/* Cada .paper es una página exacta */
 .paper{
-  width:210mm!important;height:297mm!important;
-  box-shadow:none!important;border-radius:0!important;
-  overflow:hidden;background:#fff;
-  page-break-after:always;break-after:page;
+  width:794px!important;
+  height:1123px!important;
+  box-shadow:none!important;
+  border-radius:0!important;
+  overflow:hidden;
+  background:#fff;
+  page-break-after:always;
+  break-after:page;
+  position:relative;
 }
 .paper:last-child{page-break-after:auto;break-after:auto;}
 .cv-page{
-  width:210mm!important;height:297mm!important;
-  overflow:hidden;background:#fff;
+  width:794px!important;
+  height:1123px!important;
+  overflow:hidden;
 }
 
-/* ── Pegar todo el CSS del app (templates, tipografía, layouts) ── */
+/* CSS completo del app — templates, tipografía, layouts */
 ${allCSS}
 
-/* ── Resobreescribir px duros que el app CSS pone ── */
-.paper,.cv-page{width:210mm!important;height:297mm!important;}
-body.tpl-sidebar .cv-page{height:297mm!important;}
+/* Reafirmar dimensiones (el allCSS las define igual, pero por seguridad) */
+.paper,.cv-page{width:794px!important;height:1123px!important;}
 
-/* ── Esconder chrome del app ── */
+/* Ocultar todo el chrome del app */
 .top-nav,.tab-bar,.mobile-panels,.desktop-sidebar,.fab,
-.zoom-bar,.ds-head,.ds-foot,.ds-body,.stage,.cv-stage-wrap{display:none!important;}
+.zoom-bar,.ds-head,.ds-foot,.ds-body,.stage,.cv-stage-wrap,
+.paperStack{display:block!important;transform:none!important;}
 </style>
 </head>
-<body class="${bodyClass}" style="background:#fff;">
+<body class="${bodyClass}" style="background:#fff;margin:0;padding:0;">
 ${pages}
 <script>
 ${photoSrc ? `document.querySelectorAll('#cvPhotoImg').forEach(function(i){i.src=${JSON.stringify(photoSrc)};i.style.display='block';var prev=i.previousElementSibling;if(prev)prev.style.display='none';});` : ""}
 window.addEventListener('load', function(){
   setTimeout(function(){
     window.print();
-    setTimeout(function(){ window.close(); }, 1200);
-  }, 800);
+    setTimeout(function(){ window.close(); }, 1500);
+  }, 900);
 });
 <\/script>
 </body></html>`;
