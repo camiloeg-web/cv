@@ -178,8 +178,10 @@ ul.cv-bullets li{font-size:var(--bullet-sz);line-height:1.6;color:var(--ink);mar
 .cv-course .cn{font-size:var(--small-sz);color:var(--ink);font-weight:600;line-height:1.5;word-break:break-word;}
 .cv-course .ci{font-size:9px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.04em;}
 /* Cards del lado derecho/lateral con más aire vertical */
-.cv-side .cv-card{padding:18px 18px;margin-bottom:10px;}
-.cv-side .cv-card .cv-title{margin-bottom:13px;}
+.cv-side .cv-card{padding:18px 18px;margin-bottom:0;border:none;border-top:1px solid var(--line);border-radius:0;}
+.cv-side .cv-card:first-child{border-top:none;}
+.cv-side .cv-card .cv-title{margin-bottom:13px;padding-top:16px;}
+.cv-side .cv-card:first-child .cv-title{padding-top:0;}
 /* Fix global: texto largo no rompe layout */
 .cv-name{overflow-wrap:break-word;word-break:break-word;}
 .cv-hl{overflow-wrap:break-word;}
@@ -466,17 +468,8 @@ body.tpl-creative .cv-title{color:var(--accent);}
         </div>
       </div>
       <div class="panel-card">
-        <h3>Áreas y Formación</h3>
-        <div class="field"><label>Áreas HR (una por línea)</label>
-          <textarea id="inAreas">HRBP Support
-Employee Experience
-HR Operations
-Onboarding
-Internal Communications
-Stakeholder Management
-HR Reporting</textarea>
-        </div>
-        <div class="field"><label>Educación (Título — Institución | Detalle)</label>
+        <h3>Formación y Competencias</h3>
+        <div class="field"><label>Educación (Título | Detalle)</label>
           <textarea id="inEdu">Lic. en Recursos Humanos — UADE | Finalizado
 Lic. en Psicología — UADE | En curso</textarea>
         </div>
@@ -485,6 +478,13 @@ Lic. en Psicología — UADE | En curso</textarea>
 Técnicas de selección de RR.HH. | CAME / UTN
 Conducción de equipos | CAME / UTN
 Comunicación y organizaciones | CAME / UTN</textarea>
+        </div>
+        <div class="field"><label>Competencias (una por línea)</label>
+          <textarea id="inSkills">Gestión del cambio
+Comunicación efectiva
+Trabajo en equipo
+Resolución de conflictos
+Orientación a resultados</textarea>
         </div>
       </div>
     </div>
@@ -584,17 +584,8 @@ Comunicación y organizaciones | CAME / UTN</textarea>
         <div class="field"><label>Perfil profesional</label>
           <textarea id="dInProfile">Licenciado en Recursos Humanos con experiencia en entornos corporativos y trayectoria sólida en gestión administrativa y coordinación. Actualmente HRBP Contractor en Oracle, con foco en employee experience, comunicación interna, ejecución de iniciativas de RR.HH. y trabajo cross-functional.</textarea>
         </div>
-        <div class="sec-label">Áreas y Formación</div>
-        <div class="field"><label>Áreas HR (una por línea)</label>
-          <textarea id="dInAreas">HRBP Support
-Employee Experience
-HR Operations
-Onboarding
-Internal Communications
-Stakeholder Management
-HR Reporting</textarea>
-        </div>
-        <div class="field"><label>Educación (Título — Institución | Detalle)</label>
+        <div class="sec-label">Formación y Competencias</div>
+        <div class="field"><label>Educación (Título | Detalle)</label>
           <textarea id="dInEdu">Lic. en Recursos Humanos — UADE | Finalizado
 Lic. en Psicología — UADE | En curso</textarea>
         </div>
@@ -603,6 +594,13 @@ Lic. en Psicología — UADE | En curso</textarea>
 Técnicas de selección de RR.HH. | CAME / UTN
 Conducción de equipos | CAME / UTN
 Comunicación y organizaciones | CAME / UTN</textarea>
+        </div>
+        <div class="field"><label>Competencias (una por línea)</label>
+          <textarea id="dInSkills">Gestión del cambio
+Comunicación efectiva
+Trabajo en equipo
+Resolución de conflictos
+Orientación a resultados</textarea>
         </div>
       </div>
 
@@ -701,16 +699,16 @@ Comunicación y organizaciones | CAME / UTN</textarea>
               </div>
               <div class="cv-side" id="cvSide">
                 <div class="cv-card">
-                  <div class="cv-title" id="tAreas">Áreas HR</div>
-                  <ul class="cv-list" id="cvAreas"></ul>
-                </div>
-                <div class="cv-card">
                   <div class="cv-title" id="tEdu">Educación</div>
                   <div id="cvEdu"></div>
                 </div>
                 <div class="cv-card">
                   <div class="cv-title" id="tCourses">Formación complementaria</div>
                   <div class="cv-courses" id="cvCourses"></div>
+                </div>
+                <div class="cv-card">
+                  <div class="cv-title" id="tSkills">Competencias</div>
+                  <ul class="cv-list" id="cvSkills"></ul>
                 </div>
               </div>
             </div>
@@ -820,8 +818,8 @@ setupPhoto("inPhoto"); setupPhoto("dInPhoto");
 /* ============================================================
    RENDER
 ============================================================ */
-function renderAreas() {
-  $("cvAreas").innerHTML = fv("inAreas","dInAreas").split("\n")
+function renderSkills() {
+  $("cvSkills").innerHTML = fv("inSkills","dInSkills").split("\n")
     .map(s=>s.trim()).filter(Boolean).map(l=>`<li>${esc(l)}</li>`).join("");
 }
 
@@ -896,7 +894,7 @@ function syncCV() {
   $("cvContact").innerHTML = contactParts.join(' <span class="cv-sep">·</span> ');
 
   // Side sections
-  renderAreas(); renderEdu(); renderCourses();
+  renderEdu(); renderCourses(); renderSkills();
 
   // Sidebar: inyectar/limpiar bloque de datos personales al inicio del cv-side
   const isSidebar = document.body.classList.contains("tpl-sidebar");
@@ -929,15 +927,15 @@ const PAIRS = [
   ["inName","dInName"],["inDegree","dInDegree"],["inHeadline","dInHeadline"],
   ["inEmail","dInEmail"],["inPhone","dInPhone"],["inLinkedIn","dInLinkedIn"],
   ["inLocation","dInLocation"],["inProfile","dInProfile"],
-  ["inAreas","dInAreas"],["inEdu","dInEdu"],["inCourses","dInCourses"],
+  ["inEdu","dInEdu"],["inCourses","dInCourses"],["inSkills","dInSkills"],
   ["inTemplate","dInTemplate"],["inCompact","dInCompact"],["inTheme","dInTheme"],["inPhotoMode","dInPhotoMode"]
 ];
 const mirrorD = () => PAIRS.forEach(([m,d]) => { if($(m)&&$(d)) $(d).value=$(m).value; });
 const mirrorM = () => PAIRS.forEach(([m,d]) => { if($(m)&&$(d)) $(m).value=$(d).value; });
 
-["inName","inDegree","inHeadline","inEmail","inPhone","inLinkedIn","inLocation","inProfile","inAreas","inEdu","inCourses"]
+["inName","inDegree","inHeadline","inEmail","inPhone","inLinkedIn","inLocation","inProfile","inEdu","inCourses","inSkills"]
   .forEach(id => $(id)?.addEventListener("input", () => { mirrorD(); syncCV(); autoSave(); }));
-["dInName","dInDegree","dInHeadline","dInEmail","dInPhone","dInLinkedIn","dInLocation","dInProfile","dInAreas","dInEdu","dInCourses"]
+["dInName","dInDegree","dInHeadline","dInEmail","dInPhone","dInLinkedIn","dInLocation","dInProfile","dInEdu","dInCourses","dInSkills"]
   .forEach(id => $(id)?.addEventListener("input", () => { mirrorM(); syncCV(); autoSave(); }));
 
 /* ============================================================
@@ -1159,7 +1157,8 @@ function getDraft() {
     fields:{ inName:$("inName").value, inDegree:$("inDegree").value, inHeadline:$("inHeadline").value,
              inEmail:$("inEmail").value, inPhone:$("inPhone").value, inLinkedIn:$("inLinkedIn").value,
              inLocation:$("inLocation").value, inProfile:$("inProfile").value,
-             inAreas:$("inAreas").value, inEdu:$("inEdu").value, inCourses:$("inCourses").value },
+             inEdu:$("inEdu").value, inCourses:$("inCourses").value,
+             inSkills:$("inSkills").value },
     jobs
   };
 }
