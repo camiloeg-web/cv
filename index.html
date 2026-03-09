@@ -140,7 +140,9 @@ body.show-stage .fab{display:flex;}
 .cv-contact a{color:var(--accent);text-decoration:none;font-weight:600;}
 .cv-sep{color:var(--muted);font-weight:400;margin:0 1px;}
 .cv-photo{width:96px;height:96px;border-radius:8px;border:2px solid var(--line);background:#F3F4F6;overflow:hidden;display:flex;align-items:center;justify-content:center;color:#9CA3AF;font-weight:800;font-size:10px;flex-shrink:0;justify-self:end;}
-.cv-photo img{width:100%;height:100%;object-fit:cover;display:block;}
+.cv-photo img{width:100%;height:100%;object-fit:cover;display:none;}
+.cv-photo.has-photo img{display:block;}
+.cv-photo.has-photo span{display:none;}
 
 /* ── Layout body ── */
 .cv-layout{display:grid;grid-template-columns:var(--cv-cols);gap:var(--cv-gap);}
@@ -691,7 +693,7 @@ Orientación a resultados</textarea>
               </div>
               <div class="cv-photo" id="cvPhotoBox">
                 <span id="cvPhotoLabel">FOTO</span>
-                <img id="cvPhotoImg" alt="" style="display:none"/>
+                <img id="cvPhotoImg" alt=""/>
               </div>
             </div>
             <div class="cv-layout">
@@ -811,21 +813,18 @@ window.addEventListener("resize", setDefaultZoom);
 ============================================================ */
 function setPhotoMode(mode) {
   document.body.classList.toggle("no-photo", mode !== "with");
-  if (mode !== "with") { $("cvPhotoImg").style.display="none"; $("cvPhotoLabel").style.display="block"; }
-  // Sincronizar ambos selects
   if ($("inPhotoMode"))  $("inPhotoMode").value  = mode;
   if ($("dInPhotoMode")) $("dInPhotoMode").value = mode;
 }
 function setupPhoto(id) {
   $(id)?.addEventListener("change", e => {
     const f = e.target.files?.[0]; if (!f) return;
-    // Si photoMode es "without", cambiarlo a "with" automáticamente
     setPhotoMode("with");
     const r = new FileReader();
     r.onload = () => {
-      $("cvPhotoImg").src = r.result;
-      $("cvPhotoImg").style.display = "block";
-      $("cvPhotoLabel").style.display = "none";
+      const img = $("cvPhotoImg");
+      img.src = r.result;
+      $("cvPhotoBox").classList.add("has-photo");
       autoSave();
     };
     r.readAsDataURL(f);
@@ -1139,7 +1138,7 @@ ${allCSS}
 <body class="${bodyClass}" style="background:#fff;margin:0;padding:0;">
 ${page1}
 <script>
-${photoSrc ? `document.querySelectorAll('#cvPhotoImg').forEach(function(i){i.src=${JSON.stringify(photoSrc)};i.style.display='block';var prev=i.previousElementSibling;if(prev)prev.style.display='none';});` : ""}
+${photoSrc ? `document.querySelectorAll('#cvPhotoImg').forEach(function(i){i.src=${JSON.stringify(photoSrc)};var box=document.getElementById('cvPhotoBox');if(box)box.classList.add('has-photo');});` : ""}
 window.addEventListener('load', function(){
   setTimeout(function(){
     window.print();
@@ -1193,7 +1192,10 @@ function applyDraft(d) {
   if (m.fitGap)   { $("cvPage1")?.style.setProperty("--cv-gap", m.fitGap); }
   Object.entries(d.fields||{}).forEach(([k,v]) => { if($(k)) $(k).value=v; });
   if (Array.isArray(d.jobs)&&d.jobs.length) jobs=d.jobs;
-  if (m.photoMode==="with"&&m.photoUrl) { $("cvPhotoImg").src=m.photoUrl; $("cvPhotoImg").style.display="block"; $("cvPhotoLabel").style.display="none"; }
+  if (m.photoMode==="with"&&m.photoUrl) {
+    $("cvPhotoImg").src = m.photoUrl;
+    $("cvPhotoBox").classList.add("has-photo");
+  }
   mirrorD(); renderJobsEditor(); syncCV();
 }
 
