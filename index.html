@@ -150,9 +150,9 @@ body.show-stage .fab{display:flex;}
 /* ── Sections & cards ── */
 .cv-section{margin-bottom:18px;}
 .cv-section:last-child{margin-bottom:0;}
-.cv-card{border:1px solid var(--line);border-radius:8px;padding:16px 18px;margin-bottom:14px;background:#fff;}
+.cv-card{border:1px solid var(--line);border-radius:8px;padding:16px 18px;margin-bottom:16px;background:#fff;}
 .cv-card:last-child{margin-bottom:0;}
-.cv-title{font-size:var(--title-sz);font-weight:900;letter-spacing:.13em;text-transform:uppercase;color:var(--accent);margin-bottom:11px;}
+.cv-title{font-size:var(--title-sz);font-weight:900;letter-spacing:.13em;text-transform:uppercase;color:var(--accent);margin-bottom:12px;}
 .cv-p{font-size:var(--p-sz);line-height:1.7;color:var(--ink);white-space:pre-wrap;}
 
 /* ── Jobs ── */
@@ -166,16 +166,20 @@ ul.cv-bullets{margin:7px 0 0 16px;padding:0;}
 ul.cv-bullets li{font-size:var(--bullet-sz);line-height:1.6;color:var(--ink);margin-bottom:3px;}
 
 /* ── Side sections ── */
-.cv-list{margin:0;padding-left:14px;}
-.cv-list li{font-size:var(--small-sz);margin-bottom:5px;color:var(--ink);line-height:1.4;word-break:break-word;}
-.cv-edu-item{margin-bottom:10px;}
+.cv-list{margin:0;padding-left:16px;}
+.cv-list li{font-size:var(--small-sz);margin-bottom:6px;color:var(--ink);line-height:1.5;word-break:break-word;}
+.cv-list li:last-child{margin-bottom:0;}
+.cv-edu-item{margin-bottom:12px;}
 .cv-edu-item:last-child{margin-bottom:0;}
-.cv-edu-item strong{font-size:var(--small-sz);display:block;color:var(--ink);font-weight:700;line-height:1.4;word-break:break-word;}
-.cv-edu-item span{font-size:var(--small-sz);color:var(--muted);display:block;margin-top:1px;}
-.cv-courses{display:flex;flex-direction:column;gap:8px;}
-.cv-course{display:flex;flex-direction:column;gap:1px;}
-.cv-course .cn{font-size:var(--small-sz);color:var(--ink);font-weight:600;line-height:1.4;word-break:break-word;}
+.cv-edu-item strong{font-size:var(--small-sz);display:block;color:var(--ink);font-weight:700;line-height:1.5;word-break:break-word;}
+.cv-edu-item span{font-size:var(--small-sz);color:var(--muted);display:block;margin-top:2px;}
+.cv-courses{display:flex;flex-direction:column;gap:10px;}
+.cv-course{display:flex;flex-direction:column;gap:2px;}
+.cv-course .cn{font-size:var(--small-sz);color:var(--ink);font-weight:600;line-height:1.5;word-break:break-word;}
 .cv-course .ci{font-size:9px;color:var(--muted);font-weight:600;text-transform:uppercase;letter-spacing:.04em;}
+/* Cards del lado derecho/lateral con más aire vertical */
+.cv-side .cv-card{padding:18px 18px;margin-bottom:10px;}
+.cv-side .cv-card .cv-title{margin-bottom:13px;}
 /* Fix global: texto largo no rompe layout */
 .cv-name{overflow-wrap:break-word;word-break:break-word;}
 .cv-hl{overflow-wrap:break-word;}
