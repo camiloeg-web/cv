@@ -6,7 +6,7 @@
 <title>CV Builder</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=EB+Garamond:ital,wght@0,400;0,600;0,700;0,800;1,400&family=Merriweather:ital,wght@0,400;0,700;0,900;1,400&family=Raleway:wght@400;500;600;700;800;900&family=Lato:ital,wght@0,400;0,700;0,900;1,400&family=Roboto+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 /* ===================== TOKENS ===================== */
 :root{
@@ -129,7 +129,7 @@ body.show-stage .fab{display:flex;}
 .stage{display:flex;justify-content:center;padding-bottom:40px;}
 .paperStack{display:flex;flex-direction:column;gap:20px;transform-origin:top center;}
 .paper{width:794px;height:1123px;background:#fff;box-shadow:0 8px 32px rgba(0,0,0,.12);border-radius:4px;overflow:hidden;flex-shrink:0;}
-.cv-page{width:794px;height:1123px;padding:var(--cv-pad);box-sizing:border-box;background:#fff;position:relative;overflow:hidden;}
+.cv-page{width:794px;height:1123px;padding:var(--cv-pad);box-sizing:border-box;background:#fff;position:relative;overflow:hidden;font-family:Arial,Helvetica,sans-serif;}
 
 /* ── Header base ── */
 .cv-header{display:grid;grid-template-columns:var(--hdr-cols);gap:20px;align-items:start;padding-bottom:20px;border-bottom:2px solid var(--line);margin-bottom:24px;}
@@ -386,6 +386,37 @@ body.tpl-creative .cv-side{
 body.tpl-creative .cv-card{border:1px solid var(--line);border-radius:10px;padding:16px 18px;background:#FAFAFE;}
 body.tpl-creative .cv-title{color:var(--accent);}
 
+/* ===================== FONT FAMILIES ===================== */
+/* Inter disponible como opción */
+.cv-page.font-inter        { font-family: Inter, system-ui, sans-serif; }
+.cv-page.font-arial        { font-family: Arial, Helvetica, sans-serif; }
+.cv-page.font-garamond     { font-family: 'EB Garamond', Georgia, serif; }
+.cv-page.font-merriweather { font-family: 'Merriweather', Georgia, serif; }
+.cv-page.font-raleway      { font-family: 'Raleway', system-ui, sans-serif; }
+.cv-page.font-lato         { font-family: 'Lato', system-ui, sans-serif; }
+.cv-page.font-mono         { font-family: 'Roboto Mono', 'Courier New', monospace; }
+/* Ajuste de peso para serifas (no tienen 800/900 bold) */
+.cv-page.font-garamond .cv-name,
+.cv-page.font-merriweather .cv-name { font-weight: 700; letter-spacing: -.01em; }
+.cv-page.font-garamond .cv-jobrole,
+.cv-page.font-merriweather .cv-jobrole { font-weight: 700; }
+/* Mono: ajuste de tamaño y espaciado */
+.cv-page.font-mono { --name-sz: 22px; --p-sz: 9px; --jobrole-sz: 10px; --bullet-sz: 9px; }
+.cv-page.font-mono .cv-name { letter-spacing: -.01em; }
+
+/* ===================== FONT SIZES ===================== */
+.cv-page.fs-s {
+  --name-sz:26px; --hl-sz:11px; --deg-sz:10.5px;
+  --contact-sz:9.5px; --title-sz:8px; --p-sz:9.5px;
+  --jobrole-sz:10.5px; --bullet-sz:9px; --small-sz:8.5px;
+}
+.cv-page.fs-m { /* default — sin cambios */ }
+.cv-page.fs-l {
+  --name-sz:34px; --hl-sz:14px; --deg-sz:13px;
+  --contact-sz:11.5px; --title-sz:10px; --p-sz:11.5px;
+  --jobrole-sz:13px; --bullet-sz:11px; --small-sz:10.5px;
+}
+
 /* ===================== APP SHELL CHROME ===================== */
 @media print{*{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;}}
 </style>
@@ -479,6 +510,26 @@ Comunicación y organizaciones | CAME / UTN</textarea>
             <option value="theme-red">Rojo</option>
             <option value="theme-orange">Naranja</option>
           </select>
+        </div>
+        <div class="grid2">
+          <div class="field"><label>Tipografía</label>
+            <select id="inFont">
+              <option value="font-arial">Arial</option>
+              <option value="font-inter">Inter</option>
+              <option value="font-garamond">Garamond</option>
+              <option value="font-merriweather">Merriweather</option>
+              <option value="font-raleway">Raleway</option>
+              <option value="font-lato">Lato</option>
+              <option value="font-mono">Monospace</option>
+            </select>
+          </div>
+          <div class="field"><label>Tamaño</label>
+            <select id="inFontSize">
+              <option value="fs-s">Pequeño</option>
+              <option value="fs-m" selected>Mediano</option>
+              <option value="fs-l">Grande</option>
+            </select>
+          </div>
         </div>
         <div class="divider"></div>
         <div class="grid2">
@@ -574,6 +625,26 @@ Comunicación y organizaciones | CAME / UTN</textarea>
             <option value="theme-red">Rojo</option>
             <option value="theme-orange">Naranja</option>
           </select>
+        </div>
+        <div class="grid2">
+          <div class="field"><label>Tipografía</label>
+            <select id="dInFont">
+              <option value="font-arial">Arial</option>
+              <option value="font-inter">Inter</option>
+              <option value="font-garamond">Garamond</option>
+              <option value="font-merriweather">Merriweather</option>
+              <option value="font-raleway">Raleway</option>
+              <option value="font-lato">Lato</option>
+              <option value="font-mono">Monospace</option>
+            </select>
+          </div>
+          <div class="field"><label>Tamaño</label>
+            <select id="dInFontSize">
+              <option value="fs-s">Pequeño</option>
+              <option value="fs-m" selected>Mediano</option>
+              <option value="fs-l">Grande</option>
+            </select>
+          </div>
         </div>
         <div class="divider"></div>
         <div class="field"><label>Foto</label>
@@ -868,16 +939,24 @@ const mirrorM = () => PAIRS.forEach(([m,d]) => { if($(m)&&$(d)) $(m).value=$(d).
 /* ============================================================
    TEMPLATE / THEME / COMPACT
 ============================================================ */
-const TPLS = ["tpl-classic","tpl-modern","tpl-sidebar","tpl-minimal","tpl-executive","tpl-creative"];
-const THEMES = ["theme-blue","theme-purple","theme-green","theme-red","theme-orange"];
+const TPLS   = ["tpl-classic","tpl-modern","tpl-sidebar","tpl-minimal","tpl-executive","tpl-creative"];
+const THEMES  = ["theme-blue","theme-purple","theme-green","theme-red","theme-orange"];
+const FONTS   = ["font-inter","font-arial","font-garamond","font-merriweather","font-raleway","font-lato","font-mono"];
+const FSIZES  = ["fs-s","fs-m","fs-l"];
 
 function applyTemplate(v) {
   document.body.classList.remove(...TPLS);
   document.body.classList.add(v);
   syncCV();
 }
-function applyCompact(v) { document.body.classList.toggle("compact", v === "on"); }
-function applyTheme(v) { document.body.classList.remove(...THEMES); if(v) document.body.classList.add(v); }
+function applyCompact(v)   { document.body.classList.toggle("compact", v === "on"); }
+function applyTheme(v)     { document.body.classList.remove(...THEMES); if(v) document.body.classList.add(v); }
+function applyFont(v) {
+  [$("cvPage1"), $("cvPage2")].forEach(p => { if(!p) return; p.classList.remove(...FONTS); if(v && v !== "font-arial") p.classList.add(v); });
+}
+function applyFontSize(v) {
+  [$("cvPage1"), $("cvPage2")].forEach(p => { if(!p) return; p.classList.remove(...FSIZES); if(v && v !== "fs-m") p.classList.add(v); });
+}
 
 function wireSelect(mId, dId, fn) {
   $(mId)?.addEventListener("change", () => { if($(dId)) $(dId).value=$(mId).value; fn($(mId).value); autoSave(); });
@@ -887,6 +966,8 @@ wireSelect("inTemplate","dInTemplate", applyTemplate);
 wireSelect("inCompact","dInCompact", applyCompact);
 wireSelect("inTheme","dInTheme", applyTheme);
 wireSelect("inPhotoMode","dInPhotoMode", v => { setPhotoMode(v); });
+wireSelect("inFont","dInFont", applyFont);
+wireSelect("inFontSize","dInFontSize", applyFontSize);
 
 /* ============================================================
    JOBS EDITOR
@@ -1069,7 +1150,8 @@ function doPDF() {
 function getDraft() {
   return {
     meta:{ template:$("inTemplate").value, compact:$("inCompact").value, theme:$("inTheme").value,
-           photoMode:$("inPhotoMode").value, photoUrl:$("cvPhotoImg").style.display!=="none"?$("cvPhotoImg").src:"" },
+           photoMode:$("inPhotoMode").value, photoUrl:$("cvPhotoImg").style.display!=="none"?$("cvPhotoImg").src:"",
+           font:$("inFont").value, fontSize:$("inFontSize").value },
     fields:{ inName:$("inName").value, inDegree:$("inDegree").value, inHeadline:$("inHeadline").value,
              inEmail:$("inEmail").value, inPhone:$("inPhone").value, inLinkedIn:$("inLinkedIn").value,
              inLocation:$("inLocation").value, inProfile:$("inProfile").value,
@@ -1085,6 +1167,8 @@ function applyDraft(d) {
   if (m.compact)  { $("inCompact").value=m.compact; applyCompact(m.compact); }
   if (m.theme!==undefined) { $("inTheme").value=m.theme||""; applyTheme(m.theme||""); }
   if (m.photoMode) { $("inPhotoMode").value=m.photoMode; setPhotoMode(m.photoMode); }
+  if (m.font)     { $("inFont").value=m.font; applyFont(m.font); }
+  if (m.fontSize) { $("inFontSize").value=m.fontSize; applyFontSize(m.fontSize); }
   Object.entries(d.fields||{}).forEach(([k,v]) => { if($(k)) $(k).value=v; });
   if (Array.isArray(d.jobs)&&d.jobs.length) jobs=d.jobs;
   if (m.photoMode==="with"&&m.photoUrl) { $("cvPhotoImg").src=m.photoUrl; $("cvPhotoImg").style.display="block"; $("cvPhotoLabel").style.display="none"; }
