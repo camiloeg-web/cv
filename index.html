@@ -544,6 +544,9 @@ Orientación a resultados</textarea>
           </div>
           <div class="field"><label>Subir foto</label><input id="inPhoto" type="file" accept="image/*"/></div>
         </div>
+        <div class="divider"></div>
+        <button class="btn full" id="btnFitA4" style="background:var(--accent);color:#fff;border:none;">⊡ Ajustar a A4</button>
+        <div id="fitA4Status" style="font-size:10px;color:var(--muted);text-align:center;margin-top:6px;min-height:14px;"></div>
       </div>
       <div class="panel-card">
         <button class="btn ghost full" id="btnReset"><svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:-2px;margin-right:5px"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-3.6"/></svg>Reiniciar todo</button>
@@ -655,6 +658,9 @@ Orientación a resultados</textarea>
           <select id="dInPhotoMode"><option value="with">Con foto</option><option value="without">Sin foto</option></select>
         </div>
         <div class="field"><label>Subir foto</label><input id="dInPhoto" type="file" accept="image/*"/></div>
+        <div class="divider"></div>
+        <button class="btn full" id="dBtnFitA4" style="background:var(--accent);color:#fff;border:none;">⊡ Ajustar a A4</button>
+        <div id="dFitA4Status" style="font-size:10px;color:var(--muted);text-align:center;margin-top:6px;min-height:14px;"></div>
       </div>
 
       <div class="ds-panel" id="d-jobs">
@@ -806,12 +812,22 @@ window.addEventListener("resize", setDefaultZoom);
 function setPhotoMode(mode) {
   document.body.classList.toggle("no-photo", mode !== "with");
   if (mode !== "with") { $("cvPhotoImg").style.display="none"; $("cvPhotoLabel").style.display="block"; }
+  // Sincronizar ambos selects
+  if ($("inPhotoMode"))  $("inPhotoMode").value  = mode;
+  if ($("dInPhotoMode")) $("dInPhotoMode").value = mode;
 }
 function setupPhoto(id) {
   $(id)?.addEventListener("change", e => {
     const f = e.target.files?.[0]; if (!f) return;
+    // Si photoMode es "without", cambiarlo a "with" automáticamente
+    setPhotoMode("with");
     const r = new FileReader();
-    r.onload = () => { $("cvPhotoImg").src=r.result; $("cvPhotoImg").style.display="block"; $("cvPhotoLabel").style.display="none"; autoSave(); };
+    r.onload = () => {
+      $("cvPhotoImg").src = r.result;
+      $("cvPhotoImg").style.display = "block";
+      $("cvPhotoLabel").style.display = "none";
+      autoSave();
+    };
     r.readAsDataURL(f);
   });
 }
@@ -1152,7 +1168,9 @@ function getDraft() {
   return {
     meta:{ template:$("inTemplate").value, compact:$("inCompact").value, theme:$("inTheme").value,
            photoMode:$("inPhotoMode").value, photoUrl:$("cvPhotoImg").style.display!=="none"?$("cvPhotoImg").src:"",
-           font:$("inFont").value, fontSize:$("inFontSize").value },
+           font:$("inFont").value, fontSize:$("inFontSize").value,
+           fitPad:$("cvPage1")?.style.getPropertyValue("--cv-pad")||"",
+           fitGap:$("cvPage1")?.style.getPropertyValue("--cv-gap")||"" },
     fields:{ inName:$("inName").value, inDegree:$("inDegree").value, inHeadline:$("inHeadline").value,
              inEmail:$("inEmail").value, inPhone:$("inPhone").value, inLinkedIn:$("inLinkedIn").value,
              inLocation:$("inLocation").value, inProfile:$("inProfile").value,
@@ -1168,9 +1186,11 @@ function applyDraft(d) {
   if (m.template) { $("inTemplate").value=m.template; applyTemplate(m.template); }
   if (m.compact)  { $("inCompact").value=m.compact; applyCompact(m.compact); }
   if (m.theme!==undefined) { $("inTheme").value=m.theme||""; applyTheme(m.theme||""); }
-  if (m.photoMode) { $("inPhotoMode").value=m.photoMode; setPhotoMode(m.photoMode); }
-  if (m.font)     { $("inFont").value=m.font; applyFont(m.font); }
-  if (m.fontSize) { $("inFontSize").value=m.fontSize; applyFontSize(m.fontSize); }
+  if (m.photoMode) { setPhotoMode(m.photoMode); }
+  if (m.font)     { if($("inFont")) $("inFont").value=m.font; if($("dInFont")) $("dInFont").value=m.font; applyFont(m.font); }
+  if (m.fontSize) { if($("inFontSize")) $("inFontSize").value=m.fontSize; if($("dInFontSize")) $("dInFontSize").value=m.fontSize; applyFontSize(m.fontSize); }
+  if (m.fitPad)   { $("cvPage1")?.style.setProperty("--cv-pad", m.fitPad); }
+  if (m.fitGap)   { $("cvPage1")?.style.setProperty("--cv-gap", m.fitGap); }
   Object.entries(d.fields||{}).forEach(([k,v]) => { if($(k)) $(k).value=v; });
   if (Array.isArray(d.jobs)&&d.jobs.length) jobs=d.jobs;
   if (m.photoMode==="with"&&m.photoUrl) { $("cvPhotoImg").src=m.photoUrl; $("cvPhotoImg").style.display="block"; $("cvPhotoLabel").style.display="none"; }
@@ -1185,8 +1205,85 @@ function loadDraft() {
   return false;
 }
 /* ============================================================
-   INIT
+   AUTO-FIT A4
+   Ajusta --cv-pad y --cv-gap del cvPage1 para que el contenido
+   llene la hoja sin desbordar. Itera buscando fill entre 97-100%.
 ============================================================ */
+function autoFitA4() {
+  const pg = $("cvPage1");
+  if (!pg) return;
+
+  // Límites de los parámetros ajustables
+  const PAD_MIN = 24, PAD_MAX = 72;
+  const GAP_MIN = 10, GAP_MAX = 48;
+
+  // Leer valores actuales del :root como base
+  const rootStyle = getComputedStyle(document.documentElement);
+  let pad = parseFloat(rootStyle.getPropertyValue("--cv-pad")) || 52;
+  let gap = parseFloat(rootStyle.getPropertyValue("--cv-gap")) || 26;
+
+  // Aplicar inline override al cv-page (no toca :root, no rompe templates)
+  const applyVars = () => {
+    pg.style.setProperty("--cv-pad", pad + "px");
+    pg.style.setProperty("--cv-gap", gap + "px");
+  };
+
+  const statusEls = [$("fitA4Status"), $("dFitA4Status")];
+  const setStatus = msg => statusEls.forEach(el => { if(el) el.textContent = msg; });
+
+  setStatus("Ajustando…");
+
+  // Forzar layout limpio antes de medir
+  applyVars();
+
+  let iterations = 0;
+  const MAX_ITER = 60;
+  const TARGET_LOW = 0.97;   // mínimo fill aceptable
+  const TARGET_HIGH = 1.00;  // máximo (no desbordar)
+
+  function step() {
+    const contentH = pg.scrollHeight;
+    const pageH    = pg.clientHeight;
+    if (pageH === 0) { setStatus("Error: página sin altura."); return; }
+
+    const ratio = contentH / pageH;
+    iterations++;
+
+    if (iterations > MAX_ITER) {
+      setStatus("Ajuste completado (" + Math.round(ratio * 100) + "% lleno)");
+      autoSave();
+      return;
+    }
+
+    if (ratio >= TARGET_LOW && ratio <= TARGET_HIGH) {
+      // Perfecto — entra y llena bien
+      setStatus("✓ " + Math.round(ratio * 100) + "% de la hoja");
+      autoSave();
+      return;
+    }
+
+    if (ratio > TARGET_HIGH) {
+      // Desborda — reducir pad y gap
+      const excess = ratio - 1.0;
+      pad = Math.max(PAD_MIN, pad - Math.max(1, Math.round(excess * 60)));
+      gap = Math.max(GAP_MIN, gap - Math.max(1, Math.round(excess * 40)));
+    } else {
+      // Hay espacio vacío — expandir pad y gap
+      const slack = TARGET_LOW - ratio;
+      pad = Math.min(PAD_MAX, pad + Math.max(1, Math.round(slack * 80)));
+      gap = Math.min(GAP_MAX, gap + Math.max(1, Math.round(slack * 50)));
+    }
+
+    applyVars();
+    requestAnimationFrame(step);
+  }
+
+  requestAnimationFrame(step);
+}
+
+["btnFitA4","dBtnFitA4"].forEach(id => $(id)?.addEventListener("click", autoFitA4));
+
+
 setPhotoMode("with");
 renderJobsEditor();
 if (!loadDraft()) { mirrorD(); syncCV(); }
