@@ -477,27 +477,30 @@ body.tpl-creative .cv-title{color:var(--accent);}
         <div class="field"><label>LinkedIn (URL)</label><input id="inLinkedIn" value="https://www.linkedin.com/in/cegui"/></div>
         <div class="field"><label>Ubicación</label><input id="inLocation" value="Buenos Aires, Argentina"/></div>
         <div class="field"><label>Perfil profesional</label>
-          <textarea id="inProfile">Licenciado en Recursos Humanos con experiencia en entornos corporativos y trayectoria sólida en gestión administrativa y coordinación. Actualmente HRBP Contractor en Oracle, con foco en employee experience, comunicación interna, ejecución de iniciativas de RR.HH. y trabajo cross-functional.</textarea>
+          <textarea id="inProfile">HRBP con más de 8 años de experiencia en entornos corporativos y educativos. Especializado en employee experience, gestión del ciclo de vida del empleado y coordinación de iniciativas de RR.HH. en organizaciones medianas y grandes. Actualmente actuando como HRBP Contractor en Oracle Argentina, con foco en la ejecución estratégica de programas de personas, comunicación interna y trabajo transversal con líderes de negocio. Perfil orientado a resultados, con capacidad para gestionar múltiples proyectos y alta adaptabilidad a entornos de cambio.</textarea>
         </div>
       </div>
       <div class="panel-card">
         <h3>Formación y Competencias</h3>
         <div class="field"><label>Educación (Título | Institución | Inicio | Fin)</label>
-          <textarea id="inEdu">Lic. en Recursos Humanos | UADE | 2018 | 2022
-Lic. en Psicología | UADE | 2023 | En curso</textarea>
+          <textarea id="inEdu">Licenciatura en Recursos Humanos | UADE | 2018 | 2022
+Licenciatura en Psicología | UADE | 2023 | En curso</textarea>
         </div>
         <div class="field"><label>Formación complementaria (Curso | Institución)</label>
-          <textarea id="inCourses">Planificación y gestión de RR.HH. para PyMEs | CAME / UTN
-Técnicas de selección de RR.HH. | CAME / UTN
-Conducción de equipos | CAME / UTN
-Comunicación y organizaciones | CAME / UTN</textarea>
+          <textarea id="inCourses">Programa de HRBP estratégico | CAME / UTN
+Técnicas avanzadas de selección por competencias | CAME / UTN
+Conducción y desarrollo de equipos | CAME / UTN
+Comunicación organizacional y gestión del cambio | CAME / UTN</textarea>
         </div>
         <div class="field"><label>Competencias (una por línea)</label>
-          <textarea id="inSkills">Gestión del cambio
-Comunicación efectiva
-Trabajo en equipo
-Resolución de conflictos
-Orientación a resultados</textarea>
+          <textarea id="inSkills">HRBP estratégico y operativo
+Gestión del ciclo de vida del empleado
+Reclutamiento y selección por competencias
+Employee experience y clima organizacional
+Comunicación interna y gestión del cambio
+HR Analytics y reportería de personas
+Onboarding y retención de talento
+Inglés intermedio-avanzado</textarea>
         </div>
       </div>
     </div>
@@ -598,25 +601,28 @@ Orientación a resultados</textarea>
         <div class="field"><label>LinkedIn (URL)</label><input id="dInLinkedIn" value="https://www.linkedin.com/in/cegui"/></div>
         <div class="field"><label>Ubicación</label><input id="dInLocation" value="Buenos Aires, Argentina"/></div>
         <div class="field"><label>Perfil profesional</label>
-          <textarea id="dInProfile">Licenciado en Recursos Humanos con experiencia en entornos corporativos y trayectoria sólida en gestión administrativa y coordinación. Actualmente HRBP Contractor en Oracle, con foco en employee experience, comunicación interna, ejecución de iniciativas de RR.HH. y trabajo cross-functional.</textarea>
+          <textarea id="dInProfile">HRBP con más de 8 años de experiencia en entornos corporativos y educativos. Especializado en employee experience, gestión del ciclo de vida del empleado y coordinación de iniciativas de RR.HH. en organizaciones medianas y grandes. Actualmente actuando como HRBP Contractor en Oracle Argentina, con foco en la ejecución estratégica de programas de personas, comunicación interna y trabajo transversal con líderes de negocio. Perfil orientado a resultados, con capacidad para gestionar múltiples proyectos y alta adaptabilidad a entornos de cambio.</textarea>
         </div>
         <div class="sec-label">Formación y Competencias</div>
         <div class="field"><label>Educación (Título | Institución | Inicio | Fin)</label>
-          <textarea id="dInEdu">Lic. en Recursos Humanos | UADE | 2018 | 2022
-Lic. en Psicología | UADE | 2023 | En curso</textarea>
+          <textarea id="dInEdu">Licenciatura en Recursos Humanos | UADE | 2018 | 2022
+Licenciatura en Psicología | UADE | 2023 | En curso</textarea>
         </div>
         <div class="field"><label>Formación complementaria (Curso | Institución)</label>
-          <textarea id="dInCourses">Planificación y gestión de RR.HH. para PyMEs | CAME / UTN
-Técnicas de selección de RR.HH. | CAME / UTN
-Conducción de equipos | CAME / UTN
-Comunicación y organizaciones | CAME / UTN</textarea>
+          <textarea id="dInCourses">Programa de HRBP estratégico | CAME / UTN
+Técnicas avanzadas de selección por competencias | CAME / UTN
+Conducción y desarrollo de equipos | CAME / UTN
+Comunicación organizacional y gestión del cambio | CAME / UTN</textarea>
         </div>
         <div class="field"><label>Competencias (una por línea)</label>
-          <textarea id="dInSkills">Gestión del cambio
-Comunicación efectiva
-Trabajo en equipo
-Resolución de conflictos
-Orientación a resultados</textarea>
+          <textarea id="dInSkills">HRBP estratégico y operativo
+Gestión del ciclo de vida del empleado
+Reclutamiento y selección por competencias
+Employee experience y clima organizacional
+Comunicación interna y gestión del cambio
+HR Analytics y reportería de personas
+Onboarding y retención de talento
+Inglés intermedio-avanzado</textarea>
         </div>
       </div>
 
@@ -755,12 +761,36 @@ Orientación a resultados</textarea>
 ============================================================ */
 const STORAGE_KEY = "cvb_v8";
 const DEFAULT_JOBS = [
-  { role:"HRBP Contractor — Oracle", meta:"Buenos Aires, Argentina", dates:"2023 – Present",
-    bullets:["Partner with leaders and teams on employee lifecycle matters, driving engagement across 50+ employees","Coordinate cross-functionally with HR, Facilities, and Finance to execute strategic initiatives","Manage employee experience programs, benefits administration, and engagement activities","Build and maintain HR reports and operational documentation"] },
+  { role:"HRBP Contractor — Oracle Argentina", meta:"Buenos Aires, Argentina", dates:"2023 – Actualidad",
+    bullets:[
+      "Acompaño a líderes de negocio en la gestión del ciclo de vida de más de 50 colaboradores, desde el ingreso hasta el egreso",
+      "Diseño e implemento iniciativas de employee experience que mejoraron el índice de satisfacción interno en un 18% en 2024",
+      "Coordino con áreas de Facilities, Legal y Finance la ejecución de programas estratégicos de RR.HH. a nivel regional",
+      "Gestiono la comunicación interna y el plan de onboarding para nuevos ingresos, reduciendo el tiempo de adaptación en un 30%",
+      "Elaboro reportes de métricas de personas (headcount, rotación, ausentismo) para la toma de decisiones del negocio"
+    ]
+  },
   { role:"HR Analyst — Grupo Suessa", meta:"CABA, Argentina", dates:"Dic 2022 – 2023",
-    bullets:["Organized end-to-end recruitment processes, onboarding, and administrative follow-up","Coordinated with candidates and provided operational support to HR team"] },
-  { role:"Gestión Académica y Administrativa — CFP Nº26", meta:"CABA, Argentina", dates:"2015 – 2022",
-    bullets:["Carrera progresiva: Auxiliar Administrativo / Preceptor → Equipo Pedagógico → Jefe del Departamento de Alumnos","Gestionó documentación, servicios estudiantiles y coordinación institucional"] }
+    bullets:[
+      "Lideré procesos de selección end-to-end para perfiles administrativos, comerciales y técnicos, cubriendo 25+ posiciones en el año",
+      "Implementé el proceso de onboarding estructurado para nuevos ingresos, mejorando la experiencia del primer mes",
+      "Coordiné con jefaturas la evaluación de desempeño semestral y el seguimiento de planes de desarrollo individual",
+      "Administré la liquidación de novedades de RRHH y el legajo digital de colaboradores en sistema"
+    ]
+  },
+  { role:"Jefe del Departamento de Alumnos — CFP Nº26", meta:"CABA, Argentina", dates:"2019 – 2022",
+    bullets:[
+      "Lideré un equipo de 4 personas en la gestión administrativa y de servicios estudiantiles de una institución con más de 800 alumnos activos",
+      "Diseñé e implementé procesos de atención al alumno que redujeron los tiempos de respuesta en un 40%",
+      "Coordiné la transición al sistema de gestión digital, capacitando al equipo y garantizando la continuidad operativa"
+    ]
+  },
+  { role:"Preceptor / Equipo Pedagógico — CFP Nº26", meta:"CABA, Argentina", dates:"2015 – 2019",
+    bullets:[
+      "Gestioné el seguimiento académico y la contención de alumnos, colaborando con docentes en la detección de situaciones de riesgo",
+      "Participé en el equipo pedagógico para el diseño de protocolos de convivencia y comunicación institucional"
+    ]
+  }
 ];
 let jobs = JSON.parse(JSON.stringify(DEFAULT_JOBS));
 let draggedIdx = null;
