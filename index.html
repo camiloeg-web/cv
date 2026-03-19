@@ -962,13 +962,15 @@ function syncCV() {
     if (email) sbParts.push(`<a href="mailto:${esc(email)}">${esc(email)}</a>`);
     if (phone) sbParts.push(esc(phone));
     if (li)    sbParts.push(`<a href="${/^https?:\/\//i.test(li)?esc(li):"https://"+esc(li)}" target="_blank">${esc(liShort(li))}</a>`);
-    // Foto real si existe, si no placeholder SVG
+    // Foto: solo mostrar si el modo es "Con foto"
     const photoImg = $("cvPhotoImg");
-    const hasPhoto = $("cvPhotoBox")?.classList.contains("has-photo") && photoImg?.src;
-    const photoHTML = `<div class="sb-photo${hasPhoto ? " has-photo" : ""}">
+    const photoMode = $("inPhotoMode")?.value || "with";
+    const hasPhoto = photoMode === "with" && $("cvPhotoBox")?.classList.contains("has-photo") && photoImg?.src;
+    const showPhotoCircle = photoMode === "with";
+    const photoHTML = showPhotoCircle ? `<div class="sb-photo${hasPhoto ? " has-photo" : ""}">
       <img src="${hasPhoto ? photoImg.src : ""}" alt=""/>
       ${!hasPhoto ? `<svg class="sb-photo-placeholder" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.4)" stroke-width="1.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>` : ""}
-    </div>`;
+    </div>` : "";
     hdr.innerHTML = `
       ${photoHTML}
       <div class="sb-name">${esc(fv("inName","dInName"))}</div>
