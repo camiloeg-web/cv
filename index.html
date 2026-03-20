@@ -991,7 +991,8 @@ const PAIRS = [
   ["inEmail","dInEmail"],["inPhone","dInPhone"],["inLinkedIn","dInLinkedIn"],
   ["inLocation","dInLocation"],["inProfile","dInProfile"],
   ["inEdu","dInEdu"],["inCourses","dInCourses"],["inSkills","dInSkills"],
-  ["inTemplate","dInTemplate"],["inCompact","dInCompact"],["inTheme","dInTheme"],["inPhotoMode","dInPhotoMode"]
+  ["inTemplate","dInTemplate"],["inCompact","dInCompact"],["inTheme","dInTheme"],
+  ["inPhotoMode","dInPhotoMode"],["inFont","dInFont"],["inFontSize","dInFontSize"]
 ];
 const mirrorD = () => PAIRS.forEach(([m,d]) => { if($(m)&&$(d)) $(d).value=$(m).value; });
 const mirrorM = () => PAIRS.forEach(([m,d]) => { if($(m)&&$(d)) $(m).value=$(d).value; });
@@ -1014,7 +1015,7 @@ function applyTemplate(v) {
   document.body.classList.add(v);
   syncCV();
 }
-function applyCompact(v)   { document.body.classList.toggle("compact", v === "on"); }
+function applyCompact(v)   { document.body.classList.toggle("compact", v === "on"); syncCV(); }
 function applyTheme(v)     { document.body.classList.remove(...THEMES); if(v) document.body.classList.add(v); }
 function applyFont(v) {
   [$("cvPage1"), $("cvPage2")].forEach(p => { if(!p) return; p.classList.remove(...FONTS); if(v && v !== "font-arial") p.classList.add(v); });
@@ -1030,7 +1031,7 @@ function wireSelect(mId, dId, fn) {
 wireSelect("inTemplate","dInTemplate", applyTemplate);
 wireSelect("inCompact","dInCompact", applyCompact);
 wireSelect("inTheme","dInTheme", applyTheme);
-wireSelect("inPhotoMode","dInPhotoMode", v => { setPhotoMode(v); });
+wireSelect("inPhotoMode","dInPhotoMode", v => { setPhotoMode(v); syncCV(); });
 wireSelect("inFont","dInFont", applyFont);
 wireSelect("inFontSize","dInFontSize", applyFontSize);
 
